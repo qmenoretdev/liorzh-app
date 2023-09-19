@@ -3,3 +3,7 @@ body {
     font-family: var(--font-family);
     padding: 20px;
 }
+
+.card {
+    padding: 10px;
+}

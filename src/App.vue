@@ -10,31 +10,31 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
+import { RouterView } from "vue-router";
 import Menubar from "primevue/menubar";
 import { ref } from "vue";
 import router from "./router";
 
 const menuItems = ref([
   {
-    label: "Accueil",
+    label: "Home",
     icon: "pi pi-fw pi-home",
     command: () => {
       router.push({ path: "/" });
     },
   },
   {
-    label: "Espace de travail",
+    label: "Workspace",
     icon: "pi pi-fw pi-desktop",
     command: () => {
       router.push({ path: "/workspace" });
     },
   },
   {
-    label: "Compte",
+    label: "Account",
     items: [
       {
-        label: "S'inscrire",
+        label: "Register",
         icon: "pi pi-fw pi-user",
         command: () => {
           router.push({ path: "/signup" });
@@ -48,13 +48,13 @@ const menuItems = ref([
         },
       },
       {
-        label: "Connexion",
+        label: "Log-in",
         icon: "pi pi-fw pi-sign-in",
         command: () => {
           router.push({ path: "/login" });
         },
       },
-      { label: "Déconnexion", icon: "pi pi-fw pi-sign-out" },
+      { label: "Log-out", icon: "pi pi-fw pi-sign-out" },
     ],
   },
 ]);
