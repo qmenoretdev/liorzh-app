@@ -1,36 +1,49 @@
 <template>
-  <div class="card col-12 lg:col-6">
-    <div class="field grid">
-      <label for="email" class="col-12 sm:col-2">Email</label>
-      <div class="col-12 sm:col-6">
-        <input
-          id="email"
-          placeholder="Email"
-          type="text"
-          :class="getInputClass(formError.usernameError)"
-          v-model="formLogin.username"
+  <div class="card p-4 col-12 lg:col-6 mx-auto">
+    <div :class="cssClass.container.default">
+      <h2>Log-in</h2>
+      <div class="field grid">
+        <label for="email" class="col-12 sm:col-2">Email</label>
+        <div class="col-12 sm:col-6">
+          <input
+            id="email"
+            placeholder="Email"
+            type="text"
+            :class="getInputClass(formError.usernameError)"
+            v-model="formLogin.username"
+          />
+        </div>
+        <InlineMessage class="col-12 sm:col-4" v-if="formError.usernameError !== ''">{{
+          formError.usernameError
+        }}</InlineMessage>
+      </div>
+      <div class="field grid">
+        <label for="password" class="col-12 sm:col-2">Password</label>
+        <div class="col-12 sm:col-6">
+          <input
+            id="password"
+            placeholder="Password"
+            type="password"
+            :class="getInputClass(formError.passwordError)"
+            v-model="formLogin.password"
+          />
+        </div>
+        <InlineMessage class="col-12 sm:col-4" v-if="formError.passwordError !== ''">{{
+          formError.passwordError
+        }}</InlineMessage>
+      </div>
+      <InlineMessage class="col-12 sm:col-8 mb-2" v-if="formError.serverError !== ''">{{
+        formError.serverError
+      }}</InlineMessage>
+      <div class="col-12">
+        <Button
+          rounded
+          label="Log-in"
+          @click="login()"
+          class="col-4 md:col-2 col-offset-3"
         />
       </div>
-      <InlineMessage class="col-12 sm:col-4" v-if="formError.usernameError !== ''">{{
-        formError.usernameError
-      }}</InlineMessage>
     </div>
-    <div class="field grid">
-      <label for="password" class="col-12 sm:col-2">Password</label>
-      <div class="col-12 sm:col-6">
-        <input
-          id="password"
-          placeholder="Password"
-          type="password"
-          :class="getInputClass(formError.passwordError)"
-          v-model="formLogin.password"
-        />
-      </div>
-      <InlineMessage class="col-12 sm:col-4" v-if="formError.passwordError !== ''">{{
-        formError.passwordError
-      }}</InlineMessage>
-    </div>
-    <Button rounded label="Log-in" @click="login()" class="col-4 md:col-2" />
   </div>
 </template>
 
@@ -38,6 +51,9 @@
 import InlineMessage from "primevue/inlinemessage";
 import Button from "primevue/button";
 import { ref } from "vue";
+import { cssClass, getInputClass } from "@/utils/style";
+import userService from "@/services/UserService";
+import router from "@/router";
 
 const formLogin = ref({
   username: "",
@@ -46,9 +62,28 @@ const formLogin = ref({
 
 const formError = ref(initFormError());
 
-function login() {
+async function login(): Promise<void> {
   if (checkForm()) {
-    console.log("OK");
+    try {
+      const isAuthenticated = await userService.login(
+        formLogin.value.username,
+        formLogin.value.password
+      );
+      if (isAuthenticated) {
+        router.push({ path: "/workspace" });
+      }
+    } catch (error: any) {
+      if (error.response.data) {
+        if (error.response.data.code === 401) {
+          formError.value.serverError = "Incorrect email or password.";
+        } else {
+          formError.value.serverError = error.response.data.message;
+        }
+      } else {
+        // No response from server
+        formError.value.serverError = error.message;
+      }
+    }
   }
 }
 
@@ -70,12 +105,7 @@ function initFormError() {
   return {
     usernameError: "",
     passwordError: "",
+    serverError: "",
   };
-}
-
-function getInputClass(error: string): string {
-  let cssClass =
-    "text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full";
-  return cssClass + (error !== "" ? " p-invalid" : "");
 }
 </script>
