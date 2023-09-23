@@ -1,0 +1,20 @@
+:root {
+    --light-color-red: #fc4f4f;
+    --dark-color-white: #FBFCFA;
+}
+
+/* policy uniformization */
+body {
+    font-family: var(--font-family);
+    padding: 20px;
+}
+
+.container {
+    border-radius: 10px;
+    background-color: var(--dark-color-white);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.input-invalid {
+    border-color: var(--light-color-red) !important;
+}
