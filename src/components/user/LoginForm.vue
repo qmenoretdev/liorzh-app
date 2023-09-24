@@ -11,6 +11,7 @@
             type="text"
             :class="getInputClass(formError.usernameError)"
             v-model="formLogin.username"
+            @keyup.enter="login()"
           />
         </div>
         <InlineMessage class="col-12 sm:col-4" v-if="formError.usernameError !== ''">{{
@@ -26,6 +27,7 @@
             type="password"
             :class="getInputClass(formError.passwordError)"
             v-model="formLogin.password"
+            @keyup.enter="login()"
           />
         </div>
         <InlineMessage class="col-12 sm:col-4" v-if="formError.passwordError !== ''">{{
@@ -53,7 +55,8 @@ import Button from "primevue/button";
 import { ref } from "vue";
 import { cssClass, getInputClass } from "@/utils/style";
 import userService from "@/services/UserService";
-import router from "@/router";
+
+const emit = defineEmits(["authenticated"]);
 
 const formLogin = ref({
   username: "",
@@ -69,9 +72,7 @@ async function login(): Promise<void> {
         formLogin.value.username,
         formLogin.value.password
       );
-      if (isAuthenticated) {
-        router.push({ path: "/workspace" });
-      }
+      emit("authenticated", isAuthenticated);
     } catch (error: any) {
       if (error.response.data) {
         if (error.response.data.code === 401) {
