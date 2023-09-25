@@ -1,10 +1,10 @@
 <template>
-  <div class="card p-4 col-12 lg:col-6 mx-auto">
+  <div class="card p-4 col-12 lg:col-4 mx-auto">
     <div :class="cssClass.container.default">
       <h2>Sign-up</h2>
       <div class="field grid">
-        <label for="name" class="col-12 sm:col-2">Pseudo*</label>
-        <div class="col-12 sm:col-6">
+        <label for="name" class="col-12 sm:col-3">Pseudo*</label>
+        <div class="col-12 sm:col-8">
           <input
             id="name"
             placeholder="Pseudo"
@@ -14,13 +14,11 @@
             @keyup.enter="register()"
           />
         </div>
-        <InlineMessage class="col-12 sm:col-4" v-if="formError.nameError !== ''">{{
-          formError.nameError
-        }}</InlineMessage>
+        <FormMessage :message="formError.nameError" />
       </div>
       <div class="field grid">
-        <label for="email" class="col-12 sm:col-2">Email*</label>
-        <div class="col-12 sm:col-6">
+        <label for="email" class="col-12 sm:col-3">Email*</label>
+        <div class="col-12 sm:col-8">
           <input
             id="email"
             placeholder="Email"
@@ -30,13 +28,11 @@
             @keyup.enter="register()"
           />
         </div>
-        <InlineMessage class="col-12 sm:col-4" v-if="formError.emailError !== ''">{{
-          formError.emailError
-        }}</InlineMessage>
+        <FormMessage :message="formError.emailError" />
       </div>
       <div class="field grid">
-        <label for="password" class="col-12 sm:col-2">Password*</label>
-        <div class="col-12 sm:col-6">
+        <label for="password" class="col-12 sm:col-3">Password*</label>
+        <div class="col-12 sm:col-8">
           <input
             id="password"
             placeholder="Password"
@@ -46,13 +42,11 @@
             @keyup.enter="register()"
           />
         </div>
-        <InlineMessage class="col-12 sm:col-4" v-if="formError.passwordError !== ''">{{
-          formError.passwordError
-        }}</InlineMessage>
+        <FormMessage :message="formError.passwordError" />
       </div>
       <div class="field grid">
-        <label for="password" class="col-12 sm:col-2">Repeat Password*</label>
-        <div class="col-12 sm:col-6">
+        <label for="password" class="col-12 sm:col-3">Repeat Password*</label>
+        <div class="col-12 sm:col-8">
           <input
             id="password"
             placeholder="Repeat Password"
@@ -63,18 +57,21 @@
           />
         </div>
       </div>
-      <InlineMessage
-        class="col-12 sm:col-8 mb-2"
-        v-for="message in messages"
-        :key="message"
-        >{{ message }}</InlineMessage
-      >
+      <template v-for="apiError in apiErrors" :key="apiError">
+        <InlineMessage
+          class="col-12 mb-1"
+          v-for="message in apiError.messages"
+          :key="message"
+          :severity="apiError.level"
+          >{{ message }}</InlineMessage
+        >
+      </template>
       <div class="col-12">
         <Button
           rounded
           label="Sign-up"
           @click="register()"
-          class="col-4 md:col-2 col-offset-3"
+          class="col-4 md:col-3 col-offset-4"
         />
       </div>
     </div>
@@ -87,8 +84,14 @@ import Button from "primevue/button";
 import { ref } from "vue";
 import { cssClass, getInputClass } from "@/utils/style";
 import userScript from "@/scripts/UserScript";
+import type { ApiError } from "@/models/ApiError";
+import FormMessage from "@/components/common/FormMessage.vue";
 
-defineProps(["messages"]);
+defineProps({
+  apiErrors: {
+    default: [] as ApiError[],
+  },
+});
 const emit = defineEmits(["register"]);
 
 const user = ref(userScript.init());

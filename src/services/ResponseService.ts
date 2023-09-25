@@ -1,23 +1,20 @@
 import { AxiosError } from "axios";
+import type { ApiError } from "@/models/ApiError";
 
 class ResponseService {
-    getErrorMessages(error: any): string[] {
-        const messages = [];
+    getApiErrors(error: any): ApiError[] {
+        const apiErrors = [] as ApiError[];
         if (error instanceof AxiosError && error.response) {
-          if (error.response.data.messages) { // ApiResponse Custom error
-            for (const message of error.response.data.messages) {
-              messages.push(message);
-            }
-          } else { // Validator error
-            for (const obj of error.response.data) {
-              messages.push(obj.message);
-            }
+          if (error.response.data) { // ApiError[] Custom error
+            return error.response.data;
           }
         } else {
           // No response from server
-          messages.push(error.message);
+          apiErrors.push({
+            messages: [error.message]
+          } as ApiError);
         }
-        return messages;
+        return apiErrors;
     }
 }
 const responseService = new ResponseService();
