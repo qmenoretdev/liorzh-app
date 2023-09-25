@@ -34,7 +34,7 @@ const menuItems = ref([
     label: "Account",
     items: [
       {
-        label: "Register",
+        label: "Sign-up",
         icon: "pi pi-fw pi-user",
         command: () => {
           router.push({ path: "/signup" });

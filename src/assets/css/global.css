@@ -1,4 +1,8 @@
+/* Primevue CSS */
+@import "primevue.css";
+
 :root {
+    --main-color-theme: rgb(61, 150, 61);
     --light-color-red: #fc4f4f;
     --dark-color-white: #FBFCFA;
 }
@@ -12,9 +16,17 @@ body {
 .container {
     border-radius: 10px;
     background-color: var(--dark-color-white);
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 3px;
 }
 
 .input-invalid {
     border-color: var(--light-color-red) !important;
+}
+
+h2 {
+    color: var(--main-color-theme)
+}
+
+.error {
+  color: var(--light-color-red);
 }

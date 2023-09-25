@@ -1,38 +1,39 @@
 <template>
-  <div class="card p-4 col-12 lg:col-6 mx-auto">
+  <div class="card p-4 col-12 lg:col-4 mx-auto">
     <div :class="cssClass.container.default">
+      <InlineMessage class="col-12 mb-2" v-if="user.id !== 0" severity="success"
+        >Bienvenue {{ user.name }} ! Vous pouvez vous authentifier.</InlineMessage
+      >
       <h2>Log-in</h2>
       <div class="field grid">
-        <label for="email" class="col-12 sm:col-2">Email</label>
-        <div class="col-12 sm:col-6">
+        <label for="email" class="col-12 sm:col-3">Email</label>
+        <div class="col-12 sm:col-8">
           <input
             id="email"
             placeholder="Email"
             type="text"
             :class="getInputClass(formError.usernameError)"
             v-model="formLogin.username"
+            @keyup.enter="login()"
           />
         </div>
-        <InlineMessage class="col-12 sm:col-4" v-if="formError.usernameError !== ''">{{
-          formError.usernameError
-        }}</InlineMessage>
+        <FormMessage :message="formError.usernameError" />
       </div>
       <div class="field grid">
-        <label for="password" class="col-12 sm:col-2">Password</label>
-        <div class="col-12 sm:col-6">
+        <label for="password" class="col-12 sm:col-3">Password</label>
+        <div class="col-12 sm:col-8">
           <input
             id="password"
             placeholder="Password"
             type="password"
             :class="getInputClass(formError.passwordError)"
             v-model="formLogin.password"
+            @keyup.enter="login()"
           />
         </div>
-        <InlineMessage class="col-12 sm:col-4" v-if="formError.passwordError !== ''">{{
-          formError.passwordError
-        }}</InlineMessage>
+        <FormMessage :message="formError.passwordError" />
       </div>
-      <InlineMessage class="col-12 sm:col-8 mb-2" v-if="formError.serverError !== ''">{{
+      <InlineMessage class="col-12 mb-1" v-if="formError.serverError !== ''">{{
         formError.serverError
       }}</InlineMessage>
       <div class="col-12">
@@ -40,7 +41,7 @@
           rounded
           label="Log-in"
           @click="login()"
-          class="col-4 md:col-2 col-offset-3"
+          class="col-4 md:col-3 col-offset-4"
         />
       </div>
     </div>
@@ -50,10 +51,16 @@
 <script setup lang="ts">
 import InlineMessage from "primevue/inlinemessage";
 import Button from "primevue/button";
-import { ref } from "vue";
+import FormMessage from "@/components/common/FormMessage.vue";
+import { computed, ref } from "vue";
 import { cssClass, getInputClass } from "@/utils/style";
 import userService from "@/services/UserService";
-import router from "@/router";
+import { useUserStore } from "@/stores/user";
+
+const userStore = useUserStore();
+
+const emit = defineEmits(["authenticated"]);
+const user = computed(() => userStore.user);
 
 const formLogin = ref({
   username: "",
@@ -69,9 +76,7 @@ async function login(): Promise<void> {
         formLogin.value.username,
         formLogin.value.password
       );
-      if (isAuthenticated) {
-        router.push({ path: "/workspace" });
-      }
+      emit("authenticated", isAuthenticated);
     } catch (error: any) {
       if (error.response.data) {
         if (error.response.data.code === 401) {
