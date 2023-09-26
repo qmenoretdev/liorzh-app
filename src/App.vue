@@ -4,7 +4,7 @@
       <Menubar :model="menuItems" />
     </div>
   </header>
-  <main>
+  <main class="mt-2">
     <RouterView />
   </main>
 </template>
@@ -57,7 +57,7 @@ const menuItems = computed(() => [
       },
       {
         label: "Profil",
-        icon: "pi pi-fw pi-user",
+        icon: "pi pi-fw pi-id-card",
         command: () => {
           router.push({ name: "profil" });
         },
