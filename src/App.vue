@@ -12,23 +12,37 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import Menubar from "primevue/menubar";
-import { ref } from "vue";
+import { computed, onMounted } from "vue";
 import router from "./router";
+import { useAuthStore } from "@/stores/auth";
+import { useUserStore } from "@/stores/user";
+import userService from "@/services/UserService";
+const authStore = useAuthStore();
+const userStore = useUserStore();
 
-const menuItems = ref([
+// Get user if authenticated
+onMounted(async () => {
+  if (authStore.authenticated && userStore.user.id === 0) {
+    userStore.setUser(await userService.getUser());
+  }
+});
+
+// Menu
+const menuItems = computed(() => [
   {
     label: "Home",
     icon: "pi pi-fw pi-home",
     command: () => {
-      router.push({ path: "/" });
+      router.push({ name: "home" });
     },
   },
   {
     label: "Workspace",
     icon: "pi pi-fw pi-desktop",
     command: () => {
-      router.push({ path: "/workspace" });
+      router.push({ name: "workspace" });
     },
+    visible: authStore.authenticated,
   },
   {
     label: "Account",
@@ -37,24 +51,35 @@ const menuItems = ref([
         label: "Sign-up",
         icon: "pi pi-fw pi-user",
         command: () => {
-          router.push({ path: "/signup" });
+          router.push({ name: "signup" });
         },
+        visible: !authStore.authenticated,
       },
       {
         label: "Profil",
         icon: "pi pi-fw pi-user",
         command: () => {
-          router.push({ path: "/profil" });
+          router.push({ name: "profil" });
         },
+        visible: authStore.authenticated,
       },
       {
         label: "Log-in",
         icon: "pi pi-fw pi-sign-in",
         command: () => {
-          router.push({ path: "/login" });
+          router.push({ name: "login" });
+        },
+        visible: !authStore.authenticated,
+      },
+      {
+        label: "Log-out",
+        icon: "pi pi-fw pi-sign-out",
+        visible: authStore.authenticated,
+        command: () => {
+          authStore.logout();
+          router.push({ name: "home" });
         },
       },
-      { label: "Log-out", icon: "pi pi-fw pi-sign-out" },
     ],
   },
 ]);
