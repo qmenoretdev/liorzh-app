@@ -57,15 +57,13 @@
           />
         </div>
       </div>
-      <template v-for="apiError in apiErrors" :key="apiError">
-        <InlineMessage
-          class="col-12 mb-1"
-          v-for="message in apiError.messages"
-          :key="message"
-          :severity="apiError.level"
-          >{{ message }}</InlineMessage
-        >
-      </template>
+      <InlineMessage
+        class="col-12 mb-1"
+        v-for="apiError in apiErrors"
+        :key="apiError"
+        :severity="apiError.level"
+        >{{ apiError.message }}</InlineMessage
+      >
       <div class="col-12">
         <Button
           rounded

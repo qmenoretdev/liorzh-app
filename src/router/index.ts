@@ -1,41 +1,68 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
-import LoginView from '@/views/LoginView.vue';
-import ProfilView from '@/views/ProfilView.vue';
-import SignupView from '@/views/SignupView.vue';
+import { useAuthStore } from "@/stores/auth";
+
+const securedRoutes = [
+  {
+    path: '/profil',
+    name: 'profil',
+    component: () => import('@/views/ProfilView.vue'),
+  },
+  {
+    path: '/workspace',
+    name: 'workspace',
+    // route level code-splitting
+    // this generates a separate chunk (About.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('@/views/WorkspaceView.vue')
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    ...securedRoutes,
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: () => import('@/views/HomeView.vue'),
     },
     {
       path: '/signup',
       name: 'signup',
-      component: SignupView
-    },
-    {
-      path: '/profil',
-      name: 'profil',
-      component: ProfilView
+      component: () => import('@/views/SignupView.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: () => import('@/views/LoginView.vue'),
     },
     {
-      path: '/workspace',
-      name: 'workspace',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('@/views/WorkspaceView.vue')
-    }
+      path: '/no-authenticated',
+      name: 'noAuthenticated',
+      component: () => import('@/views/NoAuthenticatedView.vue')
+    },
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (securedRoutes.find((route) => route.name === to.name)) {
+    const authStore = useAuthStore();
+    if (authStore.authenticated) {
+      if (!hasPermissionsNeeded(to)) {
+        next('/page-to-show-for-no-permission');
+        return;
+      }
+    } else {
+      next({ name: 'noAuthenticated'});
+      return;
+    }
+  }
+  next();
+  return;
+})
+
+function hasPermissionsNeeded(to: any) {
+  return true;
+}
 
 export default router

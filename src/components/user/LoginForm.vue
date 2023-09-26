@@ -33,9 +33,13 @@
         </div>
         <FormMessage :message="formError.passwordError" />
       </div>
-      <InlineMessage class="col-12 mb-1" v-if="formError.serverError !== ''">{{
-        formError.serverError
-      }}</InlineMessage>
+      <InlineMessage
+        class="col-12 mb-1"
+        v-for="apiError in apiErrors"
+        :key="apiError"
+        :severity="apiError.level"
+        >{{ apiError.message }}</InlineMessage
+      >
       <div class="col-12">
         <Button
           rounded
@@ -54,41 +58,31 @@ import Button from "primevue/button";
 import FormMessage from "@/components/common/FormMessage.vue";
 import { computed, ref } from "vue";
 import { cssClass, getInputClass } from "@/utils/style";
-import userService from "@/services/UserService";
 import { useUserStore } from "@/stores/user";
+import type { ApiError } from "@/models/ApiError";
+import type { FormLogin } from "@/models/FormLogin";
 
 const userStore = useUserStore();
 
-const emit = defineEmits(["authenticated"]);
+defineProps({
+  apiErrors: {
+    default: [] as ApiError[],
+  },
+});
+const emit = defineEmits(["login"]);
+// If redirection after registration display the welcome message
 const user = computed(() => userStore.user);
 
 const formLogin = ref({
   username: "",
   password: "",
-});
+} as FormLogin);
 
 const formError = ref(initFormError());
 
 async function login(): Promise<void> {
   if (checkForm()) {
-    try {
-      const isAuthenticated = await userService.login(
-        formLogin.value.username,
-        formLogin.value.password
-      );
-      emit("authenticated", isAuthenticated);
-    } catch (error: any) {
-      if (error.response.data) {
-        if (error.response.data.code === 401) {
-          formError.value.serverError = "Incorrect email or password.";
-        } else {
-          formError.value.serverError = error.response.data.message;
-        }
-      } else {
-        // No response from server
-        formError.value.serverError = error.message;
-      }
-    }
+    emit("login", formLogin.value);
   }
 }
 
@@ -110,7 +104,6 @@ function initFormError() {
   return {
     usernameError: "",
     passwordError: "",
-    serverError: "",
   };
 }
 </script>
