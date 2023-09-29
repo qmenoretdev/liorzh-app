@@ -8,7 +8,7 @@
       <div class="col-12">
         <Button
           icon="pi pi-file-edit"
-          class="mr-2 z-2"
+          class="mr-2"
           text
           raised
           rounded
