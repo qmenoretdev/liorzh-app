@@ -29,22 +29,25 @@
             {{ plot.name }}
           </h2>
         </div>
+        <p v-show="plot.description" class="m-2 font-italic">
+          <span>{{ plot.description }}</span>
+        </p>
         <ul class="no-puce p-2 m-2">
           <li v-show="plot.country">
             <img src="@/assets/img/country_32px.png" class="ul-icon" />
-            <span style=""><b>Pays : </b>{{ plot.country }}</span>
+            <span><b>Pays : </b>{{ plot.country }}</span>
           </li>
           <li v-show="plot.region">
             <img src="@/assets/img/region_32px.png" class="ul-icon" />
-            <span style=""><b>Région : </b>{{ plot.region }}</span>
+            <span><b>Région : </b>{{ plot.region }}</span>
           </li>
           <li v-show="plot.subRegion">
             <img src="@/assets/img/subRegion_32px.png" class="ul-icon" />
-            <span style=""><b>Département : </b>{{ plot.subRegion }}</span>
+            <span><b>Département : </b>{{ plot.subRegion }}</span>
           </li>
           <li v-show="plot.city">
             <img src="@/assets/img/city_32px.png" class="ul-icon" />
-            <span style=""><b>Ville : </b>{{ plot.city }}</span>
+            <span><b>Ville : </b>{{ plot.city }}</span>
           </li>
         </ul>
       </div>
