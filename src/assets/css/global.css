@@ -2,31 +2,72 @@
 @import "primevue.css";
 
 :root {
-    --main-color-theme: rgb(61, 150, 61);
-    --light-color-red: #fc4f4f;
-    --dark-color-white: #FBFCFA;
+  /* colors */
+  --light-blue-color: rgb(0, 153, 255);
+  --blue-color: rgb(0, 38, 255);
+  --hover-color: var(--light-blue-color);
+  --select-color: var(--blue-color);
+  --light-color-red: #fc4f4f;
+  --dark-color-white: #FBFCFA;
+  --dark-color-grey: rgba(0, 0, 0, 0.7);
+  --color-grey: rgb(206, 203, 203);
+  --light-color-grey: rgb(240, 240, 240);
+  --green-color: rgb(61, 150, 61);
+  --dark-green-color: rgb(25, 138, 25);
+  --main-color-theme: var(--green-color);
 }
 
 /* policy uniformization */
 body {
-    font-family: var(--font-family);
-    padding: 20px;
+  font-family: var(--font-family);
+  padding: 20px;
 }
 
 .container {
-    border-radius: 10px;
-    background-color: var(--dark-color-white);
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 3px;
+  border-radius: 10px;
+  background-color: var(--dark-color-white);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 3px;
 }
 
 .input-invalid {
-    border-color: var(--light-color-red) !important;
+  border-color: var(--light-color-red) !important;
 }
 
 h2 {
-    color: var(--main-color-theme)
+  color: var(--main-color-theme)
 }
 
 .error {
   color: var(--light-color-red);
+}
+
+.button-create {
+  background-color: var(--main-color-theme) !important;
+  border-color: var(--main-color-theme) !important;
+}
+
+.button-create:hover {
+  background-color: var(--dark-green-color) !important;
+  border-color: var(--dark-green-color) !important;
+}
+
+/*.clickable-card {
+  border-radius: 10px;
+  background-color: white;
+}*/
+
+.clickable-card:hover {
+  background-color: var(--light-color-grey);
+}
+
+.no-puce {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ul-icon {
+  vertical-align: middle; 
+  margin-right: 4px; 
+  margin-bottom: 4px;
 }

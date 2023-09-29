@@ -22,7 +22,7 @@ class UserService {
         email: user.email,
         password: user.password,
         active: false,
-      });
+      } as User);
     return response.data;
   }
   async getUser(): Promise<User> {

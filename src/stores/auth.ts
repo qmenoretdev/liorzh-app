@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useUserStore } from "@/stores/user";
 import userScript from '@/scripts/UserScript'
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore('authStore', () => {
   const authenticated = ref(localStorage.getItem('authenticated') === 'success');
   const jwt = ref(localStorage.getItem('jwt') || '')
   function setJwt(token: string) {

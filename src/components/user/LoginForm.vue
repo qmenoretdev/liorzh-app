@@ -10,8 +10,8 @@
         <div class="col-12 sm:col-8">
           <input
             id="email"
-            placeholder="Email"
-            type="text"
+            placeholder="example@mail.com"
+            type="email"
             :class="getInputClass(formError.usernameError)"
             v-model="formLogin.username"
             @keyup.enter="login()"
@@ -24,7 +24,7 @@
         <div class="col-12 sm:col-8">
           <input
             id="password"
-            placeholder="Password"
+            placeholder="xxx"
             type="password"
             :class="getInputClass(formError.passwordError)"
             v-model="formLogin.password"
@@ -45,7 +45,8 @@
           rounded
           label="Log-in"
           @click="login()"
-          class="col-4 md:col-3 col-offset-4"
+          class="col-4 md:col-3 col-offset-4 button-create"
+          :loading="loading"
         />
       </div>
     </div>
@@ -67,6 +68,9 @@ const userStore = useUserStore();
 defineProps({
   apiErrors: {
     default: [] as ApiError[],
+  },
+  loading: {
+    default: false,
   },
 });
 const emit = defineEmits(["login"]);

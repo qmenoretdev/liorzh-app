@@ -1,5 +1,5 @@
 <template>
-  <SignupForm @register="register" :apiErrors="apiErrors" />
+  <SignupForm @register="register" :apiErrors="apiErrors" :loading="loading" />
 </template>
 
 <script setup lang="ts">
@@ -14,8 +14,11 @@ import { useUserStore } from "@/stores/user";
 
 const apiErrors = ref([] as ApiError[]);
 
+const loading = ref(false);
+
 async function register(user: User) {
   try {
+    loading.value = true;
     apiErrors.value = [];
     const userCreated = await userService.register(user);
     if (userCreated) {
@@ -26,5 +29,6 @@ async function register(user: User) {
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
   }
+  loading.value = false;
 }
 </script>
