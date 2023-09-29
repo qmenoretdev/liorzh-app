@@ -1,5 +1,5 @@
 <template>
-  <LoginForm @login="login" :apiErrors="apiErrors" />
+  <LoginForm @login="login" :apiErrors="apiErrors" :loading="loading" />
 </template>
 
 <script setup lang="ts">
@@ -15,10 +15,13 @@ import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
+const loading = ref(false);
+
 const apiErrors = ref([] as ApiError[]);
 
 async function login(formLogin: FormLogin) {
   try {
+    loading.value = true;
     await userService.login(formLogin.username, formLogin.password);
     getUser();
   } catch (error: any) {
@@ -34,6 +37,7 @@ async function login(formLogin: FormLogin) {
       apiErrors.value = responseService.getApiErrors(error);
     }
   }
+  loading.value = false;
 }
 async function getUser() {
   if (authStore.authenticated) {

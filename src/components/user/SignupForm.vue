@@ -69,7 +69,8 @@
           rounded
           label="Sign-up"
           @click="register()"
-          class="col-4 md:col-3 col-offset-4"
+          class="col-4 md:col-3 col-offset-4 button-create"
+          :loading="loading"
         />
       </div>
     </div>
@@ -88,6 +89,9 @@ import FormMessage from "@/components/common/FormMessage.vue";
 defineProps({
   apiErrors: {
     default: [] as ApiError[],
+  },
+  loading: {
+    default: false,
   },
 });
 const emit = defineEmits(["register"]);

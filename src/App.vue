@@ -23,7 +23,8 @@ const userStore = useUserStore();
 // Get user if authenticated
 onMounted(async () => {
   if (authStore.authenticated && userStore.user.id === 0) {
-    userStore.setUser(await userService.getUser());
+    const user = await userService.getUser();
+    userStore.setUser(user);
   }
 });
 
