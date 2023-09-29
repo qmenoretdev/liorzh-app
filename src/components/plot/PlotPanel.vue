@@ -32,6 +32,7 @@
     <PlotForm
       :visible="plotCreationVisible"
       :apiErrors="apiErrors"
+      :loading="loadingForm"
       @submit="createPlot"
       @close="closeModal()"
     />
@@ -41,6 +42,7 @@
       :plotToUpdate="selectedPlot"
       :header="'Modification d\'une localisation'"
       :submitButtonLabel="'Modifier'"
+      :loading="loadingForm"
       @submit="updatePlot"
       @close="closeModal()"
     />
@@ -74,6 +76,7 @@ const plotCreationVisible = ref(false);
 const plotUpdateVisible = ref(false);
 
 const loading = ref(false);
+const loadingForm = ref(false);
 
 const apiErrors = ref([] as ApiError[]);
 
@@ -85,6 +88,7 @@ onMounted(async () => {
 
 async function createPlot(plot: Plot) {
   try {
+    loadingForm.value = true;
     const createdPlot = await plotService.createPlot(plot);
     if (createdPlot) {
       plotCreationVisible.value = false;
@@ -97,6 +101,7 @@ async function createPlot(plot: Plot) {
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
   }
+  loadingForm.value = false;
 }
 
 function openUpdatePlot(plot: Plot) {
@@ -106,6 +111,7 @@ function openUpdatePlot(plot: Plot) {
 
 async function updatePlot(plot: Plot) {
   try {
+    loadingForm.value = true;
     const isUpdated = await plotService.updatePlot(plot);
     if (!isUpdated) {
       apiErrors.value = [
@@ -117,6 +123,7 @@ async function updatePlot(plot: Plot) {
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
   }
+  loadingForm.value = false;
 }
 
 async function deletePlot(id: number) {
@@ -134,7 +141,7 @@ async function deletePlot(id: number) {
           },
         ];
       } else {
-        plotStore.setPlots(plotStore.plots.filter((plot) => plot.id !== id));
+        plotStore.setPlots(plotStore.plots.filter((plot: Plot) => plot.id !== id));
       }
     } catch (error: any) {
       apiErrors.value = responseService.getApiErrors(error);
@@ -148,24 +155,6 @@ async function getPlots() {
   const plots = await plotService.getPlots();
   plotStore.setPlots(plots);
   loading.value = false;
-}
-
-function getPlotTooltip(plot: Plot): string {
-  let text = "";
-  if (plot.country != null) {
-    text += "Pays : " + plot.country;
-    if (plot.region != null) {
-      text += "\nRégion : " + plot.region;
-    }
-    if (plot.subRegion != null) {
-      text += "\nDépartement : " + plot.subRegion;
-    }
-    if (plot.city != null) {
-      text += "\nVille : " + plot.city;
-    }
-  }
-  if (text === "") text += "Pas plus d'info";
-  return text;
 }
 
 function closeModal() {

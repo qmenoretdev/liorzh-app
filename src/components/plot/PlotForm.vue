@@ -129,7 +129,11 @@
             rounded
             :label="submitButtonLabel"
             @click="submit()"
-            class="col-4 md:col-3 col-offset-4"
+            :class="
+              'col-4 md:col-3 col-offset-4' +
+              (plotToUpdate.id === 0 ? ' button-create' : '')
+            "
+            :loading="loading"
           />
         </div>
       </div>
@@ -146,7 +150,7 @@ import plotScript from "@/scripts/PlotScript";
 import FormMessage from "@/components/common/FormMessage.vue";
 import Button from "primevue/button";
 import type { ApiError } from "@/models/ApiError";
-import { allCountries, CountryData } from "country-region-data";
+import { allCountries, type CountryData } from "country-region-data";
 
 const plot = ref(plotScript.init());
 const formError = ref(initFormError());
@@ -167,6 +171,9 @@ const props = defineProps({
   },
   submitButtonLabel: {
     default: "Créer",
+  },
+  loading: {
+    default: false,
   },
 });
 const emit = defineEmits(["close", "submit"]);
