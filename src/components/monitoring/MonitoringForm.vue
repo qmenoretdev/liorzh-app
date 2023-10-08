@@ -24,22 +24,30 @@
               :class="getInputClass(formError.nameError)"
               v-model="monitoring.name"
               @keyup.enter="submit()"
+              maxlength="32"
             />
           </div>
         </div>
         <FormMessage :message="formError.nameError" />
         <div class="field grid">
           <label for="type" class="col-12 sm:col-3">Type</label>
-          <div class="col-12 sm:col-8">
-            <select
-              id="type"
-              v-model="monitoring.type"
-              :class="getCssClass.input.default"
-            >
+          <div class="col-12 sm:col-4">
+            <select id="type" v-model="proposeType" :class="getCssClass.input.default">
               <option v-for="type in monitoringTypes" :key="type.code" :value="type.code">
                 {{ type.label }}
               </option>
             </select>
+          </div>
+          <div class="col-12 sm:col-4" v-if="proposeType === monitoringTypes[3].code">
+            <input
+              id="customType"
+              placeholder="Type personnalisé"
+              type="text"
+              :class="getInputClass(formError.typeError)"
+              v-model="customType"
+              @keyup.enter="submit()"
+              maxlength="32"
+            />
           </div>
         </div>
         <div class="field grid">
@@ -114,11 +122,23 @@ export default defineComponent({
         MonitoringType.PERSISTENT,
         MonitoringType.OTHER,
       ],
+      proposeType: MonitoringType.ANNUAL.code,
+      customType: "",
     };
   },
   watch: {
     monitoringToUpdate(newMonitoringToUpdate) {
       this.monitoring = newMonitoringToUpdate;
+      if (
+        this.monitoring.type === MonitoringType.ANNUAL.code ||
+        this.monitoring.type === MonitoringType.BI_ANNUAL.code ||
+        this.monitoring.type === MonitoringType.PERSISTENT.code
+      ) {
+        this.proposeType = this.monitoring.type;
+      } else {
+        this.customType = this.monitoring.type;
+        this.proposeType = MonitoringType.OTHER.code;
+      }
     },
   },
   computed: {
@@ -128,6 +148,10 @@ export default defineComponent({
   },
   methods: {
     submit() {
+      this.monitoring.type =
+        this.proposeType === MonitoringType.OTHER.code
+          ? (this.monitoring.type = this.customType)
+          : (this.monitoring.type = this.proposeType);
       this.$emit("submit", this.monitoring);
     },
     getInputClass(error: string): string {
@@ -145,6 +169,7 @@ export default defineComponent({
     initFormError(): object {
       return {
         nameError: "",
+        typeError: "",
       };
     },
   },
