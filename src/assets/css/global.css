@@ -3,10 +3,10 @@
 
 :root {
   /* colors */
-  --light-blue-color: rgb(0, 153, 255);
-  --blue-color: rgb(0, 38, 255);
+  --light-blue-color: rgb(172, 220, 251);
+  --dark-blue-color: rgb(0, 11, 138);
   --hover-color: var(--light-blue-color);
-  --select-color: var(--blue-color);
+  --select-color: var(--dark-blue-color);
   --light-color-red: #fc4f4f;
   --dark-color-white: #FBFCFA;
   --dark-color-grey: rgba(0, 0, 0, 0.7);
@@ -55,6 +55,10 @@ h2 {
   background-color: var(--light-color-grey);
 }
 
+.selectable-card:hover {
+  background-color: var(--hover-color);
+}
+
 .no-puce {
   list-style-type: none;
   padding: 0;
@@ -65,4 +69,30 @@ h2 {
   vertical-align: middle; 
   margin-right: 4px; 
   margin-bottom: 4px;
+}
+
+.selected-card {
+  background-color: var(--select-color) !important;
+  color: white;
+}
+
+.unabled-card {
+  text-decoration: line-through;
+}
+
+.selectable-filter {
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid var(--dark-color-grey);
+}
+
+.selectable-filter:hover {
+  background-color: var(--dark-color-grey);
+  color: white;
+  cursor: pointer;
+}
+
+.selected-filter {
+  background-color: var(--dark-color-grey) !important;
+  color: white;
 }

@@ -23,7 +23,7 @@
             <div
               class="pi pi-question-circle"
               v-tooltip="
-                'Champ personnel pour nommer votre localisation. Pas utilisé dans l\'analyse globale.'
+                'Champ personnel pour nommer votre parcelle. Pas utilisé dans l\'analyse globale.'
               "
             ></div
           ></label>
@@ -103,7 +103,7 @@
             <div
               class="pi pi-question-circle"
               v-tooltip="
-                'Champ personnel pour décrire votre localisation. Pas utilisé dans l\'analyse globale.'
+                'Champ personnel pour décrire votre parcelle. Pas utilisé dans l\'analyse globale.'
               "
             ></div
           ></label>
@@ -161,7 +161,7 @@ const props = defineProps({
     default: false,
   },
   header: {
-    default: "Nouvelle Localisation",
+    default: "Nouvelle Parcelle",
   },
   plotToUpdate: {
     default: plotScript.init(),
@@ -194,7 +194,7 @@ watch(
 function closeModal() {
   emit("close");
 }
-async function submit() {
+function submit() {
   if (checkForm()) {
     if (selectedCountry.value !== null) {
       plot.value.country = selectedCountry.value[0];

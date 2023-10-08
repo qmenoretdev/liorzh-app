@@ -2,10 +2,10 @@
   <div v-if="!loading">
     <div class="grid col-12" v-if="plotStore.plots.length === 0">
       <span
-        >Vous n'avez pas encore de Localisation. Commencer par en ajouter une.
+        >Vous n'avez pas encore de Parcelle. Commencer par en ajouter une.
         <div
           class="pi pi-question-circle"
-          v-tooltip="'Les suivis de culture doivent être associés à une Localisation.'"
+          v-tooltip="'Les suivis de culture doivent être associés à une Parcelle.'"
         ></div
       ></span>
     </div>
@@ -13,7 +13,7 @@
       <Button
         rounded
         class="button-create"
-        label="Nouvelle localisation"
+        label="Nouvelle parcelle"
         icon="pi pi-plus-circle"
         @click="plotCreationVisible = true"
       />
@@ -40,7 +40,7 @@
       :visible="plotUpdateVisible"
       :apiErrors="apiErrors"
       :plotToUpdate="selectedPlot"
-      :header="'Modification d\'une localisation'"
+      :header="'Modification d\'une parcelle'"
       :submitButtonLabel="'Modifier'"
       :loading="loadingForm"
       @submit="updatePlot"
@@ -95,7 +95,7 @@ async function createPlot(plot: Plot) {
       getPlots();
     } else {
       apiErrors.value = [
-        { message: "Impossible de créer la localisation", code: "", level: "error" },
+        { message: "Impossible de créer la parcelle", code: "", level: "error" },
       ];
     }
   } catch (error: any) {
@@ -115,7 +115,7 @@ async function updatePlot(plot: Plot) {
     const isUpdated = await plotService.updatePlot(plot);
     if (!isUpdated) {
       apiErrors.value = [
-        { message: "Impossible de modifier la localisation", code: "", level: "error" },
+        { message: "Impossible de modifier la parcelle", code: "", level: "error" },
       ];
     } else {
       plotUpdateVisible.value = false;
@@ -128,14 +128,14 @@ async function updatePlot(plot: Plot) {
 
 async function deletePlot(id: number) {
   let confirmDialog = defaultConfirmDialogOptions;
-  confirmDialog.message = "Etes-vous certain de vouloir supprimer cette localisation ?";
+  confirmDialog.message = "Etes-vous certain de vouloir supprimer cette parcelle ?";
   confirmDialog.accept = async () => {
     try {
       const isDeleted = await plotService.deletePlot(id);
       if (!isDeleted) {
         apiErrors.value = [
           {
-            message: "Impossible de supprimer la localisation",
+            message: "Impossible de supprimer la parcelle",
             code: "",
             level: "error",
           },

@@ -69,3 +69,8 @@ npm run test:e2e -- --debug
 ```sh
 npm run lint
 ```
+
+### Icons
+
+- Primevue icons
+- Pichon icons : Cute Color
