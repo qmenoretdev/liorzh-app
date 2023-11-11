@@ -20,6 +20,10 @@ class ResponseService {
     }
     return apiErrors;
   }
+  isConflict(error: any): boolean {
+    return error.response && error.response.status === 409;
+  }
+
 }
 const responseService = new ResponseService();
 export default responseService;

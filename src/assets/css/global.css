@@ -4,7 +4,8 @@
 :root {
   /* colors */
   --light-blue-color: rgb(172, 220, 251);
-  --dark-blue-color: rgb(0, 11, 138);
+  --blue-color: rgb(60, 149, 209);
+  --dark-blue-color: rgb(12, 25, 167);
   --hover-color: var(--light-blue-color);
   --select-color: var(--dark-blue-color);
   --light-color-red: #fc4f4f;
@@ -14,7 +15,8 @@
   --light-color-grey: rgb(240, 240, 240);
   --green-color: rgb(61, 150, 61);
   --dark-green-color: rgb(25, 138, 25);
-  --main-color-theme: var(--green-color);
+  --primary-color-theme: var(--green-color);
+  --secondary-color-theme: var(--blue-color);
 }
 
 /* policy uniformization */
@@ -34,7 +36,11 @@ body {
 }
 
 h2 {
-  color: var(--main-color-theme)
+  color: var(--primary-color-theme);
+}
+
+.public-object-text {
+  color: var(--secondary-color-theme);
 }
 
 .error {
@@ -42,8 +48,8 @@ h2 {
 }
 
 .button-create {
-  background-color: var(--main-color-theme) !important;
-  border-color: var(--main-color-theme) !important;
+  background-color: var(--primary-color-theme) !important;
+  border-color: var(--primary-color-theme) !important;
 }
 
 .button-create:hover {
@@ -95,4 +101,15 @@ h2 {
 .selected-filter {
   background-color: var(--dark-color-grey) !important;
   color: white;
+}
+
+.fieldset-with-legend {
+  border-radius: 10px;
+  border: 1px solid var(--blue-color);
+}
+
+.fieldset-legend {
+  color: var(--dark-blue-color);
+  font-weight: bold;
+  padding: 8px;
 }
