@@ -105,7 +105,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import ColumnGroup from "primevue/columngroup";
 import Row from "primevue/row";
-import VarietyDetails from "./VarietyDetails.vue";
+import VarietyDetails from "@/components/variety/VarietyDetails.vue";
 
 const loading = ref(false);
 const apiErrors = ref([] as ApiError[]);
