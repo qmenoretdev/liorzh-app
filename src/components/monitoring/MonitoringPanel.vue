@@ -72,7 +72,6 @@
         @close="closeModal()"
       />
     </div>
-    <ConfirmDialog />
   </div>
 </template>
 
@@ -94,7 +93,6 @@ import MonitoringCard from "@/components/monitoring/MonitoringCard.vue";
 import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
 import { useConfirm } from "primevue/useconfirm";
 import monitoringScript from "@/scripts/MonitoringScript";
-import ConfirmDialog from "primevue/confirmdialog";
 import { useWorkspaceStore } from "@/stores/workspace";
 
 const monitoringStore = useMonitoringStore();

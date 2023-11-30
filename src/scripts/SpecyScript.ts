@@ -1,5 +1,5 @@
 import type { Specy } from "@/models/Specy";
-import { Visibility } from "@/models/Visbility";
+import { Visibility } from "@/models/Visibility";
 import type { FormErrorSpecy } from "@/models/form/FormErrorSpecy";
 import type { SearchSpecy } from "@/models/request/search/SearchSpecy";
 import { PaginationLimit } from "@/utils/constant";
@@ -20,7 +20,7 @@ class SpecyScript {
             botanicalName: null,
             frenchCommonName: null,
             englishCommonName: null,
-            visibility: Visibility.PUBLIC,
+            visibility: null,
             exactSearch: false,
             pagination: {
                 total: 0,

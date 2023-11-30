@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h2>
+    <h3 class="mt-1 mb-2">
       <i>{{ variety.specy.botanicalName }}</i> {{ variety.name }}
-    </h2>
+    </h3>
     <fieldset class="fieldset-with-legend">
       <legend class="fieldset-legend">Espèce</legend>
       <SpecyDetails :specy="variety.specy" />

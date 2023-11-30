@@ -1,6 +1,7 @@
 import { axiosJwtProtected } from '@/axios.config';
 import type { Specy } from '@/models/Specy';
 import type { FormErrorSpecy } from '@/models/form/FormErrorSpecy';
+import type { SearchSpecy } from '@/models/request/search/SearchSpecy';
 import specyScript from '@/scripts/SpecyScript';
 
 class SpecyService {
@@ -65,6 +66,10 @@ class SpecyService {
     async deleteSpecy(specyId: number): Promise<boolean> {
         const response = await axiosJwtProtected.delete(`species/${specyId}`);
         return response.status === 204;
+    }
+    async searchSpecies($searchSpecy: SearchSpecy): Promise<Specy[]> {
+        const response = await axiosJwtProtected.post('species/search', $searchSpecy);
+        return response.data;
     }
 }
 const specyService = new SpecyService()

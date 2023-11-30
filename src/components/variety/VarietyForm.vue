@@ -4,21 +4,70 @@
       :header="header"
       v-model:visible="visibleData"
       modal
-      :style="{ width: '70vw' }"
+      :style="{ width: isUpdateMode ? '45vw' : '90vw' }"
       @update:visible="closeModal"
     >
       <div class="grid">
         <SpecyForm
-          class="col-12 md:col-6"
+          :class="getFormClass"
           :formError="formErrorSpecy"
           v-model:botanicalName="variety.specy.botanicalName"
           v-model:frenchCommonNames="frenchCommonNames"
           v-model:upovCode="variety.specy.upovCode"
+          :readonly="isUpdateMode"
         />
-        <SearchSpecy class="col-12 md:col-6" />
+        <div v-if="!isUpdateMode">
+          <div>
+            <h3 class="public-object-text">Recherche d'espèce</h3>
+            <SearchSpecy
+              class="col-12"
+              v-model:botanicalName="searchSpecy.botanicalName"
+              v-model:frenchCommonName="searchSpecy.frenchCommonName"
+              v-model:visibilityValues="visibilityValues"
+              @submit="searchSpecies"
+            />
+          </div>
+          <LoadingSpinner v-if="loadingSearchStep == 1" />
+          <DataTable
+            v-if="loadingSearchStep == 2 && searchedSpecies.length > 0"
+            :value="searchedSpecies"
+            scrollable
+            scrollHeight="300px"
+            dataKey="id"
+          >
+            <Column field="botanicalName" header="Nom botanique">
+              <template #body="slotProps">
+                <i>{{ slotProps.data.botanicalName }}</i>
+              </template>
+            </Column>
+            <Column field="frenchCommonNames" header="Nom(s) commun(s)">
+              <template #body="slotProps">
+                {{ commonNamesArrayToString(slotProps.data.frenchCommonNames) }}
+              </template>
+            </Column>
+            <Column field="upovCode" header="Code UPOV" />
+            <Column field="visibility" header="Visibilité" />
+            <Column>
+              <template #body="slotProps">
+                <Button
+                  icon="pi pi-plus-circle"
+                  text
+                  raised
+                  rounded
+                  @click="selectSpecy(slotProps.data)"
+                />
+              </template>
+            </Column>
+          </DataTable>
+          <div v-else-if="loadingSearchStep == 2 && searchedSpecies.length == 0">
+            <InlineMessage class="col-12 mb-1" severity="info"
+              >Aucun résultat</InlineMessage
+            >
+          </div>
+        </div>
       </div>
       <div class="grid mb-2">
-        <div :class="getCssClass.container.default + ' col-12 md:col-6'">
+        <div :class="getCssClass.container.default + ' ' + getFormClass">
           <h3 style="margin-top: -5px">Variété</h3>
           <div class="field grid">
             <label for="name" class="col-12 sm:col-3 mb-0">Nom de la variété</label>
@@ -50,9 +99,9 @@
         </div>
         <div
           v-if="proposedVariety.id !== 0"
-          :class="getCssClass.container.default + ' col-6 mt-1'"
+          :class="getCssClass.container.default + ' col-12 md:col-6 mt-1'"
         >
-          <div class="col-12">
+          <div>
             <VarietyDetails :variety="proposedVariety" />
           </div>
           <Button
@@ -102,6 +151,11 @@ import specyService from "@/services/SpecyService";
 import specyScript from "@/scripts/SpecyScript";
 import type { Variety } from "@/models/Variety";
 import VarietyDetails from "@/components/variety/VarietyDetails.vue";
+import type { Specy } from "@/models/Specy";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
+import { publicOption, visibilityOptions } from "@/models/Visibility";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -114,6 +168,9 @@ export default defineComponent({
     SpecyForm,
     SearchSpecy,
     VarietyDetails,
+    DataTable,
+    Column,
+    LoadingSpinner,
   },
   props: {
     varietyToUpdate: {
@@ -126,22 +183,37 @@ export default defineComponent({
   data() {
     return {
       variety: varietyScript.init(),
+      searchedSpecies: [] as Specy[],
+      searchSpecy: specyScript.initSearch(),
       frenchCommonNames: "",
       formError: this.initFormError(),
       formErrorSpecy: specyScript.initFormError(),
+      loadingSearchStep: 0,
+      visibilityValues: [publicOption],
     };
   },
   watch: {
     varietyToUpdate(newVarietyToUpdate) {
       this.variety = newVarietyToUpdate;
-      this.frenchCommonNames = specyService.commonNamesArrayToString(
-        this.variety.specy.frenchCommonNames
-      );
+      if (this.variety !== null) {
+        this.frenchCommonNames = specyService.commonNamesArrayToString(
+          this.variety.specy.frenchCommonNames
+        );
+      }
     },
   },
   computed: {
     getCssClass() {
       return cssClass;
+    },
+    getVisibilityOptions() {
+      return visibilityOptions;
+    },
+    getFormClass() {
+      return "col-12" + (this.isUpdateMode ? "" : " md:col-6");
+    },
+    isUpdateMode(): boolean {
+      return this.varietyToUpdate && this.varietyToUpdate.id !== 0;
     },
   },
   methods: {
@@ -152,6 +224,13 @@ export default defineComponent({
         );
         this.$emit("submit", this.variety);
       }
+    },
+    async searchSpecies() {
+      this.loadingSearchStep = 1;
+      this.searchSpecy.visibility =
+        this.visibilityValues.length == 1 ? this.visibilityValues[0].value : null;
+      this.searchedSpecies = await specyService.searchSpecies(this.searchSpecy);
+      this.loadingSearchStep = 2;
     },
     addUserToVariety() {
       this.$emit("addUserToVariety", this.proposedVariety);
@@ -173,6 +252,15 @@ export default defineComponent({
       return {
         nameError: "",
       };
+    },
+    commonNamesArrayToString(frenchCommonNames: string[]): string {
+      return specyService.commonNamesArrayToString(frenchCommonNames);
+    },
+    selectSpecy(specy: Specy) {
+      this.variety.specy = specy;
+      this.frenchCommonNames = specyService.commonNamesArrayToString(
+        specy.frenchCommonNames
+      );
     },
   },
 });

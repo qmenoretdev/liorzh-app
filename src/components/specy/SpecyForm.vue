@@ -19,6 +19,7 @@
             maxlength="255"
             :value="botanicalName"
             @input="$emit('update:botanicalName', $event.target.value)"
+            :disabled="readonly"
           />
         </div>
         <FormMessage :message="formError.botanicalNameError" />
@@ -40,6 +41,7 @@
             :value="frenchCommonNames"
             @input="$emit('update:frenchCommonNames', $event.target.value)"
             maxlength="255"
+            :disabled="readonly"
           />
         </div>
       </div>
@@ -54,12 +56,13 @@
         <div class="col-12 sm:col-8">
           <input
             id="upovCode"
-            placeholder="BETAA_VUL"
+            :placeholder="readonly ? undefined : 'BETAA_VUL'"
             type="text"
             :class="getCssClass.input.default"
             :value="upovCode"
             @input="$emit('update:upovCode', $event.target.value)"
             maxlength="32"
+            :disabled="readonly"
           />
         </div>
       </div>
@@ -106,6 +109,9 @@ export default defineComponent({
     },
     formError: {
       default: specyScript.initFormError(),
+    },
+    readonly: {
+      default: false,
     },
   },
   data() {

@@ -1,68 +1,60 @@
 <template>
   <div class="grid">
-    <div :class="cssClass.container.default + ' col-12 md:col-6'">
-      <div class="mt-0 mb-2">
-        <h2 class="mt-1 mb-2">Mes Variétés</h2>
-        <Button
-          rounded
-          class="button-create"
-          label="Nouvelle variété"
-          icon="pi pi-plus-circle"
-          @click="varietyCreationVisible = true"
-          style="max-height: 2rem"
-        />
-      </div>
-      <div v-if="!loading">
-        <div v-if="varietyStore.userVarieties.length === 0">
-          Vous n'avez pas encore de variétés. Vous pouvez rechercher dans le panel de
-          droite les variétés existantes. Sinon vous pouvez en ajouter une.
-        </div>
-        <div v-else>
-          <DataTable
-            v-model:selection="varietyStore.selectedVariety"
-            :value="varietyStore.userVarieties"
-            scrollable
-            scrollHeight="480px"
-            selectionMode="single"
-            :metaKeySelection="false"
-            dataKey="id"
+    <Accordion :multiple="true" :activeIndex="[0]" class="col-12">
+      <AccordionTab>
+        <template #header>
+          <h2 class="p-0 m-0">Mes Variétés</h2>
+        </template>
+        <div class="mt-0 mb-2">
+          <Button
+            class="button-create"
+            label="Nouvelle variété"
+            icon="pi pi-plus-circle"
+            @click="varietyCreationVisible = true"
+            style="max-height: 2rem"
+          />
+          <InlineMessage
+            class="col-12 mb-1"
+            v-for="apiError in apiErrors"
+            :key="apiError"
+            :severity="apiError.level"
+            >{{ apiError.message }}</InlineMessage
           >
-            <ColumnGroup type="header">
-              <Row>
-                <Column header="Espèce" :colspan="2"></Column>
-                <Column header="Variété" :rowspan="2"></Column>
-              </Row>
-              <Row>
-                <Column header="Nom botanique"></Column>
-                <Column header="Nom(s) commun(s)"></Column>
-              </Row>
-            </ColumnGroup>
-            <Column field="specy.botanicalName"></Column>
-            <Column field="specy.frenchCommonNames">
-              <template #body="slotProps">
-                {{
-                  specyService.commonNamesArrayToString(
-                    slotProps.data.specy.frenchCommonNames
-                  )
-                }}
-              </template>
-            </Column>
-            <Column field="name"></Column>
-          </DataTable>
         </div>
-      </div>
-      <LoadingSpinner v-else />
-    </div>
-    <div :class="cssClass.container.default + ' col-12 md:col-6'">
-      <h2 class="public-object-text mt-1 mb-2">Variétés publiées</h2>
-      <SearchVariety />
-    </div>
-    <div
-      :class="cssClass.container.default + ' col-12 md:col-6'"
-      v-if="varietyStore.selectedVariety && varietyStore.selectedVariety.id !== 0"
-    >
-      <VarietyDetails :variety="varietyStore.selectedVariety" />
-    </div>
+        <div v-if="!loading">
+          <div v-if="varietyStore.userVarieties.length === 0">
+            <InlineMessage class="col-12 mb-1" severity="info"
+              >Vous n'avez pas encore de variétés. Vous pouvez rechercher dans les
+              variétés publiées les variétés existantes. Sinon vous pouvez en ajouter
+              une.</InlineMessage
+            >
+          </div>
+          <div v-else>
+            <VarietyDataTable
+              :data="varietyStore.userVarieties"
+              :editable="true"
+              @delete="deleteVariety"
+              @update="openUpdateForm"
+            />
+          </div>
+        </div>
+        <LoadingSpinner v-else />
+      </AccordionTab>
+      <AccordionTab>
+        <template #header>
+          <h2 class="public-object-text p-0 m-0">Variétés publiées</h2>
+        </template>
+        <div :class="cssClass.container.default + ' col-12'">
+          <SearchVarietyComponent class="col-12" @submit="searchVarieties" />
+          <VarietyDataTable
+            :data="searchedVarieties"
+            :editable="false"
+            :addable="true"
+            @addToUser="addUserToVariety"
+          />
+        </div>
+      </AccordionTab>
+    </Accordion>
     <VarietyForm
       :header="'Création d\'une variété'"
       :proposedVariety="proposedVariety"
@@ -75,7 +67,7 @@
     />
     <VarietyForm
       :header="'Modification d\'une variété'"
-      :specyToUpdate="selectedVariety"
+      :varietyToUpdate="varietyToUpdate"
       :visible="varietyUpdateVisible"
       :apiErrors="apiErrors"
       :loading="loadingForm"
@@ -93,7 +85,7 @@ import { cssClass } from "@/utils/style";
 import { onMounted, ref } from "vue";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import Button from "primevue/button";
-import SearchVariety from "@/components/variety/SearchVariety.vue";
+import SearchVarietyComponent from "@/components/variety/SearchVariety.vue";
 import VarietyForm from "@/components/variety/VarietyForm.vue";
 import type { ApiError } from "@/models/ApiError";
 import varietyScript from "@/scripts/VarietyScript";
@@ -101,11 +93,12 @@ import { useConfirm } from "primevue/useconfirm";
 import type { Variety } from "@/models/Variety";
 import responseService from "@/services/ResponseService";
 import specyService from "@/services/SpecyService";
-import DataTable from "primevue/datatable";
-import Column from "primevue/column";
-import ColumnGroup from "primevue/columngroup";
-import Row from "primevue/row";
-import VarietyDetails from "@/components/variety/VarietyDetails.vue";
+import Accordion from "primevue/accordion";
+import AccordionTab from "primevue/accordiontab";
+import InlineMessage from "primevue/inlinemessage";
+import type { SearchVariety } from "@/models/request/search/SearchVariety";
+import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
+import VarietyDataTable from "@/components/variety/VarietyDataTable.vue";
 
 const loading = ref(false);
 const apiErrors = ref([] as ApiError[]);
@@ -113,10 +106,13 @@ const loadingForm = ref(false);
 const varietyStore = useVarietyStore();
 const varietyCreationVisible = ref(false);
 const varietyUpdateVisible = ref(false);
+// Variété proposée si l'utilisateur souhaite créé une variété du même ID
 const proposedVariety = ref(varietyScript.init() as Variety);
+// Variété passé en prop pour mise à jour
+const varietyToUpdate = ref(varietyScript.init() as Variety);
 
 const confirm = useConfirm();
-const selectedVariety = ref(varietyScript.init());
+const searchedVarieties = ref([] as Variety[]);
 
 onMounted(async () => {
   getUserVarieties();
@@ -178,6 +174,10 @@ async function createVariety(variety: Variety) {
   }
   loadingForm.value = false;
 }
+function openUpdateForm(variety: Variety) {
+  varietyToUpdate.value = variety;
+  varietyUpdateVisible.value = true;
+}
 async function updateVariety(variety: Variety) {
   try {
     loadingForm.value = true;
@@ -188,6 +188,7 @@ async function updateVariety(variety: Variety) {
       ];
     } else {
       varietyUpdateVisible.value = false;
+      varietyToUpdate.value = varietyScript.init();
     }
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
@@ -208,5 +209,45 @@ async function addUserToVariety(variety: Variety) {
   } catch (error) {
     apiErrors.value = responseService.getApiErrors(error);
   }
+}
+async function searchVarieties(searchVariety: SearchVariety) {
+  searchedVarieties.value = await varietyService.searchVarieties(searchVariety);
+}
+async function deleteVariety(variety: Variety) {
+  let confirmDialog = defaultConfirmDialogOptions;
+  confirmDialog.message =
+    "Etes-vous certain de vouloir supprimer la variété " +
+    variety.specy.botanicalName +
+    " " +
+    variety.name +
+    " ?";
+  confirmDialog.accept = async () => {
+    try {
+      const isDeleted = await varietyService.deleteVariety(variety.id);
+      if (!isDeleted) {
+        apiErrors.value = [
+          {
+            message:
+              "Impossible de supprimer la variété " +
+              variety.specy.botanicalName +
+              " " +
+              variety.name,
+            code: "",
+            level: "error",
+          },
+        ];
+      } else {
+        varietyStore.setSelectedVariety(varietyScript.init());
+        varietyStore.setUserVarieties(
+          varietyStore.userVarieties.filter(
+            (varietyIn: Variety) => varietyIn.id !== variety.id
+          )
+        );
+      }
+    } catch (error: any) {
+      apiErrors.value = responseService.getApiErrors(error);
+    }
+  };
+  confirm.require(confirmDialog);
 }
 </script>

@@ -1,8 +1,11 @@
 <template>
   <div v-if="!loading">
     <div class="grid col-12" v-if="plotStore.plots.length === 0">
-      <span
-        >Vous n'avez pas encore de Parcelle. Commencer par en ajouter une.
+      <span>
+        <InlineMessage class="col-12 mb-1" severity="info"
+          >Vous n'avez pas encore de Parcelle. Commencer par en ajouter
+          une.</InlineMessage
+        >
         <div
           class="pi pi-question-circle"
           v-tooltip="'Les suivis de culture doivent être associés à une Parcelle.'"
@@ -48,7 +51,6 @@
     />
   </div>
   <LoadingSpinner v-else />
-  <ConfirmDialog />
 </template>
 
 <script setup lang="ts">
@@ -65,8 +67,8 @@ import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import plotScript from "@/scripts/PlotScript";
 import PlotCard from "@/components/plot/PlotCard.vue";
 import { useConfirm } from "primevue/useconfirm";
-import ConfirmDialog from "primevue/confirmdialog";
 import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
+import InlineMessage from "primevue/inlinemessage";
 
 const emit = defineEmits(["selectPlot"]);
 

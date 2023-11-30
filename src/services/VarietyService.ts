@@ -1,6 +1,7 @@
 import { axiosJwtProtected } from '@/axios.config';
 import type { Specy } from '@/models/Specy';
 import type { Variety } from '@/models/Variety';
+import type { SearchVariety } from '@/models/request/search/SearchVariety';
 
 class VarietyService {
     async createVariety(variety: Variety): Promise<Variety> {
@@ -15,14 +16,7 @@ class VarietyService {
         return response.data;
     }
     async updateVariety(variety: Variety): Promise<boolean> {
-        const response = await axiosJwtProtected.put(`varieties/${variety.id}`, {
-            name: variety.name,
-            description: variety.description,
-            specy: {
-                id: variety.specy.id,
-            } as Specy,
-            visibility: variety.visibility,
-        } as Variety);
+        const response = await axiosJwtProtected.put(`varieties/${variety.id}`, variety);
         return response.status === 200;
     }
     async deleteVariety(varietyId: number): Promise<boolean> {
@@ -40,6 +34,10 @@ class VarietyService {
     async removeUserFromVariety(variety: Variety): Promise<boolean> {
         const response = await axiosJwtProtected.put(`varieties/${variety.id}/remove-user`);
         return response.status === 200;
+    }
+    async searchVarieties(searchVariety: SearchVariety): Promise<Variety[]> {
+        const response = await axiosJwtProtected.post('varieties/search', searchVariety);
+        return response.data;
     }
 }
 const varietyService = new VarietyService()
