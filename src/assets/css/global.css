@@ -1,20 +1,6 @@
-/* Primevue CSS */
-@import "primevue.css";
-
 :root {
   /* colors */
-  --light-blue-color: rgb(172, 220, 251);
-  --dark-blue-color: rgb(0, 11, 138);
-  --hover-color: var(--light-blue-color);
-  --select-color: var(--dark-blue-color);
-  --light-color-red: #fc4f4f;
-  --dark-color-white: #FBFCFA;
-  --dark-color-grey: rgba(0, 0, 0, 0.7);
-  --color-grey: rgb(206, 203, 203);
-  --light-color-grey: rgb(240, 240, 240);
-  --green-color: rgb(61, 150, 61);
-  --dark-green-color: rgb(25, 138, 25);
-  --main-color-theme: var(--green-color);
+  --surface-card: #f9fafb !important;
 }
 
 /* policy uniformization */
@@ -25,38 +11,20 @@ body {
 
 .container {
   border-radius: 10px;
-  background-color: var(--dark-color-white);
+  background-color: var(--surface-card);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 3px;
 }
 
 .input-invalid {
-  border-color: var(--light-color-red) !important;
-}
-
-h2 {
-  color: var(--main-color-theme)
-}
-
-.error {
-  color: var(--light-color-red);
-}
-
-.button-create {
-  background-color: var(--main-color-theme) !important;
-  border-color: var(--main-color-theme) !important;
-}
-
-.button-create:hover {
-  background-color: var(--dark-green-color) !important;
-  border-color: var(--dark-green-color) !important;
+  border-color: var(--red-300) !important;
 }
 
 .clickable-card:hover {
-  background-color: var(--light-color-grey);
+  background-color: var(--highlight-bg);
 }
 
 .selectable-card:hover {
-  background-color: var(--hover-color);
+  background-color: var(--highlight-bg);
 }
 
 .no-puce {
@@ -72,27 +40,21 @@ h2 {
 }
 
 .selected-card {
-  background-color: var(--select-color) !important;
-  color: white;
+  background-color: var(--primary-color) !important;
+  color: var(--primary-color-text);
 }
 
 .unabled-card {
   text-decoration: line-through;
 }
 
-.selectable-filter {
-  text-align: center;
+.fieldset-with-legend {
   border-radius: 10px;
-  border: 1px solid var(--dark-color-grey);
+  border: 1px solid var(--primary-color);
 }
 
-.selectable-filter:hover {
-  background-color: var(--dark-color-grey);
-  color: white;
-  cursor: pointer;
-}
-
-.selected-filter {
-  background-color: var(--dark-color-grey) !important;
-  color: white;
+.fieldset-legend {
+  color: var(--primary-color);
+  font-weight: bold;
+  padding: 8px;
 }

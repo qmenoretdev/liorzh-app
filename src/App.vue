@@ -7,6 +7,7 @@
   <main class="mt-2">
     <RouterView />
   </main>
+  <ConfirmDialog />
 </template>
 
 <script setup lang="ts">
@@ -17,6 +18,8 @@ import router from "./router";
 import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import userService from "@/services/UserService";
+import ConfirmDialog from "primevue/confirmdialog";
+
 const authStore = useAuthStore();
 const userStore = useUserStore();
 

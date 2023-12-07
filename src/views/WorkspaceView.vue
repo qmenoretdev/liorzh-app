@@ -1,9 +1,9 @@
 <template>
   <div class="grid col-12">
-    <div class="col-2">
+    <div class="col-12 lg:col-2">
       <Menu :model="menuItems" />
     </div>
-    <div class="col-10">
+    <div class="col-12 lg:col-10">
       <MonitoringPanel v-show="workspaceStore.selectedItemNumber === 0" />
       <VarietyPanel v-show="workspaceStore.selectedItemNumber === 1" />
       <SowingPanel v-show="workspaceStore.selectedItemNumber === 2" />

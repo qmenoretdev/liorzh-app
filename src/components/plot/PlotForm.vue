@@ -129,10 +129,7 @@
             rounded
             :label="submitButtonLabel"
             @click="submit()"
-            :class="
-              'col-4 md:col-3 col-offset-4' +
-              (plotToUpdate.id === 0 ? ' button-create' : '')
-            "
+            class="col-4 md:col-3 col-offset-4"
             :loading="loading"
           />
         </div>

@@ -69,7 +69,7 @@
           rounded
           label="Sign-up"
           @click="register()"
-          class="col-4 md:col-3 col-offset-4 button-create"
+          class="col-4 md:col-3 col-offset-4"
           :loading="loading"
         />
       </div>
