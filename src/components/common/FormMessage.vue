@@ -12,7 +12,7 @@ defineProps({
     default: "",
   },
   severity: {
-    default: "error",
+    default: "p-error",
   },
   additionnalClass: {
     default: "col-offset-3",

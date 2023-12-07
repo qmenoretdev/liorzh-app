@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <Button rounded class="col-1" icon="pi pi-search" text raised @click="submit()" />
+    <Button class="col-12" icon="pi pi-search" @click="submit()">Rechercher</Button>
   </div>
 </template>
 

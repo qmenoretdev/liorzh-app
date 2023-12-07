@@ -10,16 +10,13 @@
         <div class="col-4">
           <Button
             icon="pi pi-file-edit"
-            class="col-6 mr-2"
-            text
+            class="mb-1"
             raised
             rounded
             @click.stop="openUpdateMonitoring()"
           />
           <Button
             icon="pi pi-trash"
-            class="col-6"
-            text
             raised
             rounded
             severity="danger"

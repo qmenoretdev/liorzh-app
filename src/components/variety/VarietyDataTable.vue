@@ -13,6 +13,7 @@
           <Column header="Espèce" :colspan="2"></Column>
           <Column header="Variété" :rowspan="2"></Column>
           <Column header="Description" :rowspan="2"></Column>
+          <Column header="" :rowspan="2"></Column>
         </Row>
         <Row>
           <Column header="Nom botanique"></Column>
@@ -60,6 +61,7 @@
             rounded
             @click="addVarietyToUser(slotProps.data)"
             v-if="addable"
+            title="Ajouter à vos variétés"
           />
         </template>
       </Column>

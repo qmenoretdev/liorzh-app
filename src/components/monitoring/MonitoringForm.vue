@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="field grid">
-          <label for="name" class="col-12 sm:col-3"
+          <label for="enabled" class="col-12 sm:col-3"
             >Actif&nbsp;
             <div
               class="pi pi-question-circle"
@@ -61,12 +61,8 @@
             ></div
           ></label>
           <div class="col-12 sm:col-8">
-            <input
-              id="enabled"
-              type="checkbox"
-              v-model="monitoring.enabled"
-              @keyup.enter="submit()"
-            />
+            <Checkbox v-model="monitoring.enabled" :binary="true" id="enabled">
+            </Checkbox>
           </div>
         </div>
       </div>
@@ -82,10 +78,7 @@
           rounded
           :label="submitButtonLabel"
           @click="submit()"
-          :class="
-            'col-4 md:col-3 col-offset-4' +
-            (monitoringToUpdate.id === 0 ? ' button-create' : '')
-          "
+          class="col-4 md:col-3 col-offset-4"
           :loading="loading"
         />
       </div>
@@ -103,10 +96,11 @@ import { cssClass, getInputClass } from "@/utils/style";
 import monitoringScript from "@/scripts/MonitoringScript";
 import { MonitoringType } from "@/models/Monitoring";
 import FormMessage from "@/components/common/FormMessage.vue";
+import Checkbox from "primevue/checkbox";
 
 export default defineComponent({
   extends: ModalFormCommon,
-  components: { Dialog, Button, InlineMessage, FormMessage },
+  components: { Dialog, Button, InlineMessage, FormMessage, Checkbox },
   props: {
     monitoringToUpdate: {
       default: monitoringScript.init(),

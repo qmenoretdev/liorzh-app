@@ -3,7 +3,6 @@
     <h2>Espèces</h2>
     <Button
       rounded
-      class="button-create"
       label="Nouvelle espèce"
       icon="pi pi-plus-circle"
       @click="specyCreationVisible = true"

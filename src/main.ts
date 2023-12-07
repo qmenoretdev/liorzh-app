@@ -11,7 +11,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 
 //theme
 import "primevue/resources/primevue.min.css"; // core CSS
-import "primevue/resources/themes/bootstrap4-light-blue/theme.css"; // theme
+import "primevue/resources/themes/lara-light-green/theme.css";
 import 'primeicons/primeicons.css'; // icons
 import "/node_modules/primeflex/primeflex.css"; // primeflex
 

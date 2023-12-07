@@ -14,22 +14,19 @@
         />
         <Button
           rounded
-          class="button-create mr-4"
+          class="mr-4"
           label="Nouveau suivi"
           icon="pi pi-plus-circle"
           @click="monitoringCreationVisible = true"
         />
-        <div class="mr-2 pi pi-filter"></div>
-        <div
-          :class="
-            getFilterClass(workspaceStore.workspace.monitoringPanel.filters.enabledOnly)
-          "
-          @click="
-            workspaceStore.workspace.monitoringPanel.filters.enabledOnly = !workspaceStore
-              .workspace.monitoringPanel.filters.enabledOnly
-          "
-        >
-          Actif uniquement
+        <div class="flex align-items-center">
+          <label for="enabledOnlyFilter" class="mr-2">Actif uniquement</label>
+          <Checkbox
+            v-model="workspaceStore.workspace.monitoringPanel.filters.enabledOnly"
+            :binary="true"
+            id="enabledOnlyFilter"
+          >
+          </Checkbox>
         </div>
       </div>
       <div v-if="!loading">
@@ -94,6 +91,7 @@ import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
 import { useConfirm } from "primevue/useconfirm";
 import monitoringScript from "@/scripts/MonitoringScript";
 import { useWorkspaceStore } from "@/stores/workspace";
+import Checkbox from "primevue/checkbox";
 
 const monitoringStore = useMonitoringStore();
 const plotStore = usePlotStore();

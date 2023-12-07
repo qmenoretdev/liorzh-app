@@ -15,7 +15,6 @@
     <div class="col-12">
       <Button
         rounded
-        class="button-create"
         label="Nouvelle parcelle"
         icon="pi pi-plus-circle"
         @click="plotCreationVisible = true"

@@ -16,16 +16,19 @@
           v-model:upovCode="variety.specy.upovCode"
           :readonly="isUpdateMode"
         />
-        <div v-if="!isUpdateMode">
+        <div v-if="!isUpdateMode" class="col-6">
           <div>
-            <h3 class="public-object-text">Recherche d'espèce</h3>
+            <h3>Recherche d'espèce</h3>
             <SearchSpecy
-              class="col-12"
+              class="col-12 mb-2"
               v-model:botanicalName="searchSpecy.botanicalName"
               v-model:frenchCommonName="searchSpecy.frenchCommonName"
               v-model:visibilityValues="visibilityValues"
               @submit="searchSpecies"
             />
+            <Button class="col-12" icon="pi pi-search" @click="searchSpecies"
+              >Rechercher</Button
+            >
           </div>
           <LoadingSpinner v-if="loadingSearchStep == 1" />
           <DataTable
@@ -101,7 +104,7 @@
           v-if="proposedVariety.id !== 0"
           :class="getCssClass.container.default + ' col-12 md:col-6 mt-1'"
         >
-          <div>
+          <div class="col-12 mb-2">
             <VarietyDetails :variety="proposedVariety" />
           </div>
           <Button
@@ -109,7 +112,7 @@
             icon="pi pi-plus-circle"
             label="Ajouter la variété existante"
             @click="addUserToVariety()"
-            :class="'col-12 md:col-6 button-create'"
+            class="col-12 md:col-6"
           />
         </div>
       </div>
@@ -125,10 +128,7 @@
           rounded
           :label="submitButtonLabel"
           @click="submit()"
-          :class="
-            'col-4 md:col-3 col-offset-4' +
-            (varietyToUpdate.id === 0 ? ' button-create' : '')
-          "
+          class="col-4 md:col-3 col-offset-4"
           :loading="loading"
         />
       </div>

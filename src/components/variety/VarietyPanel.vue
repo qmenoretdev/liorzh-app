@@ -7,19 +7,11 @@
         </template>
         <div class="mt-0 mb-2">
           <Button
-            class="button-create"
             label="Nouvelle variété"
             icon="pi pi-plus-circle"
             @click="varietyCreationVisible = true"
             style="max-height: 2rem"
           />
-          <InlineMessage
-            class="col-12 mb-1"
-            v-for="apiError in apiErrors"
-            :key="apiError"
-            :severity="apiError.level"
-            >{{ apiError.message }}</InlineMessage
-          >
         </div>
         <div v-if="!loading">
           <div v-if="varietyStore.userVarieties.length === 0">
@@ -42,16 +34,18 @@
       </AccordionTab>
       <AccordionTab>
         <template #header>
-          <h2 class="public-object-text p-0 m-0">Variétés publiées</h2>
+          <h2 class="p-0 m-0">Variétés publiées</h2>
         </template>
         <div :class="cssClass.container.default + ' col-12'">
-          <SearchVarietyComponent class="col-12" @submit="searchVarieties" />
+          <SearchVarietyComponent class="col-12 mb-2" @submit="searchVarieties" />
           <VarietyDataTable
+            v-if="searchedVarieties.length > 0"
             :data="searchedVarieties"
             :editable="false"
             :addable="true"
             @addToUser="addUserToVariety"
           />
+          <LoadingSpinner v-else-if="loadingSearchVarieties" />
         </div>
       </AccordionTab>
     </Accordion>
@@ -101,8 +95,10 @@ import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
 import VarietyDataTable from "@/components/variety/VarietyDataTable.vue";
 
 const loading = ref(false);
-const apiErrors = ref([] as ApiError[]);
 const loadingForm = ref(false);
+const loadingSearchVarieties = ref(false);
+
+const apiErrors = ref([] as ApiError[]);
 const varietyStore = useVarietyStore();
 const varietyCreationVisible = ref(false);
 const varietyUpdateVisible = ref(false);
@@ -211,7 +207,10 @@ async function addUserToVariety(variety: Variety) {
   }
 }
 async function searchVarieties(searchVariety: SearchVariety) {
+  loadingSearchVarieties.value = true;
+  searchedVarieties.value = [];
   searchedVarieties.value = await varietyService.searchVarieties(searchVariety);
+  loadingSearchVarieties.value = false;
 }
 async function deleteVariety(variety: Variety) {
   let confirmDialog = defaultConfirmDialogOptions;
