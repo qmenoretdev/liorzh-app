@@ -66,6 +66,22 @@
           />
         </div>
       </div>
+      <div class="field grid">
+        <label for="isPublicSpecy" class="col-12 sm:col-3"
+          >Public&nbsp;
+          <div
+            class="pi pi-question-circle"
+            v-tooltip="'Une espèce publique est partagée avec les autres utilisateurs. Une espèce publique ne peut être modifiée que par un Administrateur.'"
+          ></div
+        ></label>
+        <div class="col-12 sm:col-8">
+          <Checkbox id="isPublicSpecy"
+            v-model="isPublicSpecyData"
+            :binary="true"
+            @input="$emit('update:isPublicSpecy', $event)">
+          </Checkbox>
+        </div>
+      </div>
     </div>
     <InlineMessage
       class="col-12 mb-1"
@@ -87,15 +103,17 @@ import specyScript from "@/scripts/SpecyScript";
 import FormMessage from "@/components/common/FormMessage.vue";
 import type { Specy } from "@/models/Specy";
 import type { FormErrorSpecy } from "@/models/form/FormErrorSpecy";
+import Checkbox from "primevue/checkbox";
 
 export default defineComponent({
   extends: ModalFormCommon,
-  components: { Button, InlineMessage, FormMessage },
+  components: { Button, InlineMessage, FormMessage, Checkbox },
   emits: [
     "submit",
     "update:botanicalName",
     "update:frenchCommonNames",
     "update:upovCode",
+    "update:isPublicSpecy",
   ],
   props: {
     botanicalName: {
@@ -107,6 +125,9 @@ export default defineComponent({
     upovCode: {
       default: "",
     },
+    isPublicSpecy: {
+      default: true,
+    },
     formError: {
       default: specyScript.initFormError(),
     },
@@ -114,10 +135,16 @@ export default defineComponent({
       default: false,
     },
   },
-  data() {
+  data(props) {
     return {
       specy: specyScript.init() as Specy,
+      isPublicSpecyData: props.isPublicSpecy !== undefined ? props.isPublicSpecy : true,
     };
+  },
+  watch: {
+    isPublicSpecy(newIsPublicSpecy) {
+      this.isPublicSpecyData = newIsPublicSpecy;
+    },
   },
   computed: {
     getCssClass() {

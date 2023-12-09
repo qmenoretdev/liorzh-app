@@ -1,8 +1,8 @@
 import type { Specy } from "@/models/Specy";
-import { Visibility } from "@/models/Visibility";
 import type { FormErrorSpecy } from "@/models/form/FormErrorSpecy";
 import type { SearchSpecy } from "@/models/request/search/SearchSpecy";
-import { PaginationLimit } from "@/utils/constant";
+import { PUBLIC, PaginationLimit } from "@/utils/constant";
+import { VALIDITY } from "@/utils/validity";
 
 class SpecyScript {
     init(): Specy {
@@ -12,7 +12,8 @@ class SpecyScript {
             upovCode: null,
             frenchCommonNames: [] as string[],
             englishCommonNames: [] as string[],
-            visibility: Visibility.PRIVATE,
+            valid: VALIDITY.ND.value,
+            owner: PUBLIC,
         }
     }
     initSearch(): SearchSpecy {
@@ -20,7 +21,8 @@ class SpecyScript {
             botanicalName: null,
             frenchCommonName: null,
             englishCommonName: null,
-            visibility: null,
+            validity: null,
+            owner: null,
             exactSearch: false,
             pagination: {
                 total: 0,

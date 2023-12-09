@@ -1,3 +1,5 @@
+import { useUserStore } from "@/stores/user";
+import { PUBLIC } from "@/utils/constant";
 import type { ConfirmationOptions } from "primevue/confirmationoptions";
 
 export const defaultConfirmDialogOptions = {
@@ -8,3 +10,11 @@ export const defaultConfirmDialogOptions = {
   acceptLabel: 'Oui',
   acceptClass: 'p-button-danger',
 } as ConfirmationOptions;
+
+export function getOwner(isPublic: boolean) {
+  if (isPublic) {
+    return PUBLIC;
+  }
+  const userStore = useUserStore();
+  return userStore.user.email;
+}

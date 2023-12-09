@@ -17,7 +17,7 @@
           <span><b>Description : </b>{{ variety.description }}</span>
         </li>
         <li>
-          <span><b>Visibilité : </b>{{ variety.visibility }}</span>
+          <span><b>Valide ? : </b>{{ showValidity(variety.valid) }}</span>
         </li>
       </ul>
     </fieldset>
@@ -27,6 +27,7 @@
 <script setup lang="ts">
 import varietyScript from "@/scripts/VarietyScript";
 import SpecyDetails from "@/components/specy/SpecyDetails.vue";
+import { showValidity } from "@/utils/style";
 
 defineProps({
   variety: {

@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('authStore', () => {
     removeAuthenticated();
     removeJwt();
     const userStore = useUserStore();
-    userStore.user = userScript.init();
+    userStore.setUser(userScript.init());
   }
   return { jwt, setJwt, authenticated, logout, setAuthenticated }
 })

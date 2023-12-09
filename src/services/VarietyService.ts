@@ -11,7 +11,8 @@ class VarietyService {
             specy: {
                 id: variety.specy.id,
             } as Specy,
-            visibility: variety.visibility,
+            valid: variety.valid,
+            owner: variety.owner,
         } as Variety);
         return response.data;
     }

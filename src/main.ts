@@ -8,6 +8,7 @@ import router from './router'
 import PrimeVue from 'primevue/config';
 import Tooltip from 'primevue/tooltip';
 import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
 
 //theme
 import "primevue/resources/primevue.min.css"; // core CSS
@@ -18,6 +19,7 @@ import "/node_modules/primeflex/primeflex.css"; // primeflex
 const app = createApp(App);
 app.use(PrimeVue);
 app.use(ConfirmationService);
+app.use(ToastService);
 app.use(createPinia());
 app.use(router);
 

@@ -42,7 +42,8 @@ async function login(formLogin: FormLogin) {
 async function getUser() {
   if (authStore.authenticated) {
     try {
-      userStore.setUser(await userService.getUser());
+      const user = await userService.getUser();
+      userStore.setUser(user);
       router.push({ path: "/workspace" });
     } catch (error: any) {
       apiErrors.value = responseService.getApiErrors(error);

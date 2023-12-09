@@ -8,6 +8,7 @@
     <RouterView />
   </main>
   <ConfirmDialog />
+  <Toast />
 </template>
 
 <script setup lang="ts">
@@ -19,6 +20,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useUserStore } from "@/stores/user";
 import userService from "@/services/UserService";
 import ConfirmDialog from "primevue/confirmdialog";
+import Toast from "primevue/toast";
 
 const authStore = useAuthStore();
 const userStore = useUserStore();

@@ -4,6 +4,7 @@ export interface Variety {
     id: number;
     name: string;
     specy: Specy;
-    visibility: string;
     description: string;
+    valid: string;
+    owner: string;
 }

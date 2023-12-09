@@ -1,8 +1,8 @@
 import type { Variety } from "@/models/Variety";
-import { Visibility } from "@/models/Visibility";
 import type { SearchVariety } from "@/models/request/search/SearchVariety";
 import specyScript from "@/scripts/SpecyScript";
-import { PaginationLimit } from "@/utils/constant";
+import { PUBLIC, PaginationLimit } from "@/utils/constant";
+import { VALIDITY } from "@/utils/validity";
 
 class VarietyScript {
     init(): Variety {
@@ -11,14 +11,16 @@ class VarietyScript {
             name: '',
             description: '',
             specy: specyScript.init(),
-            visibility: Visibility.PRIVATE,
+            valid: VALIDITY.ND.value,
+            owner: PUBLIC,
         }
     }
     initSearch(): SearchVariety {
         return {
             name: null,
             exactSearch: false,
-            visibility: null,
+            validity: null,
+            owner: null,
             searchSpecy: specyScript.initSearch(),
             pagination: {
                 total: 0,

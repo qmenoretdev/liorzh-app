@@ -47,6 +47,7 @@
           />
           <Button
             icon="pi pi-trash"
+            class="mr-2"
             text
             raised
             rounded

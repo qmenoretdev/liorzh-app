@@ -4,5 +4,6 @@ export interface Specy {
     upovCode: string | null;
     englishCommonNames: string[];
     frenchCommonNames: string[];
-    visibility: string;
+    valid: string;
+    owner: string;
 }
