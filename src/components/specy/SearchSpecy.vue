@@ -30,29 +30,56 @@
         />
       </div>
     </div>
-    <SelectButton
-      v-model="visibilityValuesData"
-      @change="$emit('update:visibilityValues', $event.value)"
-      :options="visibilityOptions"
-      optionLabel="name"
-      multiple
-      aria-labelledby="multiple"
-      class="mb-1"
-    />
+    <div class="field grid">
+      <label for="onlyValid" class="col-12 sm:col-3"
+        >Espèce validée ?&nbsp;
+            <div
+              class="pi pi-question-circle"
+              v-tooltip="
+                'La validation d\'une espèce est réservée aux Administrateurs. Non déterminé signifie qu\'elle n\'a pas encore été revue'
+              "
+            ></div
+          ></label>
+      <div class="col-12 sm:col-8">
+        <SelectButton
+          v-model="validityValuesData"
+          @change="$emit('update:validityValues', $event.value)"
+          :options="validityOptions"
+          optionLabel="name"
+          multiple
+          aria-labelledby="multiple"
+          class="mb-1"
+        />
+      </div>
+    </div>
+    <div class="field grid" v-if="authorizationService.isAdmin()">
+      <label for="onAllSpecies" class="col-12 sm:col-3"
+        >Toutes les espèces ?</label>
+      <div class="col-12 sm:col-8">
+        <Checkbox id="onAllSpecies"
+          v-model="onAllSpeciesData"
+          :binary="true"
+          @input="$emit('update:onAllSpecies', $event)">
+        </Checkbox>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { cssClass } from "@/utils/style";
-import SelectButton from "primevue/selectbutton";
-import { visibilityOptions } from "@/models/Visibility";
+import authorizationService from "@/services/AuthorizationService";
+import Checkbox from "primevue/checkbox";
 import { ref } from "vue";
+import SelectButton from "primevue/selectbutton";
+import { validityOptions } from "@/utils/validity";
 
 const emit = defineEmits([
   "submit",
   "update:botanicalName",
   "update:frenchCommonNames",
-  "update:visibilityValues",
+  "update:onAllSpecies",
+  "update:validityValues",
 ]);
 const props = defineProps({
   botanicalName: {
@@ -61,12 +88,16 @@ const props = defineProps({
   frenchCommonName: {
     default: "",
   },
-  visibilityValues: {
-    default: [],
+  onAllSpecies: {
+    default: false,
   },
+  validityValues: {
+    default: [],
+  }
 });
 
-const visibilityValuesData = ref(props.visibilityValues);
+const onAllSpeciesData = ref(props.onAllSpecies !== undefined ? props.onAllSpecies : false);
+const validityValuesData = ref(props.validityValues);
 
 async function submit() {
   emit("submit");

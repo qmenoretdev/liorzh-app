@@ -9,7 +9,7 @@
           <Button
             label="Nouvelle variété"
             icon="pi pi-plus-circle"
-            @click="varietyCreationVisible = true"
+            @click="openCreationForm()"
             style="max-height: 2rem"
           />
         </div>
@@ -25,7 +25,7 @@
             <VarietyDataTable
               :data="varietyStore.userVarieties"
               :editable="true"
-              @delete="deleteVariety"
+              @delete="removeVarietyFromUser"
               @update="openUpdateForm"
             />
           </div>
@@ -41,9 +41,11 @@
           <VarietyDataTable
             v-if="searchedVarieties.length > 0"
             :data="searchedVarieties"
-            :editable="false"
+            :editable="authorizationService.isAdmin()"
             :addable="true"
             @addToUser="addUserToVariety"
+            @delete="deleteVariety"
+            @update="openUpdateForm"
           />
           <LoadingSpinner v-else-if="loadingSearchVarieties" />
         </div>
@@ -93,6 +95,12 @@ import InlineMessage from "primevue/inlinemessage";
 import type { SearchVariety } from "@/models/request/search/SearchVariety";
 import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
 import VarietyDataTable from "@/components/variety/VarietyDataTable.vue";
+import toastService from "@/services/ToastService";
+import type { ToastMessageOptions } from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+import authorizationService from "@/services/AuthorizationService";
+
+const toast = useToast();
 
 const loading = ref(false);
 const loadingForm = ref(false);
@@ -114,18 +122,32 @@ onMounted(async () => {
   getUserVarieties();
 });
 
+function closeModal() {
+  varietyCreationVisible.value = false;
+  varietyUpdateVisible.value = false;
+}
+
+function openUpdateForm(variety: Variety) {
+  varietyToUpdate.value = variety;
+  varietyUpdateVisible.value = true;
+  resetForm();
+}
+function openCreationForm() {
+  varietyToUpdate.value = varietyScript.init();
+  varietyCreationVisible.value = true;
+  resetForm();
+}
+function resetForm() {
+  apiErrors.value = [];
+  proposedVariety.value = varietyScript.init();
+}
+
 async function getUserVarieties() {
   loading.value = true;
   const varieties = await varietyService.getVarietiesByCurrentUser();
   varietyStore.setUserVarieties(varieties);
   loading.value = false;
 }
-
-function closeModal() {
-  varietyCreationVisible.value = false;
-  varietyUpdateVisible.value = false;
-}
-
 async function createVariety(variety: Variety) {
   loadingForm.value = true;
   try {
@@ -170,10 +192,6 @@ async function createVariety(variety: Variety) {
   }
   loadingForm.value = false;
 }
-function openUpdateForm(variety: Variety) {
-  varietyToUpdate.value = variety;
-  varietyUpdateVisible.value = true;
-}
 async function updateVariety(variety: Variety) {
   try {
     loadingForm.value = true;
@@ -195,22 +213,71 @@ async function addUserToVariety(variety: Variety) {
   try {
     const isAdd = await varietyService.addUserToVariety(variety);
     if (!isAdd) {
-      apiErrors.value = [
-        { message: "Impossible d'ajouter la variété", code: "", level: "error" },
-      ];
+      toast.add(toastService.showError("Impossible d'ajouter la variété !", variety.specy.botanicalName + ' ' + variety.name));
     } else {
       varietyStore.userVarieties.push(variety);
+      toast.add(toastService.showSuccess("Variété ajoutée !", variety.specy.botanicalName + ' ' + variety.name));
       closeModal();
     }
   } catch (error) {
-    apiErrors.value = responseService.getApiErrors(error);
+    const toastOptions = toastService.getToastOptions("Impossible d'ajouter cette variété", responseService.getApiErrors(error))
+      toastOptions.forEach((toastOption: ToastMessageOptions) => {
+      toast.add(toastOption);
+    });
   }
 }
 async function searchVarieties(searchVariety: SearchVariety) {
   loadingSearchVarieties.value = true;
   searchedVarieties.value = [];
-  searchedVarieties.value = await varietyService.searchVarieties(searchVariety);
+  try {
+    searchedVarieties.value = await varietyService.searchVarieties(searchVariety);
+  } catch(error: any) {
+    const toastOptions = toastService.getToastOptions('Erreur lors de la recherche des espèces', responseService.getApiErrors(error))
+      toastOptions.forEach((toastOption: ToastMessageOptions) => {
+      toast.add(toastOption);
+    });
+  }
   loadingSearchVarieties.value = false;
+}
+async function removeVarietyFromUser(variety: Variety) {
+  let confirmDialog = defaultConfirmDialogOptions;
+  confirmDialog.message =
+    "Etes-vous certain de vouloir supprimer la variété " +
+    variety.specy.botanicalName +
+    " " +
+    variety.name +
+    " ?";
+  confirmDialog.accept = async () => {
+    try {
+      const isDeleted = await varietyService.removeUserFromVariety(variety);
+      if (!isDeleted) {
+        apiErrors.value = [
+          {
+            message:
+              "Impossible de supprimer la variété " +
+              variety.specy.botanicalName +
+              " " +
+              variety.name,
+            code: "",
+            level: "error",
+          },
+        ];
+      } else {
+        varietyStore.setSelectedVariety(varietyScript.init());
+        varietyStore.setUserVarieties(
+          varietyStore.userVarieties.filter(
+            (varietyIn: Variety) => varietyIn.id !== variety.id
+          )
+        );
+      }
+    } catch (error: any) {
+      const toastOptions = toastService.getToastOptions('Impossible de supprimer la variété', responseService.getApiErrors(error))
+        toastOptions.forEach((toastOption: ToastMessageOptions) => {
+        toast.add(toastOption);
+      });
+    }
+  };
+  confirm.require(confirmDialog);
 }
 async function deleteVariety(variety: Variety) {
   let confirmDialog = defaultConfirmDialogOptions;
@@ -236,15 +303,15 @@ async function deleteVariety(variety: Variety) {
           },
         ];
       } else {
-        varietyStore.setSelectedVariety(varietyScript.init());
-        varietyStore.setUserVarieties(
-          varietyStore.userVarieties.filter(
+        searchedVarieties.value = searchedVarieties.value.filter(
             (varietyIn: Variety) => varietyIn.id !== variety.id
-          )
         );
       }
     } catch (error: any) {
-      apiErrors.value = responseService.getApiErrors(error);
+      const toastOptions = toastService.getToastOptions('Impossible de supprimer la variété', responseService.getApiErrors(error))
+        toastOptions.forEach((toastOption: ToastMessageOptions) => {
+        toast.add(toastOption);
+      });
     }
   };
   confirm.require(confirmDialog);

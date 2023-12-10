@@ -1,7 +1,8 @@
-import type { SearchRequestVisibility } from "./SearchRequestVisibility";
+import type { SearchRequestValidity } from "./SearchRequestValidity";
 
-export interface SearchSpecy extends SearchRequestVisibility {
+export interface SearchSpecy extends SearchRequestValidity {
   botanicalName: string | null;
   frenchCommonName: string | null;
   englishCommonName: string | null;
+  owner: string | null;
 }

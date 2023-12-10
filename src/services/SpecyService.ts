@@ -49,7 +49,8 @@ class SpecyService {
             upovCode: specy.upovCode,
             frenchCommonNames: specy.frenchCommonNames,
             englishCommonNames: specy.englishCommonNames,
-            visibility: specy.visibility,
+            valid: specy.valid,
+            owner: specy.owner,
         } as Specy);
         return response.data;
     }
@@ -59,7 +60,8 @@ class SpecyService {
             upovCode: specy.upovCode,
             frenchCommonNames: specy.frenchCommonNames,
             englishCommonNames: specy.englishCommonNames,
-            visibility: specy.visibility,
+            valid: specy.valid,
+            owner: specy.owner,
         } as Specy);
         return response.status === 200;
     }

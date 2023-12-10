@@ -14,6 +14,7 @@
           v-model:botanicalName="variety.specy.botanicalName"
           v-model:frenchCommonNames="frenchCommonNames"
           v-model:upovCode="variety.specy.upovCode"
+          v-model:isPublicSpecy="isPublicSpecy"
           :readonly="isUpdateMode"
         />
         <div v-if="!isUpdateMode" class="col-6">
@@ -23,7 +24,8 @@
               class="col-12 mb-2"
               v-model:botanicalName="searchSpecy.botanicalName"
               v-model:frenchCommonName="searchSpecy.frenchCommonName"
-              v-model:visibilityValues="visibilityValues"
+              v-model:validityValues="searchSpecyFilter.validityValues"
+              v-model:onAllSpecies="searchSpecyFilter.onAllSpecies"
               @submit="searchSpecies"
             />
             <Button class="col-12" icon="pi pi-search" @click="searchSpecies"
@@ -49,7 +51,9 @@
               </template>
             </Column>
             <Column field="upovCode" header="Code UPOV" />
-            <Column field="visibility" header="Visibilité" />
+            <Column field="valid" header="Validée ?"><template #body="slotProps">
+                {{ showValidity(slotProps.data.valid) }}
+              </template></Column>
             <Column>
               <template #body="slotProps">
                 <Button
@@ -58,6 +62,7 @@
                   raised
                   rounded
                   @click="selectSpecy(slotProps.data)"
+                  title="Sélectionner cette espèce"
                 />
               </template>
             </Column>
@@ -97,6 +102,22 @@
                 :class="getCssClass.input.default"
                 v-model="variety.description"
               />
+            </div>
+          </div>
+          <div class="field grid" v-if="isPublicSpecy">
+            <label for="isPublicVariety" class="col-12 sm:col-3"
+              >Public&nbsp;
+              <div
+                class="pi pi-question-circle"
+                v-tooltip="'Une variété publique est partagée avec les autres utilisateurs. Une variété publique ne peut être modifiée que par un Administrateur.'"
+              ></div
+            ></label>
+            <div class="col-12 sm:col-8">
+              <Checkbox id="isPublicVariety"
+                v-model="isPublicVariety"
+                :binary="true"
+                :disabled="varietyToUpdate.id !== 0 && varietyToUpdate.owner === publicOwner && !isAdmin()">
+              </Checkbox>
             </div>
           </div>
         </div>
@@ -155,7 +176,14 @@ import type { Specy } from "@/models/Specy";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
-import { publicOption, visibilityOptions } from "@/models/Visibility";
+import { getOwner } from "@/scripts/CommonScript";
+import { PUBLIC } from "@/utils/constant";
+import Checkbox from "primevue/checkbox";
+import { VALIDITY, selectOptionsToValidity, showValidity } from "@/utils/validity";
+import responseService from "@/services/ResponseService";
+import toastService from "@/services/ToastService";
+import type { ToastMessageOptions } from "primevue/toast";
+import authorizationService from "@/services/AuthorizationService";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -171,6 +199,7 @@ export default defineComponent({
     DataTable,
     Column,
     LoadingSpinner,
+    Checkbox,
   },
   props: {
     varietyToUpdate: {
@@ -189,7 +218,12 @@ export default defineComponent({
       formError: this.initFormError(),
       formErrorSpecy: specyScript.initFormError(),
       loadingSearchStep: 0,
-      visibilityValues: [publicOption],
+      isPublicSpecy: true,
+      isPublicVariety: true,
+      searchSpecyFilter: {
+        onAllSpecies: false,
+        validityValues: [VALIDITY.TRUE]
+      }
     };
   },
   watch: {
@@ -199,6 +233,21 @@ export default defineComponent({
         this.frenchCommonNames = specyService.commonNamesArrayToString(
           this.variety.specy.frenchCommonNames
         );
+        this.isPublicVariety = newVarietyToUpdate.owner === PUBLIC;
+        this.isPublicSpecy = newVarietyToUpdate.specy.owner === PUBLIC;
+      }
+    },
+    visible(newVisibility) {
+      if (newVisibility) {
+        // Reset du formulaire
+        if (this.varietyToUpdate.id === 0) {
+          this.variety = varietyScript.init();
+        }
+        this.searchedSpecies = [] as Specy[];
+        this.searchSpecy = specyScript.initSearch();
+        this.formError = this.initFormError();
+        this.formErrorSpecy = specyScript.initFormError();
+        this.loadingSearchStep = 0;
       }
     },
   },
@@ -206,15 +255,15 @@ export default defineComponent({
     getCssClass() {
       return cssClass;
     },
-    getVisibilityOptions() {
-      return visibilityOptions;
-    },
     getFormClass() {
       return "col-12" + (this.isUpdateMode ? "" : " md:col-6");
     },
     isUpdateMode(): boolean {
       return this.varietyToUpdate && this.varietyToUpdate.id !== 0;
     },
+    publicOwner(): string {
+      return PUBLIC;
+    }
   },
   methods: {
     submit() {
@@ -222,14 +271,23 @@ export default defineComponent({
         this.variety.specy.frenchCommonNames = specyService.stringCommonNamesToArray(
           this.frenchCommonNames
         );
+        this.variety.specy.owner = getOwner(this.isPublicSpecy);
+        this.variety.owner = getOwner(this.isPublicSpecy && this.isPublicVariety);
         this.$emit("submit", this.variety);
       }
     },
     async searchSpecies() {
       this.loadingSearchStep = 1;
-      this.searchSpecy.visibility =
-        this.visibilityValues.length == 1 ? this.visibilityValues[0].value : null;
-      this.searchedSpecies = await specyService.searchSpecies(this.searchSpecy);
+      this.searchSpecy.owner = this.searchSpecyFilter.onAllSpecies ? null : PUBLIC;
+      this.searchSpecy.validity = selectOptionsToValidity(this.searchSpecyFilter.validityValues);
+      try {
+        this.searchedSpecies = await specyService.searchSpecies(this.searchSpecy);
+      } catch (error: any) {
+        const toastOptions = toastService.getToastOptions('Erreur lors de la recherche des espèces', responseService.getApiErrors(error))
+        toastOptions.forEach((toastOption: ToastMessageOptions) => {
+          this.$toast.add(toastOption);
+        });
+      }
       this.loadingSearchStep = 2;
     },
     addUserToVariety() {
@@ -258,10 +316,17 @@ export default defineComponent({
     },
     selectSpecy(specy: Specy) {
       this.variety.specy = specy;
+      this.isPublicSpecy = specy.owner === PUBLIC;
       this.frenchCommonNames = specyService.commonNamesArrayToString(
         specy.frenchCommonNames
       );
     },
+    showValidity(valid: string) {
+      return showValidity(valid);
+    },
+    isAdmin(): boolean {
+      return authorizationService.isAdmin();
+    }
   },
 });
 </script>
