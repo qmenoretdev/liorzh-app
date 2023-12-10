@@ -51,7 +51,7 @@
               </template>
             </Column>
             <Column field="upovCode" header="Code UPOV" />
-            <Column field="valid" header="Valide ?"><template #body="slotProps">
+            <Column field="valid" header="Validée ?"><template #body="slotProps">
                 {{ showValidity(slotProps.data.valid) }}
               </template></Column>
             <Column>
@@ -115,7 +115,8 @@
             <div class="col-12 sm:col-8">
               <Checkbox id="isPublicVariety"
                 v-model="isPublicVariety"
-                :binary="true">
+                :binary="true"
+                :disabled="varietyToUpdate.id !== 0 && varietyToUpdate.owner === publicOwner && !isAdmin()">
               </Checkbox>
             </div>
           </div>
@@ -162,7 +163,7 @@ import ModalFormCommon from "@/components/common/ModalFormCommon.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InlineMessage from "primevue/inlinemessage";
-import { cssClass, getInputClass, showValidity } from "@/utils/style";
+import { cssClass, getInputClass } from "@/utils/style";
 import varietyScript from "@/scripts/VarietyScript";
 import FormMessage from "@/components/common/FormMessage.vue";
 import SpecyForm from "@/components/specy/SpecyForm.vue";
@@ -178,10 +179,11 @@ import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { getOwner } from "@/scripts/CommonScript";
 import { PUBLIC } from "@/utils/constant";
 import Checkbox from "primevue/checkbox";
-import { VALIDITY, getValidity } from "@/utils/validity";
+import { VALIDITY, selectOptionsToValidity, showValidity } from "@/utils/validity";
 import responseService from "@/services/ResponseService";
 import toastService from "@/services/ToastService";
 import type { ToastMessageOptions } from "primevue/toast";
+import authorizationService from "@/services/AuthorizationService";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -232,6 +234,20 @@ export default defineComponent({
           this.variety.specy.frenchCommonNames
         );
         this.isPublicVariety = newVarietyToUpdate.owner === PUBLIC;
+        this.isPublicSpecy = newVarietyToUpdate.specy.owner === PUBLIC;
+      }
+    },
+    visible(newVisibility) {
+      if (newVisibility) {
+        // Reset du formulaire
+        if (this.varietyToUpdate.id === 0) {
+          this.variety = varietyScript.init();
+        }
+        this.searchedSpecies = [] as Specy[];
+        this.searchSpecy = specyScript.initSearch();
+        this.formError = this.initFormError();
+        this.formErrorSpecy = specyScript.initFormError();
+        this.loadingSearchStep = 0;
       }
     },
   },
@@ -245,6 +261,9 @@ export default defineComponent({
     isUpdateMode(): boolean {
       return this.varietyToUpdate && this.varietyToUpdate.id !== 0;
     },
+    publicOwner(): string {
+      return PUBLIC;
+    }
   },
   methods: {
     submit() {
@@ -260,7 +279,7 @@ export default defineComponent({
     async searchSpecies() {
       this.loadingSearchStep = 1;
       this.searchSpecy.owner = this.searchSpecyFilter.onAllSpecies ? null : PUBLIC;
-      this.searchSpecy.validity = getValidity(this.searchSpecyFilter.validityValues);
+      this.searchSpecy.validity = selectOptionsToValidity(this.searchSpecyFilter.validityValues);
       try {
         this.searchedSpecies = await specyService.searchSpecies(this.searchSpecy);
       } catch (error: any) {
@@ -302,10 +321,12 @@ export default defineComponent({
         specy.frenchCommonNames
       );
     },
-    showValidity(valid: boolean) {
+    showValidity(valid: string) {
       return showValidity(valid);
+    },
+    isAdmin(): boolean {
+      return authorizationService.isAdmin();
     }
   },
 });
 </script>
-@/services/toast

@@ -13,6 +13,7 @@
           <Column header="Espèce" :colspan="2"></Column>
           <Column header="Variété" :rowspan="2"></Column>
           <Column header="Description" :rowspan="2"></Column>
+          <Column header="Valide ?" :rowspan="2"></Column>
           <Column header="" :rowspan="2"></Column>
         </Row>
         <Row>
@@ -22,7 +23,10 @@
       </ColumnGroup>
       <Column field="specy.botanicalName">
         <template #body="slotProps">
-          <i>{{ slotProps.data.specy.botanicalName }}</i>
+          <span class="flex align-items-center">
+            <img class="mr-2" src="@/assets/img/visible_24px.png" v-if="slotProps.data.specy.owner === PUBLIC" title="Espèce publique"/>
+            <img class="mr-2" src="@/assets/img/invisible_24px.png" v-else :title="'Espèce privée : ' + slotProps.data.specy.owner"/>
+          <i>{{ slotProps.data.specy.botanicalName }}</i></span>
         </template>
       </Column>
       <Column field="specy.frenchCommonNames">
@@ -32,8 +36,20 @@
           }}
         </template>
       </Column>
-      <Column field="name"></Column>
+      <Column field="name">
+        <template #body="slotProps">
+          <span class="flex align-items-center">
+            <img class="mr-2" src="@/assets/img/visible_24px.png" v-if="slotProps.data.owner === PUBLIC" title="Variété publique"/>
+            <img class="mr-2" src="@/assets/img/invisible_24px.png" v-else :title="'Variété privée : ' + slotProps.data.owner"/>
+          <i>{{ slotProps.data.name }}</i></span>
+        </template>
+      </Column>
       <Column field="description"></Column>
+      <Column field="valid">
+        <template #body="slotProps">
+          {{ showValidity(slotProps.data.valid) }}
+        </template>
+      </Column>
       <Column v-if="editable || addable">
         <template #body="slotProps">
           <Button
@@ -43,7 +59,7 @@
             raised
             rounded
             @click="updateVariety(slotProps.data)"
-            v-if="editable"
+            v-if="editable && (authorizationService.isAdmin() || slotProps.data.owner !== PUBLIC)"
           />
           <Button
             icon="pi pi-trash"
@@ -78,6 +94,9 @@ import Column from "primevue/column";
 import ColumnGroup from "primevue/columngroup";
 import Row from "primevue/row";
 import Button from "primevue/button";
+import authorizationService from "@/services/AuthorizationService";
+import { PUBLIC } from "@/utils/constant";
+import { showValidity } from "@/utils/validity";
 
 const emit = defineEmits(["update", "delete", "addToUser"]);
 defineProps({

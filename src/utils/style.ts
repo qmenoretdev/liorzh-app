@@ -13,13 +13,3 @@ export const cssClass = {
 export function getInputClass(error: string): string {
     return cssClass.input.default + (error !== "" ? " input-invalid" : "");
 }
-
-export function showValidity(valid: boolean | null) {
-    if (valid) {
-      return 'Oui';
-    }
-    if (valid === false) {
-      return 'Non';
-    }
-    return 'Non déterminé'
-  }

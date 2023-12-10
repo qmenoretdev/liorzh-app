@@ -25,7 +25,14 @@
       </div>
       <div class="field grid">
         <label for="onlyValid" class="col-12 sm:col-3"
-          >Variété valide ?</label>
+          >Variété validée ?&nbsp;
+            <div
+              class="pi pi-question-circle"
+              v-tooltip="
+                'La validation d\'une variété est réservée aux Administrateurs. Non déterminé signifie qu\'elle n\'a pas encore été revue'
+              "
+            ></div
+          ></label>
         <div class="col-12 sm:col-8">
           <SelectButton
             v-model="searchVarietyFilter.validityValues"
@@ -61,7 +68,7 @@ import Button from "primevue/button";
 import { PUBLIC } from "@/utils/constant";
 import authorizationService from "@/services/AuthorizationService";
 import Checkbox from "primevue/checkbox";
-import { VALIDITY, getValidity, validityOptions } from "@/utils/validity";
+import { VALIDITY, selectOptionsToValidity, validityOptions } from "@/utils/validity";
 import SelectButton from "primevue/selectbutton";
 
 const emit = defineEmits(["submit"]);
@@ -81,8 +88,8 @@ const searchVariety = ref(varietyScript.initSearch());
 async function submit() {
   searchVariety.value.searchSpecy.owner = searchSpecyFilter.value.onAllSpecies ? null : PUBLIC;
   searchVariety.value.owner = searchVarietyFilter.value.onAllVarieties ? null : PUBLIC;
-  searchVariety.value.searchSpecy.validity = getValidity(searchSpecyFilter.value.validityValues);
-  searchVariety.value.validity = getValidity(searchVarietyFilter.value.validityValues);
+  searchVariety.value.searchSpecy.validity = selectOptionsToValidity(searchSpecyFilter.value.validityValues);
+  searchVariety.value.validity = selectOptionsToValidity(searchVarietyFilter.value.validityValues);
   emit("submit", searchVariety.value);
 }
 </script>

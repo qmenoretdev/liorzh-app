@@ -9,7 +9,7 @@
           <Button
             label="Nouvelle variété"
             icon="pi pi-plus-circle"
-            @click="varietyCreationVisible = true"
+            @click="openCreationForm()"
             style="max-height: 2rem"
           />
         </div>
@@ -122,18 +122,32 @@ onMounted(async () => {
   getUserVarieties();
 });
 
+function closeModal() {
+  varietyCreationVisible.value = false;
+  varietyUpdateVisible.value = false;
+}
+
+function openUpdateForm(variety: Variety) {
+  varietyToUpdate.value = variety;
+  varietyUpdateVisible.value = true;
+  resetForm();
+}
+function openCreationForm() {
+  varietyToUpdate.value = varietyScript.init();
+  varietyCreationVisible.value = true;
+  resetForm();
+}
+function resetForm() {
+  apiErrors.value = [];
+  proposedVariety.value = varietyScript.init();
+}
+
 async function getUserVarieties() {
   loading.value = true;
   const varieties = await varietyService.getVarietiesByCurrentUser();
   varietyStore.setUserVarieties(varieties);
   loading.value = false;
 }
-
-function closeModal() {
-  varietyCreationVisible.value = false;
-  varietyUpdateVisible.value = false;
-}
-
 async function createVariety(variety: Variety) {
   loadingForm.value = true;
   try {
@@ -177,10 +191,6 @@ async function createVariety(variety: Variety) {
     }
   }
   loadingForm.value = false;
-}
-function openUpdateForm(variety: Variety) {
-  varietyToUpdate.value = variety;
-  varietyUpdateVisible.value = true;
 }
 async function updateVariety(variety: Variety) {
   try {
@@ -226,7 +236,7 @@ async function searchVarieties(searchVariety: SearchVariety) {
       toastOptions.forEach((toastOption: ToastMessageOptions) => {
       toast.add(toastOption);
     });
-}
+  }
   loadingSearchVarieties.value = false;
 }
 async function removeVarietyFromUser(variety: Variety) {

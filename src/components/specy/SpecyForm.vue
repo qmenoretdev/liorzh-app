@@ -78,7 +78,8 @@
           <Checkbox id="isPublicSpecy"
             v-model="isPublicSpecyData"
             :binary="true"
-            @input="$emit('update:isPublicSpecy', $event)">
+            @input="$emit('update:isPublicSpecy', $event)"
+            :disabled="readonly">
           </Checkbox>
         </div>
       </div>

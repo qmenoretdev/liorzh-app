@@ -16,7 +16,7 @@
         <span><b>Code UPOV : </b>{{ specy.upovCode }}</span>
       </li>
       <li>
-        <span><b>Valide ? : </b>{{ showValidity(specy.valid) }}</span>
+        <span><b>Validée ? : </b>{{ showValidity(specy.valid) }}</span>
       </li>
     </ul>
   </div>
@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import specyScript from "@/scripts/SpecyScript";
 import specyService from "@/services/SpecyService";
-import { showValidity } from "@/utils/style";
+import { showValidity } from "@/utils/validity";
 
 defineProps({
   specy: {

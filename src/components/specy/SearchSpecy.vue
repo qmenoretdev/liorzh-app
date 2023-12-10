@@ -32,7 +32,14 @@
     </div>
     <div class="field grid">
       <label for="onlyValid" class="col-12 sm:col-3"
-        >Espèce Valide ?</label>
+        >Espèce validée ?&nbsp;
+            <div
+              class="pi pi-question-circle"
+              v-tooltip="
+                'La validation d\'une espèce est réservée aux Administrateurs. Non déterminé signifie qu\'elle n\'a pas encore été revue'
+              "
+            ></div
+          ></label>
       <div class="col-12 sm:col-8">
         <SelectButton
           v-model="validityValuesData"

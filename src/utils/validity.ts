@@ -8,11 +8,18 @@ export const VALIDITY = {
 
 export const validityOptions = [VALIDITY.TRUE, VALIDITY.FALSE, VALIDITY.ND];
 
-export function getValidity(validityValues: SelectOption[] | null): string[] {
+export function selectOptionsToValidity(validityValues: SelectOption[] | null): string[] {
     if (validityValues === null || validityValues.length === 0) return []
     const validity = [] as string[]
     validityValues.forEach((validityValue: SelectOption) => {
         validity.push(validityValue.value);
     });
     return validity;
+}
+
+export function showValidity(validityValue: string): string {
+    if (validityValue === VALIDITY.TRUE.value) return VALIDITY.TRUE.name;
+    if (validityValue === VALIDITY.FALSE.value) return VALIDITY.FALSE.name;
+    if (validityValue === VALIDITY.ND.value) return VALIDITY.ND.name;
+    return '';
 }
