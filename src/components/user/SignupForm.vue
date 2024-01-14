@@ -17,7 +17,7 @@
         <FormMessage :message="formError.nameError" />
       </div>
       <div class="field grid">
-        <label for="email" class="col-12 sm:col-3">Email*</label>
+        <label for="email" class="col-12 sm:col-3">{{ $t('login.email') }}*</label>
         <div class="col-12 sm:col-8">
           <input
             id="email"
@@ -31,7 +31,7 @@
         <FormMessage :message="formError.emailError" />
       </div>
       <div class="field grid">
-        <label for="password" class="col-12 sm:col-3">Password*</label>
+        <label for="password" class="col-12 sm:col-3">{{ $t('login.password') }}*</label>
         <div class="col-12 sm:col-8">
           <input
             id="password"
@@ -45,7 +45,7 @@
         <FormMessage :message="formError.passwordError" />
       </div>
       <div class="field grid">
-        <label for="password" class="col-12 sm:col-3">Repeat Password*</label>
+        <label for="password" class="col-12 sm:col-3">{{ $t('login.repeatPassword') }}*</label>
         <div class="col-12 sm:col-8">
           <input
             id="password"

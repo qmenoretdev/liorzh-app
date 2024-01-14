@@ -2,11 +2,11 @@
   <div class="card p-4 col-12 lg:col-4 mx-auto">
     <div :class="cssClass.container.default">
       <InlineMessage class="col-12 mb-2" v-if="user.id !== 0" severity="success"
-        >Bienvenue {{ user.name }} ! Vous pouvez vous authentifier.</InlineMessage
+        >{{ $t('message.signup.success', { name: user.name }) }}</InlineMessage
       >
-      <h2>Log-in</h2>
+      <h2>{{ $t('login.title') }}</h2>
       <div class="field grid">
-        <label for="email" class="col-12 sm:col-3">Email</label>
+        <label for="email" class="col-12 sm:col-3">{{ $t('login.email') }}</label>
         <div class="col-12 sm:col-8">
           <input
             id="email"
@@ -20,7 +20,7 @@
         <FormMessage :message="formError.usernameError" />
       </div>
       <div class="field grid">
-        <label for="password" class="col-12 sm:col-3">Password</label>
+        <label for="password" class="col-12 sm:col-3">{{ $t('login.password') }}</label>
         <div class="col-12 sm:col-8">
           <input
             id="password"
@@ -43,7 +43,7 @@
       <div class="col-12">
         <Button
           rounded
-          label="Log-in"
+          :label="$t('login.title')"
           @click="login()"
           class="col-4 md:col-3 col-offset-4"
           :loading="loading"
@@ -62,7 +62,8 @@ import { cssClass, getInputClass } from "@/utils/style";
 import { useUserStore } from "@/stores/user";
 import type { ApiError } from "@/models/ApiError";
 import type { FormLogin } from "@/models/FormLogin";
-
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 const userStore = useUserStore();
 
 defineProps({
@@ -94,11 +95,11 @@ function checkForm(): boolean {
   formError.value = initFormError();
   let checkOk = true;
   if (formLogin.value.username === "" || formLogin.value.username == undefined) {
-    formError.value.usernameError = "Email is required";
+    formError.value.usernameError = t('message.login.emailError');
     checkOk = false;
   }
   if (formLogin.value.password === "" || formLogin.value.password == undefined) {
-    formError.value.passwordError = "Password is required";
+    formError.value.passwordError = t('message.login.passwordError');
     checkOk = false;
   }
   return checkOk;
