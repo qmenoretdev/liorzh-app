@@ -14,6 +14,8 @@ import responseService from "@/services/ResponseService";
 import { useUserStore } from "@/stores/user";
 const userStore = useUserStore();
 const authStore = useAuthStore();
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
 const loading = ref(false);
 
@@ -28,7 +30,7 @@ async function login(formLogin: FormLogin) {
     if (error.response && error.response.data && error.response.data.code === 401) {
       apiErrors.value = [
         {
-          message: "Incorrect email or password.",
+          message: t('message.login.error'),
           code: "ERR_CREDENTIALS",
           level: "error",
         },
@@ -51,4 +53,3 @@ async function getUser() {
   }
 }
 </script>
-@/models/form/FormLogin
