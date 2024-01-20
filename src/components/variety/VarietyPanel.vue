@@ -145,9 +145,16 @@ function resetForm() {
 
 async function getUserVarieties() {
   loading.value = true;
+  try {
   const varieties = await varietyService.getVarietiesByCurrentUser();
   varietyStore.setUserVarieties(varieties);
   loading.value = false;
+  } catch(error: any) {
+    const toastOptions = toastService.getToastOptions('Impossible de récupérer vos variétés', responseService.getApiErrors(error))
+      toastOptions.forEach((toastOption: ToastMessageOptions) => {
+      toast.add(toastOption);
+    });
+  }
 }
 async function createVariety(variety: Variety) {
   loadingForm.value = true;

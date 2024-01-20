@@ -1,8 +1,11 @@
 <template>
   <div class="card p-4 col-12 lg:col-4 mx-auto">
     <div :class="cssClass.container.default">
-      <InlineMessage class="col-12 mb-2" v-if="user.id !== 0" severity="success"
+      <InlineMessage class="col-12 mb-2" v-if="justSignup" severity="success"
         >{{ $t('message.signup.success', { name: user.name }) }}</InlineMessage
+      >
+      <InlineMessage class="col-12 mb-2" v-else-if="jwtExpiration" severity="info"
+        >{{ $t('message.login.jwtExpiration', { name: user.name }) }}</InlineMessage
       >
       <h2>{{ $t('login.title') }}</h2>
       <div class="field grid">
@@ -43,9 +46,9 @@
       <div class="col-12">
         <Button
           rounded
-          :label="$t('login.title')"
+          :label="$t('login.to')"
           @click="login()"
-          class="col-4 md:col-3 col-offset-4"
+          class="col-6 md:col-6 col-offset-3"
           :loading="loading"
         />
       </div>
@@ -63,8 +66,12 @@ import { useUserStore } from "@/stores/user";
 import type { ApiError } from "@/models/ApiError";
 import type { FormLogin } from "@/models/FormLogin";
 import { useI18n } from "vue-i18n";
+import {useRoute} from "vue-router";
+import { queryParams } from "@/utils/queryParams";
+
 const { t } = useI18n();
 const userStore = useUserStore();
+const context = useRoute().query.context;
 
 defineProps({
   apiErrors: {
@@ -77,6 +84,8 @@ defineProps({
 const emit = defineEmits(["login"]);
 // If redirection after registration display the welcome message
 const user = computed(() => userStore.user);
+const justSignup = context === queryParams.loginForm.context.signup;
+const jwtExpiration = context === queryParams.loginForm.context.jwtExpiration;
 
 const formLogin = ref({
   username: "",

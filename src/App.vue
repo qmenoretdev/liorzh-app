@@ -21,6 +21,8 @@ import { useUserStore } from "@/stores/user";
 import userService from "@/services/UserService";
 import ConfirmDialog from "primevue/confirmdialog";
 import Toast from "primevue/toast";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
@@ -36,14 +38,14 @@ onMounted(async () => {
 // Menu
 const menuItems = computed(() => [
   {
-    label: "Home",
+    label: t('navigation.home'),
     icon: "pi pi-fw pi-home",
     command: () => {
       router.push({ name: "home" });
     },
   },
   {
-    label: "Workspace",
+    label: t('navigation.workspace'),
     icon: "pi pi-fw pi-desktop",
     command: () => {
       router.push({ name: "workspace" });
@@ -51,10 +53,10 @@ const menuItems = computed(() => [
     visible: authStore.authenticated,
   },
   {
-    label: "Account",
+    label: t('navigation.account'),
     items: [
       {
-        label: "Sign-up",
+        label: t('navigation.signup'),
         icon: "pi pi-fw pi-user",
         command: () => {
           router.push({ name: "signup" });
@@ -62,7 +64,7 @@ const menuItems = computed(() => [
         visible: !authStore.authenticated,
       },
       {
-        label: "Profil",
+        label: t('navigation.profile'),
         icon: "pi pi-fw pi-id-card",
         command: () => {
           router.push({ name: "profil" });
@@ -70,7 +72,7 @@ const menuItems = computed(() => [
         visible: authStore.authenticated,
       },
       {
-        label: "Log-in",
+        label: t('navigation.login'),
         icon: "pi pi-fw pi-sign-in",
         command: () => {
           router.push({ name: "login" });
@@ -78,7 +80,7 @@ const menuItems = computed(() => [
         visible: !authStore.authenticated,
       },
       {
-        label: "Log-out",
+        label: t('navigation.logout'),
         icon: "pi pi-fw pi-sign-out",
         visible: authStore.authenticated,
         command: () => {

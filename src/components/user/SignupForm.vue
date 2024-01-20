@@ -1,7 +1,7 @@
 <template>
   <div class="card p-4 col-12 lg:col-4 mx-auto">
     <div :class="cssClass.container.default">
-      <h2>Sign-up</h2>
+      <h2>{{ $t('signup.title') }}</h2>
       <div class="field grid">
         <label for="name" class="col-12 sm:col-3">Pseudo*</label>
         <div class="col-12 sm:col-8">
@@ -67,9 +67,9 @@
       <div class="col-12">
         <Button
           rounded
-          label="Sign-up"
+          :label="$t('signup.to')"
           @click="register()"
-          class="col-4 md:col-3 col-offset-4"
+          class="col-6 md:col-6 col-offset-3"
           :loading="loading"
         />
       </div>

@@ -11,6 +11,7 @@ import { ref } from "vue";
 import type { ApiError } from "@/models/ApiError";
 import router from "@/router";
 import { useUserStore } from "@/stores/user";
+import { queryParams } from "@/utils/queryParams";
 
 const apiErrors = ref([] as ApiError[]);
 
@@ -24,7 +25,7 @@ async function register(user: User) {
     if (userCreated) {
       const userStore = useUserStore();
       userStore.setUser(userCreated);
-      router.push({ path: "/login" });
+      router.push({ path: "/login", query: { context: queryParams.loginForm.context.signup }});
     }
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
