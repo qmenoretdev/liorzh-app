@@ -16,6 +16,9 @@ export default {
             email: 'Email',
             password: 'Mot de passe',
             repeatPassword: 'Répéter le mot de passe',
+        },
+        variety: {
+            publish: 'Publier la variété'
         }
     },
     en: {
@@ -35,6 +38,9 @@ export default {
             email: 'Email',
             password: 'Password',
             repeatPassword: 'Repeat password',
+        },
+        variety: {
+            publish: 'Publish the variety'
         }
     }
 }

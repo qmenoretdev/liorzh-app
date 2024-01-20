@@ -40,6 +40,10 @@ class VarietyService {
         const response = await axiosJwtProtected.post('varieties/search', searchVariety);
         return response.data;
     }
+    async publishVariety(varietyId: number): Promise<Variety> {
+        const response = await axiosJwtProtected.post(`varieties/${varietyId}/publish`);
+        return response.data;
+    }
 }
 const varietyService = new VarietyService()
 export default varietyService

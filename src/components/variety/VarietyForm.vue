@@ -116,7 +116,7 @@
               <Checkbox id="isPublicVariety"
                 v-model="isPublicVariety"
                 :binary="true"
-                :disabled="varietyToUpdate.id !== 0 && varietyToUpdate.owner === publicOwner && !isAdmin()">
+                :disabled="varietyToUpdate.id !== 0">
               </Checkbox>
             </div>
           </div>

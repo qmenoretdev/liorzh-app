@@ -27,6 +27,7 @@
               :editable="true"
               @delete="removeVarietyFromUser"
               @update="openUpdateForm"
+              @publish="publishVariety"
             />
           </div>
         </div>
@@ -309,6 +310,48 @@ async function deleteVariety(variety: Variety) {
       }
     } catch (error: any) {
       const toastOptions = toastService.getToastOptions('Impossible de supprimer la variété', responseService.getApiErrors(error))
+        toastOptions.forEach((toastOption: ToastMessageOptions) => {
+        toast.add(toastOption);
+      });
+    }
+  };
+  confirm.require(confirmDialog);
+}
+async function publishVariety(variety: Variety) {
+  let confirmDialog = defaultConfirmDialogOptions;
+  confirmDialog.message =
+    "Etes-vous certain de vouloir publier la variété " +
+    variety.specy.botanicalName +
+    " " +
+    variety.name +
+    " ?";
+  confirmDialog.accept = async () => {
+    try {
+      const publishedVariety = await varietyService.publishVariety(variety.id);
+      if (!publishedVariety) {
+        apiErrors.value = [
+          {
+            message:
+              "Impossible de publier la variété " +
+              variety.specy.botanicalName +
+              " " +
+              variety.name,
+            code: "",
+            level: "error",
+          },
+        ];
+      } else {
+        varietyStore.userVarieties.forEach(
+            (varietyIn: Variety, index: number) => {
+              if (varietyIn.id === publishedVariety.id) {
+                varietyStore.userVarieties[index] = publishedVariety;
+                return;
+              }
+            }
+        );
+      }
+    } catch (error: any) {
+      const toastOptions = toastService.getToastOptions('Impossible de publier la variété', responseService.getApiErrors(error))
         toastOptions.forEach((toastOption: ToastMessageOptions) => {
         toast.add(toastOption);
       });

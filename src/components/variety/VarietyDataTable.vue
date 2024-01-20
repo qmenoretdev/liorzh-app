@@ -72,6 +72,17 @@
             v-if="editable"
           />
           <Button
+            icon="pi pi-eye"
+            class="mr-2"
+            text
+            raised
+            rounded
+            severity="info"
+            @click="publishVariety(slotProps.data)"
+            v-if="editable && slotProps.data.owner !== PUBLIC"
+            :title="$t('variety.publish')"
+          />
+          <Button
             icon="pi pi-plus-circle"
             text
             raised
@@ -98,7 +109,7 @@ import authorizationService from "@/services/AuthorizationService";
 import { PUBLIC } from "@/utils/constant";
 import { showValidity } from "@/utils/validity";
 
-const emit = defineEmits(["update", "delete", "addToUser"]);
+const emit = defineEmits(["update", "delete", "addToUser", "publish"]);
 defineProps({
   data: {
     default: [] as Variety[],
@@ -117,6 +128,10 @@ function updateVariety(variety: Variety) {
 
 function deleteVariety(variety: Variety) {
   emit("delete", variety);
+}
+
+function publishVariety(variety: Variety) {
+  emit("publish", variety);
 }
 
 function addVarietyToUser(variety: Variety) {
