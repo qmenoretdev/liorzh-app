@@ -18,28 +18,30 @@ import MonitoringPanel from "@/components/monitoring/MonitoringPanel.vue";
 import VarietyPanel from "@/components/variety/VarietyPanel.vue";
 import SowingPanel from "@/components/sowing/SowingPanel.vue";
 import { useWorkspaceStore } from "@/stores/workspace";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 const workspaceStore = useWorkspaceStore();
 
 const menuItems = computed(() => [
   {
-    label: "Workspace",
+    label: t('navigation.workspace'),
     items: [
       {
-        label: "Suivi",
+        label: t('navigation.monitoring'),
         icon: "pi pi-fw pi-chart-bar",
         command: () => {
           workspaceStore.setSelectedItemNumber(0);
         },
       },
       {
-        label: "Variétés",
+        label: t('navigation.variety'),
         icon: "pi pi-fw pi-apple",
         command: () => {
           workspaceStore.setSelectedItemNumber(1);
         },
       },
       {
-        label: "Semis",
+        label: t('navigation.sowing'),
         icon: "pi pi-fw pi-database",
         command: () => {
           workspaceStore.setSelectedItemNumber(2);

@@ -24,6 +24,7 @@ const apiErrors = ref([] as ApiError[]);
 async function login(formLogin: FormLogin) {
   try {
     loading.value = true;
+    apiErrors.value = [];
     await userService.login(formLogin.username, formLogin.password);
     getUser();
   } catch (error: any) {
