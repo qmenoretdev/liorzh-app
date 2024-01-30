@@ -111,7 +111,7 @@ import authorizationService from "@/services/AuthorizationService";
 import { PUBLIC } from "@/utils/constant";
 import { showValidity } from "@/utils/validity";
 import varietyScript from "@/scripts/VarietyScript";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 
 const emit = defineEmits(["update", "delete", "addToUser", "publish", "selectVariety"]);
 defineProps({
