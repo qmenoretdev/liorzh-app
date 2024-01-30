@@ -9,6 +9,9 @@ export default {
             },
             signup: {
                 success: 'Bienvenue {name} ! Vous pouvez vous authentifier.',
+            },
+            monitoringLine: {
+                chooseVariety: 'Choisir une variété',
             }
         },
         login: {
@@ -23,6 +26,7 @@ export default {
             title: 'Enregistrement'
         },
         variety: {
+            label: 'Variété',
             publish: 'Publier la variété'
         },
         navigation: {
@@ -37,6 +41,32 @@ export default {
             variety: 'Variétés',
             sowing: 'Semis',
         },
+        monitoring: {
+            label: 'Suivi',
+            types: {
+                annual: 'Annuel',
+                biAnnual: 'Bi-annuel',
+                persistent: 'Pérenne',
+                other: 'Autre',
+            }
+        },
+        monitoringLine: {
+            plantNumber: 'Nombre de plants',
+            description: 'Description',
+            ended: 'Terminé ?',
+            planting: 'Mise en terre',
+            harvest: {
+                start: 'Début de la récolte',
+                stop: 'Fin de la récolte',
+                number: 'Quantité',
+                weight: 'Masse (g)'
+            },
+        },
+        sowing: {
+            sowingDate: 'Date de semis',
+            location: 'Condition',
+            year: 'Année'
+        }
     },
     en: {
         message: {
@@ -48,7 +78,10 @@ export default {
             },
             signup: {
                 success: 'Welcome {name} ! You can authenticate.',
-            }
+            },
+            monitoringLine: {
+                chooseVariety: 'Choose a variety',
+            },
         },
         login: {
             to: 'Log-in',

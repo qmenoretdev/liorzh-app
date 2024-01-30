@@ -1,25 +1,26 @@
 import type { Monitoring } from "@/models/Monitoring";
 import { MonitoringType } from "@/models/Monitoring";
-
 class MonitoringScript {
     init(): Monitoring {
         return {
             id: 0,
             name: '',
             enabled: true,
-            type: MonitoringType.ANNUAL.code,
+            type: MonitoringType.ANNUAL,
+            monitoringLines: [],
         }
     }
-    getMonitoringTypeLabel(code: string) {
+    getMonitoringTypeI18nKey(code: string) {
         switch (code) {
-            case MonitoringType.ANNUAL.code:
-                return MonitoringType.ANNUAL.label;
-            case MonitoringType.BI_ANNUAL.code:
-                return MonitoringType.BI_ANNUAL.label;
-            case MonitoringType.PERSISTENT.code:
-                return MonitoringType.PERSISTENT.label;
+            case MonitoringType.PERSISTENT:
+                return 'monitoring.types.persistent'
+            case MonitoringType.ANNUAL:
+                return 'monitoring.types.annual'
+            case MonitoringType.BI_ANNUAL:
+                return 'monitoring.types.biAnnual'
+            default:
+                return 'monitoring.types.other'
         }
-        return code;
     }
 }
 const monitoringScript = new MonitoringScript();

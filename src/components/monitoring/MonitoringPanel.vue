@@ -34,12 +34,18 @@
           <template v-for="monitoring in filteredMonitorings" :key="monitoring.id">
             <MonitoringCard
               :monitoring="monitoring"
-              class="col-12 md:col-6 lg:col-3"
+              class="col-12 md:col-8 lg:col-4"
               @openUpdateMonitoring="openUpdateMonitoring"
               @deleteMonitoring="deleteMonitoring"
               @selectMonitoring="selectMonitoring"
+              @addMonitoringLine="addMonitoringLine"
             />
           </template>
+          <MonitoringLinePanel
+            class="col-12"
+            :monitoringToAddLine="monitoringToAddLine"
+            @resetMonitoringToAddLine="monitoringToAddLine = monitoringScript.init()"
+          />
         </div>
       </div>
       <LoadingSpinner v-else />
@@ -92,6 +98,7 @@ import { useConfirm } from "primevue/useconfirm";
 import monitoringScript from "@/scripts/MonitoringScript";
 import { useWorkspaceStore } from "@/stores/workspace";
 import Checkbox from "primevue/checkbox";
+import MonitoringLinePanel from "@/components/monitoringline/MonitoringLinePanel.vue";
 
 const monitoringStore = useMonitoringStore();
 const plotStore = usePlotStore();
@@ -105,6 +112,7 @@ const monitoringCreationVisible = ref(false);
 const monitoringUpdateVisible = ref(false);
 const confirm = useConfirm();
 const selectedMonitoring = ref(monitoringScript.init());
+const monitoringToAddLine = ref(monitoringScript.init());
 
 const filteredMonitorings = computed(() =>
   filterMonitorings(monitoringStore.monitorings)
@@ -214,6 +222,9 @@ function selectMonitoring(monitoring: Monitoring) {
 function openUpdateMonitoring(monitoring: Monitoring) {
   selectedMonitoring.value = monitoring;
   monitoringUpdateVisible.value = true;
+}
+function addMonitoringLine(monitoring: Monitoring) {
+  monitoringToAddLine.value = monitoring;
 }
 function filterMonitorings(monitorings: Monitoring[]) {
   let filteredMonitorings = [] as Monitoring[];
