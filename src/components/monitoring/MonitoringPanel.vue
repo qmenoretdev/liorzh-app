@@ -99,6 +99,7 @@ import monitoringScript from "@/scripts/MonitoringScript";
 import { useWorkspaceStore } from "@/stores/workspace";
 import Checkbox from "primevue/checkbox";
 import MonitoringLinePanel from "@/components/monitoringline/MonitoringLinePanel.vue";
+import monitoringLineService from "@/services/MonitoringLineService";
 
 const monitoringStore = useMonitoringStore();
 const plotStore = usePlotStore();
@@ -204,7 +205,7 @@ async function deleteMonitoring(id: number) {
   };
   confirm.require(confirmDialog);
 }
-function selectMonitoring(monitoring: Monitoring) {
+async function selectMonitoring(monitoring: Monitoring) {
   if (
     monitoringStore.selectedMonitorings.find(
       (monitoringInStore: Monitoring) => monitoringInStore.id === monitoring.id
@@ -217,6 +218,7 @@ function selectMonitoring(monitoring: Monitoring) {
     );
   } else {
     monitoringStore.selectedMonitorings.push(monitoring);
+    monitoring.monitoringLines = await monitoringLineService.getMonitoringLinesByMonitoring(monitoring.id);
   }
 }
 function openUpdateMonitoring(monitoring: Monitoring) {

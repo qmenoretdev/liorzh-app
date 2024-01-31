@@ -12,6 +12,8 @@ export default {
             },
             monitoringLine: {
                 chooseVariety: 'Choisir une variété',
+                chooseMonitoringError: 'Vous devez choisir un suivi',
+                chooseVarietyError: 'Vous devez choisir une variété',
             }
         },
         login: {
@@ -61,8 +63,12 @@ export default {
                 number: 'Quantité',
                 weight: 'Masse (g)'
             },
+            tooltip: {
+                ended: 'Indique si la récolte est terminée pour cette ligne'
+            }
         },
         sowing: {
+            label: 'Semis',
             sowingDate: 'Date de semis',
             location: 'Condition',
             year: 'Année'
@@ -81,6 +87,8 @@ export default {
             },
             monitoringLine: {
                 chooseVariety: 'Choose a variety',
+                chooseMonitoringError: 'You must choose a monitoring',
+                chooseVarietyError: 'You must choose a variety',
             },
         },
         login: {
@@ -108,6 +116,36 @@ export default {
             monitoring: 'Monitoring',
             variety: 'Varieties',
             sowing: 'Sowing',
+        },
+        monitoring: {
+            label: 'Monitoring',
+            types: {
+                annual: 'Annual',
+                biAnnual: 'Bi-annual',
+                persistent: 'Persistent',
+                other: 'Other',
+            }
+        },
+        monitoringLine: {
+            plantNumber: 'Plants number',
+            description: 'Description',
+            ended: 'End ?',
+            planting: 'Planting',
+            harvest: {
+                start: 'Harvest start',
+                stop: 'Harvest end',
+                number: 'Quantity',
+                weight: 'Mass (g)'
+            },
+            tooltip: {
+                ended: 'Indicates whether harvesting is complete for this row'
+            }
+        },
+        sowing: {
+            label: 'Sowing',
+            sowingDate: 'Sowing date',
+            location: 'Condition',
+            year: 'Year'
         }
     }
 }

@@ -10,7 +10,7 @@
     <div class="grid">
       <div :class="getCssClass.container.default + getFormClass">
         <div class="field grid">
-          <label for="type" class="col-12 sm:col-3">{{ $t('monitoring.label') }}* : </label>
+          <label for="monitoring" class="col-12 sm:col-3">{{ $t('monitoring.label') }}* : </label>
           <div class="col-12 sm:col-4" v-if="monitoringToAddLine.id === 0">
             <select id="monitoring" v-model="monitoringLine.monitoring" :class="getCssClass.input.default">
               <option v-for="monitoringIn in getMonitorings" :key="monitoringIn.id" :value="monitoringIn">
@@ -18,12 +18,13 @@
               </option>
             </select>
           </div>
-          <div class="col-12 sm:col-9">
+          <div class="col-12 sm:col-9" v-else>
             {{ monitoringLine.monitoring.name }} ({{ monitoringLine.monitoring.type }})
           </div>
         </div>
+        <FormMessage class="col-12" :message="formError.monitoringError" v-if="monitoringLine.monitoring.id === 0"/>
         <div class="field grid">
-          <label for="type" class="col-12 sm:col-3">{{ $t('variety.label') }}* : </label>
+          <label class="col-12 sm:col-3">{{ $t('variety.label') }}* : </label>
           <div class="col-12 sm:col-9">
             <template v-if="monitoringLine.variety.id !== 0">
               {{ monitoringLine.variety.specy.botanicalName }} ({{ monitoringLine.variety.name }})
@@ -37,9 +38,33 @@
             </template>
           </div>
         </div>
+        <FormMessage class="col-12" :message="formError.varietyError" v-if="monitoringLine.variety.id === 0" />
+        <div class="field grid" v-if="monitoringLine.variety.id !== 0">
+          <label for="sowing" class="col-12 sm:col-3">{{ $t('sowing.label') }}</label>
+          <div class="col-12 sm:col-4">
+            <select id="sowing" v-model="monitoringLine.sowing" :class="getCssClass.input.default">
+              <option v-for="sowingIn in monitoringLine.variety.sowings" :key="sowingIn.id" :value="sowingIn">
+                {{ sowingIn.sowingDate }} ({{ sowingIn.location }})
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="field grid">
+          <label for="plantNumber" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.plantNumber') }}</label>
+          <div class="col-12 sm:col-8">
+            <input
+              id="plantNumber"
+              placeholder="0"
+              type="number"
+              :class="getCssClass.input.default"
+              v-model.number="monitoringLine.plantNumber"
+              @keyup.enter="submit()"
+            />
+          </div>
+        </div>
         <div class="field grid">
           <label for="description" class="col-12 sm:col-3"
-            >Description</label>
+            >{{ $t('monitoringLine.description') }}</label>
           <div class="col-12 sm:col-8">
             <textarea
               id="description"
@@ -50,15 +75,12 @@
             />
           </div>
         </div>
-        <FormMessage :message="formError.nameError" />
         <div class="field grid">
           <label for="enabled" class="col-12 sm:col-3"
             >{{ $t('monitoringLine.ended') }}&nbsp;
             <div
               class="pi pi-question-circle"
-              v-tooltip="
-                'Indique si la récolte est terminée pour cette ligne'
-              "
+              v-tooltip="$t('monitoringLine.tooltip.ended')"
             ></div
           ></label>
           <div class="col-12 sm:col-8">
@@ -119,6 +141,7 @@ import responseService from "@/services/ResponseService";
 import varietyService from "@/services/VarietyService";
 import type { ToastMessageOptions } from "primevue/toast";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -130,6 +153,13 @@ export default defineComponent({
     monitoringToAddLine: {
       default: monitoringScript.init(),
     },
+  },
+  setup() {
+    const { t } = useI18n();
+    return {
+      chooseMonitoringErrorMessage: t('message.monitoringLine.chooseMonitoringError'),
+      chooseVarietyErrorMessage: t('message.monitoringLine.chooseVarietyError'),
+    };
   },
   data() {
     return {
@@ -168,7 +198,9 @@ export default defineComponent({
   },
   methods: {
     submit() {
-      this.$emit("submit", this.monitoringLine);
+      if (this.checkForm()) {
+        this.$emit("submit", this.monitoringLine);
+      }
     },
     getInputClass(error: string): string {
       return getInputClass(error);
@@ -176,10 +208,20 @@ export default defineComponent({
     checkForm() {
       this.formError = this.initFormError();
       let checkOk = true;
+      if (this.monitoringLine.monitoring.id === 0) {
+        this.formError.monitoringError = this.chooseMonitoringErrorMessage;
+        checkOk = false;
+      }
+      if (this.monitoringLine.variety.id === 0) {
+        this.formError.varietyError = this.chooseVarietyErrorMessage;
+        checkOk = false;
+      }
       return checkOk;
     },
     initFormError(): object {
       return {
+        varietyError: '',
+        monitoringError: '',
       };
     },
     async getUserVarieties() {
@@ -194,8 +236,10 @@ export default defineComponent({
         });
       }
     },
-    selectVariety(variety: Variety) {
+    async selectVariety(variety: Variety) {
       this.monitoringLine.variety = variety;
+      // TODO
+      //this.monitoringLine.variety.sowings = sowingService.getSowingsByVariety();
     }
   },
 });

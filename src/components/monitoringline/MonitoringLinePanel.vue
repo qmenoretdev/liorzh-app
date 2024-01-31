@@ -61,12 +61,6 @@ const emit = defineEmits([
   "resetMonitoringToAddLine",
 ]);
 
-onMounted(() => {
-  for (const monitoring of monitoringStore.selectedMonitorings) {
-    monitoring.monitoringLines = monitoringLineService.getMonitoringLinesByMonitoring(monitoring.id);
-  }
-});
-
 const aggregateMonitoringLines = computed(() => {
   if (props.mode !== MONITORING_LINE_DISPLAY_MODE.AGGREGATE) {
     return []
