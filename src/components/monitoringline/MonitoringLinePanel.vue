@@ -7,7 +7,12 @@
       @click="monitoringLineCreationVisible = true"
     />
     <template v-if="props.mode === MONITORING_LINE_DISPLAY_MODE.AGGREGATE">
-      <MonitoringLineDataTable :monitoringLines="aggregateMonitoringLines" @delete="deleteMonitoringLine" @update="openUpdateMonitoringLine" />
+      <MonitoringLineDataTable
+        class="col-12 mt-2"
+        :monitoringLines="aggregateMonitoringLines"
+        :loading="loading"
+        @delete="deleteMonitoringLine"
+        @update="openUpdateMonitoringLine" />
     </template>
     <MonitoringLineForm
       :header="'Création d\'une ligne de suivi'"
@@ -34,7 +39,7 @@
 <script setup lang="ts">
 import { useMonitoringStore } from "@/stores/monitoring";
 import { MONITORING_LINE_DISPLAY_MODE } from "@/utils/constant"
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import MonitoringLineDataTable from "@/components/monitoringline/MonitoringLineDataTable.vue"
 import monitoringLineService from "@/services/MonitoringLineService"
 import Button from "primevue/button";
@@ -67,7 +72,7 @@ const aggregateMonitoringLines = computed(() => {
   }
   const aggregateMonitoringLines = []
   for (const monitoringLine of monitoringStore.selectedMonitorings) {
-    aggregateMonitoringLines.push(monitoringLine.monitoringLines);
+    aggregateMonitoringLines.push(...monitoringLine.monitoringLines);
   }
   return aggregateMonitoringLines;
 });
@@ -78,7 +83,10 @@ const props = defineProps({
   },
   monitoringToAddLine: {
     default: monitoringScript.init()
-  }
+  },
+  loading: {
+    default: false,
+  },
 });
 
 function closeModal() {

@@ -44,6 +44,7 @@
           <MonitoringLinePanel
             class="col-12"
             :monitoringToAddLine="monitoringToAddLine"
+            :loading="loadingMonitoringLines"
             @resetMonitoringToAddLine="monitoringToAddLine = monitoringScript.init()"
           />
         </div>
@@ -114,6 +115,7 @@ const monitoringUpdateVisible = ref(false);
 const confirm = useConfirm();
 const selectedMonitoring = ref(monitoringScript.init());
 const monitoringToAddLine = ref(monitoringScript.init());
+const loadingMonitoringLines = ref(false);
 
 const filteredMonitorings = computed(() =>
   filterMonitorings(monitoringStore.monitorings)
@@ -217,8 +219,11 @@ async function selectMonitoring(monitoring: Monitoring) {
       )
     );
   } else {
+    loadingMonitoringLines.value = true;
+    monitoring.monitoringLines = []
     monitoringStore.selectedMonitorings.push(monitoring);
     monitoring.monitoringLines = await monitoringLineService.getMonitoringLinesByMonitoring(monitoring.id);
+    loadingMonitoringLines.value = false;
   }
 }
 function openUpdateMonitoring(monitoring: Monitoring) {

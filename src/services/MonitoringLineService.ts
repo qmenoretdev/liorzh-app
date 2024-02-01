@@ -4,7 +4,6 @@ import { axiosJwtProtected } from '@/axios.config';
 class MonitoringLineService {
     async getMonitoringLinesByMonitoring(monitoringId: number): Promise<MonitoringLine[]> {
         const response = await axiosJwtProtected.get(`monitoring-lines?monitoringId=${monitoringId}`);
-        console.log(response)
         return response.data;
     }
     async createMonitoringLine(monitoringLine: MonitoringLine): Promise<MonitoringLine> {

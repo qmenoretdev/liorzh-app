@@ -14,6 +14,7 @@ export default {
                 chooseVariety: 'Choisir une variété',
                 chooseMonitoringError: 'Vous devez choisir un suivi',
                 chooseVarietyError: 'Vous devez choisir une variété',
+                noResult: 'Aucune ligne pour le(s) suivi(s) sélectionné(s)',
             }
         },
         login: {
@@ -89,6 +90,7 @@ export default {
                 chooseVariety: 'Choose a variety',
                 chooseMonitoringError: 'You must choose a monitoring',
                 chooseVarietyError: 'You must choose a variety',
+                noResult: 'No line for selected monitoring(s)',
             },
         },
         login: {
