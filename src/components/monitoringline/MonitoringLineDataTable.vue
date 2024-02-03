@@ -1,11 +1,17 @@
 <template>
   <div>
+    <ContextMenu ref="cm" :model="menuModel" @hide="selectedMonitoringLine = null" />
     <DataTable
       v-if="!loading && monitoringLines.length > 0"
       :value="monitoringLines"
       scrollable
-      scrollHeight="400px"
-      da.3taKey="id"
+      scrollHeight="500px"
+      @row-contextmenu="onRowContextMenu"
+      contextMenu
+      v-model:contextMenuSelection="selectedMonitoringLine"
+      selectionMode="single"
+      :metaKeySelection="false"
+      dataKey="id"
     >
       <Column field="variety" :header="$t('variety.label')">
         <template #body="slotProps">
@@ -25,18 +31,22 @@
       </Column>
       <Column field="sowing" :header="$t('sowing.label')">
         <template #body="slotProps">
-          {{ slotProps.data.sowing === undefined ? '' : slotProps.data.sowing.sowingDate }}
+          {{ slotProps.data.sowing === undefined ? '' : toStrDate(slotProps.data.sowing.sowingDate) }}
         </template>
       </Column>
-      <Column field="planting" :header="$t('monitoringLine.planting')" />
+      <Column field="planting" :header="$t('monitoringLine.planting')">
+        <template #body="slotProps">
+          {{ slotProps.data.planting === undefined ? '' : toStrDate(slotProps.data.planting) }}
+        </template>
+      </Column>
       <Column field="harvest.weight" :header="$t('monitoringLine.harvest.start')">
         <template #body="slotProps">
-          {{ slotProps.data.harvest === undefined ? '' : slotProps.data.harvest.start }}
+          {{ slotProps.data.harvest === undefined ? '' : toStrDate(slotProps.data.harvest.start) }}
         </template>
       </Column>
       <Column field="harvest.weight" :header="$t('monitoringLine.harvest.stop')">
         <template #body="slotProps">
-          {{ slotProps.data.harvest === undefined ? '' : slotProps.data.harvest.stop }}
+          {{ slotProps.data.harvest === undefined ? '' : toStrDate(slotProps.data.harvest.stop) }}
         </template>
       </Column>
       <Column field="description" :header="$t('monitoringLine.description')" />
@@ -55,8 +65,15 @@ import DataTable from "primevue/datatable";
 import { ref } from "vue";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import InlineMessage from "primevue/inlinemessage";
+import { toStrDate } from "@/utils/date";
+import monitoringLineScript from "@/scripts/MonitoringLineScript";
+import ContextMenu from "primevue/contextmenu";
+import { useI18n } from "vue-i18n";
+const { t } = useI18n();
 
-const props = defineProps({
+const emits = defineEmits(['harvest', 'update', 'delete'])
+
+defineProps({
   monitoringLines: {
     default: [] as MonitoringLine[],
   },
@@ -64,4 +81,17 @@ const props = defineProps({
     default: false,
   },
 });
+
+const cm = ref();
+const selectedMonitoringLine = ref(monitoringLineScript.init());
+const menuModel = ref([
+    {label: t('button.harvest'), icon: 'pi pi-fw pi-plus', command: () => emits('harvest', selectedMonitoringLine.value)},
+    {label: t('button.update'), icon: 'pi pi-fw pi-file-edit', command: () => emits('update', selectedMonitoringLine.value)},
+    {label: t('button.delete'), icon: 'pi pi-fw pi-trash', command: () => emits('delete', selectedMonitoringLine.value)}
+]);
+
+function onRowContextMenu(event: any) {
+  cm.value.show(event.originalEvent);
+}
+
 </script>

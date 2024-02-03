@@ -8,9 +8,9 @@ export interface MonitoringLine {
     plantNumber?: number;
     description?: string;
     ended: boolean;
-    planting?: Date;
+    planting?: string;
     variety: Variety;
     monitoring: Monitoring;
-    harvest?: Harvest;
+    harvest: Harvest;
     sowing?: Sowing;
 }

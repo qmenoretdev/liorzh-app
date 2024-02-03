@@ -10,87 +10,42 @@
     <div class="grid">
       <div :class="getCssClass.container.default + getFormClass">
         <div class="field grid">
-          <label for="monitoring" class="col-12 sm:col-3">{{ $t('monitoring.label') }}* : </label>
-          <div class="col-12 sm:col-4" v-if="!isUpdateMode && monitoringToAddLine.id === 0">
-            <select id="monitoring" v-model="monitoringLine.monitoring" :class="getCssClass.input.default">
-              <option v-for="monitoringIn in getMonitorings" :key="monitoringIn.id" :value="monitoringIn">
-                {{ monitoringIn.name }} ({{ monitoringIn.type }})
-              </option>
-            </select>
-          </div>
-          <div class="col-12 sm:col-9" v-else>
-            {{ monitoringLine.monitoring.name }} ({{ monitoringLine.monitoring.type }})
-          </div>
-        </div>
-        <FormMessage class="col-12" :message="formError.monitoringError" v-if="monitoringLine.monitoring.id === 0"/>
-        <div class="field grid">
-          <label class="col-12 sm:col-3">{{ $t('variety.label') }}* : </label>
-          <div class="col-12 sm:col-9">
-            <template v-if="monitoringLine.variety.id !== 0">
-              {{ monitoringLine.variety.specy.botanicalName }} ({{ monitoringLine.variety.name }})
-            </template>
-            <template v-else>
-              <InlineMessage
-                class="col-12 mb-1"
-                :severity="'info'"
-                >{{ $t('message.monitoringLine.chooseVariety') }}</InlineMessage
-              >
-            </template>
-          </div>
-        </div>
-        <FormMessage class="col-12" :message="formError.varietyError" v-if="monitoringLine.variety.id === 0" />
-        <div class="field grid" v-if="monitoringLine.variety.id !== 0">
-          <label for="sowing" class="col-12 sm:col-3">{{ $t('sowing.label') }}</label>
-          <div class="col-12 sm:col-4">
-            <select id="sowing" v-model="monitoringLine.sowing" :class="getCssClass.input.default">
-              <option v-for="sowingIn in monitoringLine.variety.sowings" :key="sowingIn.id" :value="sowingIn">
-                {{ sowingIn.sowingDate }} ({{ sowingIn.location }})
-              </option>
-            </select>
-          </div>
-        </div>
-        <div class="field grid">
-          <label for="plantNumber" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.plantNumber') }}</label>
-          <div class="col-12 sm:col-8">
+          <label for="harvestNumber" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.harvest.addNumber') }}</label>
+          <div class="col-12 sm:col-3">
             <input
-              id="plantNumber"
+              id="harvestNumber"
               placeholder="0"
               type="number"
               :class="getCssClass.input.default"
-              v-model.number="monitoringLine.plantNumber"
+              v-model.number="harvestNumber"
+              @keyup.enter="submit()"
+            />
+          </div>
+          <label for="harvestWeight" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.harvest.addWeight') }}</label>
+          <div class="col-12 sm:col-3">
+            <input
+              id="harvestWeight"
+              placeholder="0"
+              type="number"
+              :class="getCssClass.input.default"
+              v-model.number="harvestWeight"
               @keyup.enter="submit()"
             />
           </div>
         </div>
-        <div class="field grid">
-          <label for="description" class="col-12 sm:col-3"
-            >{{ $t('monitoringLine.description') }}</label>
-          <div class="col-12 sm:col-8">
-            <textarea
-              id="description"
-              placeholder="Un petit jardin très mignon près d'un ruisseau"
-              type="text"
-              :class="getCssClass.input.default"
-              v-model="monitoringLine.description"
-            />
-          </div>
-        </div>
-        <div class="field grid">
-          <label for="enabled" class="col-12 sm:col-3"
-            >{{ $t('monitoringLine.ended') }}&nbsp;
-            <div
-              class="pi pi-question-circle"
-              v-tooltip="$t('monitoringLine.tooltip.ended')"
-            ></div
-          ></label>
-          <div class="col-12 sm:col-8">
-            <Checkbox v-model="monitoringLine.ended" :binary="true" id="enabled">
-            </Checkbox>
-          </div>
+        <div class="col-12">
+          <Button
+            rounded
+            severity="info"
+            :label="$t('button.add')"
+            @click="add()"
+            class="col-4 md:col-3 col-offset-4"
+            :loading="loading"
+          />
         </div>
         <div class="field grid">
           <label for="harvestNumber" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.harvest.number') }}</label>
-          <div class="col-12 sm:col-8">
+          <div class="col-12 sm:col-6">
             <input
               id="harvestNumber"
               placeholder="0"
@@ -103,7 +58,7 @@
         </div>
         <div class="field grid">
           <label for="harvestWeight" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.harvest.weight') }}</label>
-          <div class="col-12 sm:col-8">
+          <div class="col-12 sm:col-6">
             <input
               id="harvestWeight"
               placeholder="0"
@@ -113,22 +68,13 @@
               @keyup.enter="submit()"
             />
           </div>
-        </div>
-        <div class="field grid">
-          <label for="planting" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.planting') }}</label>
-          <div class="col-12 sm:col-8">
-            <input
-              id="planting"
-              type="date"
-              :class="getCssClass.input.default"
-              v-model="monitoringLine.planting"
-              @keyup.enter="submit()"
-            />
-          </div>
+          <label v-if="totalWeightAdd !== 0" class="col-12 sm:col-3 mb-0" :style="getOperationStyle(totalWeightAdd)">
+            {{ getOperation(totalWeightAdd) }}
+          </label>
         </div>
         <div class="field grid">
           <label for="harvestStart" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.harvest.start') }}</label>
-          <div class="col-12 sm:col-8">
+          <div class="col-12 sm:col-6">
             <input
               id="harvestStart"
               type="date"
@@ -140,7 +86,7 @@
         </div>
         <div class="field grid">
           <label for="harvestStop" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.harvest.stop') }}</label>
-          <div class="col-12 sm:col-8">
+          <div class="col-12 sm:col-6">
             <input
               id="harvestStop"
               type="date"
@@ -150,17 +96,6 @@
             />
           </div>
         </div>
-      </div>
-      <div :class="getCssClass.container.default + ' col-6'" v-if="!isUpdateMode">
-        <VarietyDataTable
-          class="col-12"
-          v-if="userVarieties.length > 0"
-          :data="userVarieties"
-          :addable="false"
-          :editable="false"
-          @selectVariety="selectVariety"
-        />
-        <LoadingSpinner v-else-if="loadingVarieties" />
       </div>
       <InlineMessage
         class="col-12 mb-1"
@@ -198,10 +133,6 @@ import { useMonitoringStore } from "@/stores/monitoring";
 import type { Monitoring } from "@/models/Monitoring";
 import VarietyDataTable from "@/components/variety/VarietyDataTable.vue";
 import type { Variety } from "@/models/Variety";
-import toastService from "@/services/ToastService";
-import responseService from "@/services/ResponseService";
-import varietyService from "@/services/VarietyService";
-import type { ToastMessageOptions } from "primevue/toast";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { useI18n } from "vue-i18n";
 import { toInputDate } from "@/utils/date";
@@ -230,11 +161,12 @@ export default defineComponent({
       formError: this.initFormError(),
       customType: "",
       loadingVarieties: false,
-      userVarieties: [] as Variety[]
+      userVarieties: [] as Variety[],
+      harvestNumber: 0 as number,
+      harvestWeight: 0 as number,
+      totalNumberAdd: 0 as number,
+      totalWeightAdd: 0 as number,
     };
-  },
-  mounted() {
-    this.getUserVarieties();
   },
   watch: {
     monitoringLineToUpdate(newMonitoringLineToUpdate) {
@@ -276,45 +208,49 @@ export default defineComponent({
         this.$emit("submit", this.monitoringLine);
       }
     },
+    reset() {
+      this.harvestNumber = 0;
+      this.harvestWeight = 0;
+      this.totalNumberAdd = 0;
+      this.totalWeightAdd = 0;
+    },
+    add() {
+      if (this.monitoringLine.harvest === undefined) {
+        this.monitoringLine.harvest = monitoringLineScript.initHarvest();
+      }
+      if (this.monitoringLine.harvest.number === undefined) {
+        this.monitoringLine.harvest.number = 0;
+      }
+      if (this.monitoringLine.harvest.weight === undefined) {
+        this.monitoringLine.harvest.weight = 0;
+      }
+      this.monitoringLine.harvest.number += Number(this.harvestNumber);
+      this.monitoringLine.harvest.weight += Number(this.harvestWeight);
+      this.totalNumberAdd += Number(this.harvestNumber);
+      this.totalWeightAdd += Number(this.harvestWeight)
+      this.harvestNumber = 0;
+      this.harvestWeight = 0;
+    },
     getInputClass(error: string): string {
       return getInputClass(error);
     },
     checkForm() {
       this.formError = this.initFormError();
       let checkOk = true;
-      if (this.monitoringLine.monitoring.id === 0) {
-        this.formError.monitoringError = this.chooseMonitoringErrorMessage;
-        checkOk = false;
-      }
-      if (this.monitoringLine.variety.id === 0) {
-        this.formError.varietyError = this.chooseVarietyErrorMessage;
-        checkOk = false;
-      }
       return checkOk;
     },
     initFormError(): object {
-      return {
-        varietyError: '',
-        monitoringError: '',
-      };
+      return {};
     },
-    async getUserVarieties() {
-      this.loadingVarieties = true;
-      try {
-        this.userVarieties = await varietyService.getVarietiesByCurrentUser();
-        this.loadingVarieties = false;
-      } catch(error: any) {
-        const toastOptions = toastService.getToastOptions('Impossible de récupérer vos variétés', responseService.getApiErrors(error))
-          toastOptions.forEach((toastOption: ToastMessageOptions) => {
-          this.$toast.add(toastOption);
-        });
-      }
+    getOperation(total: number): string {
+      if (total === 0) return '';
+      return total > 0 ? '+' + total : total.toString()
     },
-    async selectVariety(variety: Variety) {
-      this.monitoringLine.variety = variety;
-      // TODO
-      //this.monitoringLine.variety.sowings = sowingService.getSowingsByVariety();
-    }
+    getOperationStyle(total: number): string {
+      if (total === 0) return '';
+      return total > 0 ? 'color: green' : 'color: red'
+    },
   },
 });
 </script>
+  

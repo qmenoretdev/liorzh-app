@@ -9,13 +9,13 @@ export default defineComponent({
       default: false,
     },
     header: {
-      default: "Créer",
+      default: "Create",
     },
     apiErrors: {
       default: [] as ApiError[],
     },
     submitButtonLabel: {
-      default: "Créer",
+      default: 'Create',
     },
     loading: {
       default: false,

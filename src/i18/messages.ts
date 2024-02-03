@@ -62,17 +62,30 @@ export default {
                 start: 'Début de la récolte',
                 stop: 'Fin de la récolte',
                 number: 'Quantité',
-                weight: 'Masse (g)'
+                weight: 'Masse (g)',
+                addNumber: 'Quantité à ajouter',
+                addWeight: 'Masse à ajouter (g)',
+                updateTitle: 'Mise à jour de la récolte',
             },
             tooltip: {
                 ended: 'Indique si la récolte est terminée pour cette ligne'
-            }
+            },
+            updateTtile: 'Modification d\'une ligne de suivi',
+            createTitle: 'Création d\'une ligne de suivi',
         },
         sowing: {
             label: 'Semis',
             sowingDate: 'Date de semis',
             location: 'Condition',
             year: 'Année'
+        },
+        button: {
+            update: 'Modifier',
+            delete: 'Supprimer',
+            harvest: 'Récolte',
+            register: 'Enregistrer',
+            add: 'Ajouter',
+            create: 'Créer',
         }
     },
     en: {
@@ -137,17 +150,30 @@ export default {
                 start: 'Harvest start',
                 stop: 'Harvest end',
                 number: 'Quantity',
-                weight: 'Mass (g)'
+                weight: 'Mass (g)',
+                addNumber: 'Quantity to add',
+                addWeight: 'Mass to add (g)',
+                updateTitle: 'Harvest update',
             },
             tooltip: {
                 ended: 'Indicates whether harvesting is complete for this row'
-            }
+            },
+            updateTtile: 'Update a monitoring line',
+            createTitle: 'Create a monitoring line',
         },
         sowing: {
             label: 'Sowing',
             sowingDate: 'Sowing date',
             location: 'Condition',
             year: 'Year'
+        },        
+        button: {
+            update: 'Update',
+            delete: 'Delete',
+            harvest: 'Harvest',
+            register: 'Register',
+            add: 'Add',
+            create: 'Create',
         }
     }
 }

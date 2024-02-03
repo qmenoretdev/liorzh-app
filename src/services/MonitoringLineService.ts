@@ -1,5 +1,6 @@
 import type { MonitoringLine } from "@/models/MonitoringLine";
 import { axiosJwtProtected } from '@/axios.config';
+import { toDateTime } from "@/utils/date";
 
 class MonitoringLineService {
     async getMonitoringLinesByMonitoring(monitoringId: number): Promise<MonitoringLine[]> {
@@ -11,17 +12,21 @@ class MonitoringLineService {
             plantNumber: monitoringLine.plantNumber,
             ended: monitoringLine.ended,
             description: monitoringLine.description,
+            planting: toDateTime(monitoringLine.planting),
             harvest: {
                 number: monitoringLine.harvest?.number,
                 weight: monitoringLine.harvest?.weight,
-                start: monitoringLine.harvest?.start,
-                stop: monitoringLine.harvest?.stop,
+                start: toDateTime(monitoringLine.harvest?.start),
+                stop: toDateTime(monitoringLine.harvest?.stop),
             },
             monitoring: {
                 id: monitoringLine.monitoring.id,
             },
             variety: {
                 id: monitoringLine.variety.id,
+            },
+            sowing: {
+                id: monitoringLine.sowing?.id,
             }
         } as MonitoringLine);
         return response.data;
@@ -31,12 +36,17 @@ class MonitoringLineService {
             plantNumber: monitoringLine.plantNumber,
             ended: monitoringLine.ended,
             description: monitoringLine.description,
+            planting: toDateTime(monitoringLine.planting),
             harvest: {
+                id: monitoringLine.harvest?.id,
                 number: monitoringLine.harvest?.number,
                 weight: monitoringLine.harvest?.weight,
-                start: monitoringLine.harvest?.start,
-                stop: monitoringLine.harvest?.stop,
+                start: toDateTime(monitoringLine.harvest?.start),
+                stop: toDateTime(monitoringLine.harvest?.stop),
             },
+            sowing: {
+                id: monitoringLine.sowing?.id,
+            }
         } as MonitoringLine);
         return response.status === 200;
     }

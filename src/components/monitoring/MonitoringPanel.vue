@@ -62,6 +62,7 @@
         :visible="monitoringCreationVisible"
         :apiErrors="apiErrors"
         :loading="loadingForm"
+        :submitButtonLabel="$t('button.create')"
         @submit="createMonitoring"
         @close="closeModal()"
       />
@@ -71,7 +72,7 @@
         :visible="monitoringUpdateVisible"
         :apiErrors="apiErrors"
         :loading="loadingForm"
-        :submitButtonLabel="'Modifier'"
+        :submitButtonLabel="$t('button.update')"
         @submit="updateMonitoring"
         @close="closeModal()"
       />

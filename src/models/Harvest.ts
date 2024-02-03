@@ -1,7 +1,7 @@
 export interface Harvest {
     id: number;
-    start?: Date;
-    stop?: Date;
+    start?: string;
+    stop?: string;
     number?: number;
     weight?: number;
 }

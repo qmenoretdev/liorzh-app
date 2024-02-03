@@ -12,24 +12,37 @@
         :monitoringLines="aggregateMonitoringLines"
         :loading="loading"
         @delete="deleteMonitoringLine"
-        @update="openUpdateMonitoringLine" />
+        @update="openUpdateMonitoringLine"
+        @harvest="openHarvestMonitoringLine" />
     </template>
     <MonitoringLineForm
-      :header="'Création d\'une ligne de suivi'"
+      :header="$t('monitoringLine.createTitle')"
       :visible="monitoringLineCreationVisible || monitoringToAddLine.id !== 0"
       :apiErrors="apiErrors"
       :loading="loadingForm"
       :monitoringToAddLine="monitoringToAddLine"
+      :submitButtonLabel="$t('button.create')"
       @submit="createMonitoringLine"
       @close="closeModal()"
     />
     <MonitoringLineForm
-      :header="'Modification d\'une ligne de suivi'"
+      :header="$t('monitoringLine.updateTitle')"
       :monitoringLineToUpdate="selectedMonitoringLine"
       :visible="monitoringLineUpdateVisible"
       :apiErrors="apiErrors"
       :loading="loadingForm"
-      :submitButtonLabel="'Modifier'"
+      :submitButtonLabel="$t('button.update')"
+      @submit="updateMonitoringLine"
+      @close="closeModal()"
+    />
+    <HarvestForm
+      ref="harvestFormRef"
+      :header="$t('monitoringLine.harvest.updateTitle')"
+      :monitoringLineToUpdate="selectedMonitoringLine"
+      :visible="monitoringLineHarvestVisible"
+      :apiErrors="apiErrors"
+      :loading="loadingForm"
+      :submitButtonLabel="$t('button.register')"
       @submit="updateMonitoringLine"
       @close="closeModal()"
     />
@@ -52,12 +65,16 @@ import responseService from "@/services/ResponseService";
 import monitoringLineScript from "@/scripts/MonitoringLineScript";
 import MonitoringLineForm from "./MonitoringLineForm.vue";
 import monitoringScript from "@/scripts/MonitoringScript";
+import HarvestForm from "@/components/monitoringline/HarvestForm.vue";
+
+const harvestFormRef = ref();
 
 const monitoringStore = useMonitoringStore();
 const confirm = useConfirm();
 
 const monitoringLineCreationVisible = ref(false);
 const monitoringLineUpdateVisible = ref(false);
+const monitoringLineHarvestVisible = ref(false);
 const apiErrors = ref([] as ApiError[]);
 const loadingForm = ref(false);
 const selectedMonitoringLine = ref(monitoringLineScript.init());
@@ -92,7 +109,9 @@ const props = defineProps({
 function closeModal() {
   monitoringLineCreationVisible.value = false;
   monitoringLineUpdateVisible.value = false;
+  monitoringLineHarvestVisible.value = false;
   emit("resetMonitoringToAddLine");
+  harvestFormRef.value.reset();
 }
 async function createMonitoringLine(monitoringLine: MonitoringLine) {
   try {
@@ -121,22 +140,24 @@ async function updateMonitoringLine(monitoringLine: MonitoringLine) {
     const isUpdated = await monitoringLineService.updateMonitoringLine(monitoringLine);
     if (!isUpdated) {
       apiErrors.value = [
-        { message: "Impossible de modifier le suivi", code: "", level: "error" },
+        { message: "Impossible de modifier la ligne de suivi", code: "", level: "error" },
       ];
     } else {
       monitoringLineUpdateVisible.value = false;
+      monitoringLineHarvestVisible.value = false;
+      harvestFormRef.value.reset();
     }
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
   }
   loadingForm.value = false;
 }
-async function deleteMonitoringLine(id: number) {
+async function deleteMonitoringLine(monitoringLine: MonitoringLine) {
   let confirmDialog = defaultConfirmDialogOptions;
   confirmDialog.message = "Etes-vous certain de vouloir supprimer cette ligne ?";
   confirmDialog.accept = async () => {
     try {
-      const isDeleted = await monitoringLineService.deleteMonitoringLine(id);
+      const isDeleted = await monitoringLineService.deleteMonitoringLine(monitoringLine.id);
       if (!isDeleted) {
         apiErrors.value = [
           {
@@ -147,10 +168,17 @@ async function deleteMonitoringLine(id: number) {
         ];
       } else {
         monitoringStore.selectedMonitorings.forEach(monitoring => {
-          monitoring.monitoringLines = monitoring.monitoringLines?.filter(monitoringLine => {
-            monitoringLine.id !== id
-          })
+          if (monitoring.id === monitoringLine.monitoring.id) {
+            monitoring.monitoringLines = monitoring.monitoringLines?.filter(
+              monitoringLineIn => monitoringLineIn.id !== monitoringLine.id);
+          }
         });
+        monitoringStore.monitorings.forEach(monitoring => {
+          if (monitoring.id === monitoringLine.monitoring.id) {
+            monitoring.monitoringLines = monitoring.monitoringLines?.filter(
+              monitoringLineIn => monitoringLineIn.id !== monitoringLine.id);
+          }
+        })
       }
     } catch (error: any) {
       apiErrors.value = responseService.getApiErrors(error);
@@ -161,5 +189,9 @@ async function deleteMonitoringLine(id: number) {
 function openUpdateMonitoringLine(monitoringLine: MonitoringLine) {
   selectedMonitoringLine.value = monitoringLine;
   monitoringLineUpdateVisible.value = true;
+}
+function openHarvestMonitoringLine(monitoringLine: MonitoringLine) {
+  selectedMonitoringLine.value = monitoringLine;
+  monitoringLineHarvestVisible.value = true;
 }
 </script>
