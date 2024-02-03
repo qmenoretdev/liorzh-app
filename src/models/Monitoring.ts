@@ -1,28 +1,17 @@
+import type { MonitoringLine } from "./MonitoringLine";
 import type { Plot } from "./Plot";
-
 export interface Monitoring {
     id: number;
     type: string;
     name: string;
     enabled: boolean;
     plot?: Plot;
+    monitoringLines?: MonitoringLine[]; 
 }
 
 export const MonitoringType = {
-    PERSISTENT: {
-        code: 'persistent',
-        label: 'Pérenne',
-    },
-    BI_ANNUAL: {
-       code: 'bi-annual',
-       label: 'Bi-annuel'
-    },
-    ANNUAL: {
-        code: 'annual',
-        label: 'Annuel'
-    },
-    OTHER: {
-        code: 'other',
-        label: 'Autre',
-    }
+    PERSISTENT: 'persistent',
+    BI_ANNUAL: 'bi-annual',
+    ANNUAL: 'annual',
+    OTHER: 'other',
 }

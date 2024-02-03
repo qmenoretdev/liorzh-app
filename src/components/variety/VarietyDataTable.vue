@@ -7,6 +7,8 @@
       selectionMode="single"
       :metaKeySelection="false"
       dataKey="id"
+      v-model:selection="selectedVariety"
+      @row-select="onSelect"
     >
       <ColumnGroup type="header">
         <Row>
@@ -108,8 +110,10 @@ import Button from "primevue/button";
 import authorizationService from "@/services/AuthorizationService";
 import { PUBLIC } from "@/utils/constant";
 import { showValidity } from "@/utils/validity";
+import varietyScript from "@/scripts/VarietyScript";
+import { ref } from "vue";
 
-const emit = defineEmits(["update", "delete", "addToUser", "publish"]);
+const emit = defineEmits(["update", "delete", "addToUser", "publish", "selectVariety"]);
 defineProps({
   data: {
     default: [] as Variety[],
@@ -121,6 +125,12 @@ defineProps({
     default: false,
   },
 });
+
+const selectedVariety = ref(varietyScript.init())
+
+function onSelect() {
+  emit("selectVariety", selectedVariety.value)
+}
 
 function updateVariety(variety: Variety) {
   emit("update", variety);
@@ -137,4 +147,5 @@ function publishVariety(variety: Variety) {
 function addVarietyToUser(variety: Variety) {
   emit("addToUser", variety);
 }
+
 </script>

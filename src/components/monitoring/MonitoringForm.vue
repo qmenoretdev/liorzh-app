@@ -33,8 +33,8 @@
           <label for="type" class="col-12 sm:col-3">Type</label>
           <div class="col-12 sm:col-4">
             <select id="type" v-model="proposeType" :class="getCssClass.input.default">
-              <option v-for="type in monitoringTypes" :key="type.code" :value="type.code">
-                {{ type.label }}
+              <option v-for="type in monitoringTypes" :key="type" :value="type">
+                {{ getMonitoringTypeLabel(type) }}
               </option>
             </select>
           </div>
@@ -97,6 +97,7 @@ import monitoringScript from "@/scripts/MonitoringScript";
 import { MonitoringType } from "@/models/Monitoring";
 import FormMessage from "@/components/common/FormMessage.vue";
 import Checkbox from "primevue/checkbox";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -116,7 +117,7 @@ export default defineComponent({
         MonitoringType.PERSISTENT,
         MonitoringType.OTHER,
       ],
-      proposeType: MonitoringType.ANNUAL.code,
+      proposeType: MonitoringType.ANNUAL,
       customType: "",
     };
   },
@@ -124,14 +125,14 @@ export default defineComponent({
     monitoringToUpdate(newMonitoringToUpdate) {
       this.monitoring = newMonitoringToUpdate;
       if (
-        this.monitoring.type === MonitoringType.ANNUAL.code ||
-        this.monitoring.type === MonitoringType.BI_ANNUAL.code ||
-        this.monitoring.type === MonitoringType.PERSISTENT.code
+        this.monitoring.type === MonitoringType.ANNUAL ||
+        this.monitoring.type === MonitoringType.BI_ANNUAL ||
+        this.monitoring.type === MonitoringType.PERSISTENT
       ) {
         this.proposeType = this.monitoring.type;
       } else {
         this.customType = this.monitoring.type;
-        this.proposeType = MonitoringType.OTHER.code;
+        this.proposeType = MonitoringType.OTHER;
       }
     },
   },
@@ -143,7 +144,7 @@ export default defineComponent({
   methods: {
     submit() {
       this.monitoring.type =
-        this.proposeType === MonitoringType.OTHER.code
+        this.proposeType === MonitoringType.OTHER
           ? (this.monitoring.type = this.customType)
           : (this.monitoring.type = this.proposeType);
       this.$emit("submit", this.monitoring);
@@ -166,6 +167,11 @@ export default defineComponent({
         typeError: "",
       };
     },
+    getMonitoringTypeLabel(code: string) {
+      const { t } = useI18n();
+      const key = monitoringScript.getMonitoringTypeI18nKey(code);
+      return t(key);
+    }
   },
 });
 </script>

@@ -34,12 +34,19 @@
           <template v-for="monitoring in filteredMonitorings" :key="monitoring.id">
             <MonitoringCard
               :monitoring="monitoring"
-              class="col-12 md:col-6 lg:col-3"
+              class="col-12 md:col-8 lg:col-4"
               @openUpdateMonitoring="openUpdateMonitoring"
               @deleteMonitoring="deleteMonitoring"
               @selectMonitoring="selectMonitoring"
+              @addMonitoringLine="addMonitoringLine"
             />
           </template>
+          <MonitoringLinePanel
+            class="col-12"
+            :monitoringToAddLine="monitoringToAddLine"
+            :loading="loadingMonitoringLines"
+            @resetMonitoringToAddLine="monitoringToAddLine = monitoringScript.init()"
+          />
         </div>
       </div>
       <LoadingSpinner v-else />
@@ -55,6 +62,7 @@
         :visible="monitoringCreationVisible"
         :apiErrors="apiErrors"
         :loading="loadingForm"
+        :submitButtonLabel="$t('button.create')"
         @submit="createMonitoring"
         @close="closeModal()"
       />
@@ -64,7 +72,7 @@
         :visible="monitoringUpdateVisible"
         :apiErrors="apiErrors"
         :loading="loadingForm"
-        :submitButtonLabel="'Modifier'"
+        :submitButtonLabel="$t('button.update')"
         @submit="updateMonitoring"
         @close="closeModal()"
       />
@@ -92,6 +100,8 @@ import { useConfirm } from "primevue/useconfirm";
 import monitoringScript from "@/scripts/MonitoringScript";
 import { useWorkspaceStore } from "@/stores/workspace";
 import Checkbox from "primevue/checkbox";
+import MonitoringLinePanel from "@/components/monitoringline/MonitoringLinePanel.vue";
+import monitoringLineService from "@/services/MonitoringLineService";
 
 const monitoringStore = useMonitoringStore();
 const plotStore = usePlotStore();
@@ -105,6 +115,8 @@ const monitoringCreationVisible = ref(false);
 const monitoringUpdateVisible = ref(false);
 const confirm = useConfirm();
 const selectedMonitoring = ref(monitoringScript.init());
+const monitoringToAddLine = ref(monitoringScript.init());
+const loadingMonitoringLines = ref(false);
 
 const filteredMonitorings = computed(() =>
   filterMonitorings(monitoringStore.monitorings)
@@ -196,7 +208,7 @@ async function deleteMonitoring(id: number) {
   };
   confirm.require(confirmDialog);
 }
-function selectMonitoring(monitoring: Monitoring) {
+async function selectMonitoring(monitoring: Monitoring) {
   if (
     monitoringStore.selectedMonitorings.find(
       (monitoringInStore: Monitoring) => monitoringInStore.id === monitoring.id
@@ -208,12 +220,19 @@ function selectMonitoring(monitoring: Monitoring) {
       )
     );
   } else {
+    loadingMonitoringLines.value = true;
+    monitoring.monitoringLines = []
     monitoringStore.selectedMonitorings.push(monitoring);
+    monitoring.monitoringLines = await monitoringLineService.getMonitoringLinesByMonitoring(monitoring.id);
+    loadingMonitoringLines.value = false;
   }
 }
 function openUpdateMonitoring(monitoring: Monitoring) {
   selectedMonitoring.value = monitoring;
   monitoringUpdateVisible.value = true;
+}
+function addMonitoringLine(monitoring: Monitoring) {
+  monitoringToAddLine.value = monitoring;
 }
 function filterMonitorings(monitorings: Monitoring[]) {
   let filteredMonitorings = [] as Monitoring[];
