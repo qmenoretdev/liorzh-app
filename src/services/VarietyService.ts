@@ -1,4 +1,5 @@
 import { axiosJwtProtected } from '@/axios.config';
+import type { Sowing } from '@/models/Sowing';
 import type { Specy } from '@/models/Specy';
 import type { Variety } from '@/models/Variety';
 import type { SearchVariety } from '@/models/request/search/SearchVariety';

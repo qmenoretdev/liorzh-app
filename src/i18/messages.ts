@@ -11,11 +11,19 @@ export default {
                 success: 'Bienvenue {name} ! Vous pouvez vous authentifier.',
             },
             monitoringLine: {
-                chooseVariety: 'Choisir une variété',
                 chooseMonitoringError: 'Vous devez choisir un suivi',
-                chooseVarietyError: 'Vous devez choisir une variété',
                 noResult: 'Aucune ligne pour le(s) suivi(s) sélectionné(s)',
-            }
+            },
+            sowing: {
+                none: 'Vous n\'avez pas encore de semis',
+                getError: 'Impossible de récupérer vos semis',
+                createError: 'Impossible de créer le semis',
+                updateError: 'Impossible de modifier le semis',
+                deleteError: 'Impossible de supprimer le semis',
+                sowingDateError: 'Vous devez saisir une date de semis',
+            },
+            chooseVarietyError: 'Vous devez choisir une variété',
+            chooseVariety: 'Choisir une variété',
         },
         login: {
             to: 'Connecter',
@@ -70,14 +78,25 @@ export default {
             tooltip: {
                 ended: 'Indique si la récolte est terminée pour cette ligne'
             },
-            updateTtile: 'Modification d\'une ligne de suivi',
+            updateTitle: 'Modification d\'une ligne de suivi',
             createTitle: 'Création d\'une ligne de suivi',
         },
         sowing: {
+            title: 'Mes semis',
             label: 'Semis',
             sowingDate: 'Date de semis',
             location: 'Condition',
-            year: 'Année'
+            year: 'Année de production',
+            createTitle: 'Création d\'un semis',
+            updateTitle: 'Modification d\'un semis',
+        },
+        location: {
+            locationOptions: {
+              outside: 'Exterieur',
+              greenhouse: 'Serre',
+              tunnel: 'Tunnel',
+              other: 'Autre',
+            },
         },
         button: {
             update: 'Modifier',
@@ -85,6 +104,7 @@ export default {
             harvest: 'Récolte',
             register: 'Enregistrer',
             add: 'Ajouter',
+            addSowing: 'Ajouter un semis',
             create: 'Créer',
         }
     },
@@ -100,11 +120,20 @@ export default {
                 success: 'Welcome {name} ! You can authenticate.',
             },
             monitoringLine: {
-                chooseVariety: 'Choose a variety',
                 chooseMonitoringError: 'You must choose a monitoring',
                 chooseVarietyError: 'You must choose a variety',
                 noResult: 'No line for selected monitoring(s)',
             },
+            sowing: {
+                none: 'You don\'t have any sowing get',
+                getError: 'Impossible to get your sowings',
+                createError: 'Impossible to create this sowing',
+                updateError: 'Impossible to update this sowing',
+                deleteError: 'Impossible to delete the sowing',
+                sowingDateError: 'You must set a sowing date',
+            },
+            chooseVarietyError: 'You must choose a variety',
+            chooseVariety: 'Choose a variety',
         },
         login: {
             to: 'Log-in',
@@ -162,17 +191,29 @@ export default {
             createTitle: 'Create a monitoring line',
         },
         sowing: {
+            title: 'My sowings',
             label: 'Sowing',
             sowingDate: 'Sowing date',
             location: 'Condition',
-            year: 'Year'
-        },        
+            year: 'Year',
+            createTitle: 'Creation of a sowing',
+            updateTitle: 'Update of a sowing',
+        },       
+        location: {
+            locationOptions: {
+              outside: 'Outside',
+              greenhouse: 'Greenhouse',
+              tunnel: 'Tunnel',
+              other: 'Other',
+            },
+        }, 
         button: {
             update: 'Update',
             delete: 'Delete',
             harvest: 'Harvest',
             register: 'Register',
             add: 'Add',
+            addSowing: 'Add a sowing',
             create: 'Create',
         }
     }
