@@ -33,7 +33,7 @@
               <InlineMessage
                 class="col-12 mb-1"
                 :severity="'info'"
-                >{{ $t('message.monitoringLine.chooseVariety') }}</InlineMessage
+                >{{ $t('message.chooseVariety') }}</InlineMessage
               >
             </template>
           </div>
@@ -41,10 +41,20 @@
         <FormMessage class="col-12" :message="formError.varietyError" v-if="monitoringLine.variety.id === 0" />
         <div class="field grid" v-if="monitoringLine.variety.id !== 0">
           <label for="sowing" class="col-12 sm:col-3">{{ $t('sowing.label') }}</label>
-          <div class="col-12 sm:col-4">
+          <div class="col-12 sm:col-4" v-if="isUpdateMode && monitoringLineToUpdate.sowing !== undefined && monitoringLineToUpdate.sowing.id !== 0">
+            <select id="sowing" v-model="monitoringLine.sowing" :class="getCssClass.input.default">
+              <option :value="monitoringLineToUpdate.sowing">
+                {{ toStrDate(monitoringLineToUpdate.sowing.sowingDate) }} ({{ monitoringLineToUpdate.sowing.location }})
+              </option>
+              <option v-for="sowingIn in filterSowings(monitoringLineToUpdate.sowing.id)" :key="sowingIn.id" :value="sowingIn">
+                {{ toStrDate(sowingIn.sowingDate) }} ({{ sowingIn.location }})
+              </option>
+            </select>
+          </div>
+          <div class="col-12 sm:col-4" v-else> 
             <select id="sowing" v-model="monitoringLine.sowing" :class="getCssClass.input.default">
               <option v-for="sowingIn in monitoringLine.variety.sowings" :key="sowingIn.id" :value="sowingIn">
-                {{ sowingIn.sowingDate }} ({{ sowingIn.location }})
+                {{ toStrDate(sowingIn.sowingDate) }} ({{ sowingIn.location }})
               </option>
             </select>
           </div>
@@ -204,7 +214,9 @@ import varietyService from "@/services/VarietyService";
 import type { ToastMessageOptions } from "primevue/toast";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { useI18n } from "vue-i18n";
-import { toInputDate } from "@/utils/date";
+import { toInputDate, toStrDate } from "@/utils/date";
+import sowingService from "@/services/SowingService";
+import type { Sowing } from "@/models/Sowing";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -221,7 +233,7 @@ export default defineComponent({
     const { t } = useI18n();
     return {
       chooseMonitoringErrorMessage: t('message.monitoringLine.chooseMonitoringError'),
-      chooseVarietyErrorMessage: t('message.monitoringLine.chooseVarietyError'),
+      chooseVarietyErrorMessage: t('message.chooseVarietyError'),
     };
   },
   data() {
@@ -237,8 +249,9 @@ export default defineComponent({
     this.getUserVarieties();
   },
   watch: {
-    monitoringLineToUpdate(newMonitoringLineToUpdate) {
+    async monitoringLineToUpdate(newMonitoringLineToUpdate) {
       this.monitoringLine = newMonitoringLineToUpdate;
+      this.monitoringLine.variety.sowings = await sowingService.getSowingsByVariety(newMonitoringLineToUpdate.variety.id);
       this.monitoringLine.planting = this.monitoringLine.planting === undefined 
         ? undefined
         : toInputDate(this.monitoringLine.planting);
@@ -312,9 +325,17 @@ export default defineComponent({
     },
     async selectVariety(variety: Variety) {
       this.monitoringLine.variety = variety;
-      // TODO
-      //this.monitoringLine.variety.sowings = sowingService.getSowingsByVariety();
-    }
+      this.monitoringLine.variety.sowings = await sowingService.getSowingsByVariety(variety.id);
+    },
+    toStrDate(str: string) {
+      return toStrDate(str);
+    },
+    filterSowings(choosenSowingId: number): Sowing[] {
+      if (this.monitoringLine.variety.sowings === undefined) return []
+      return this.monitoringLine.variety.sowings.filter((sowing) => {
+        sowing.id !== choosenSowingId
+      })
+    },
   },
 });
 </script>

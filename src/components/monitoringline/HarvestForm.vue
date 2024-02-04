@@ -40,7 +40,6 @@
             :label="$t('button.add')"
             @click="add()"
             class="col-4 md:col-3 col-offset-4"
-            :loading="loading"
           />
         </div>
         <div class="field grid">
@@ -152,7 +151,7 @@ export default defineComponent({
     const { t } = useI18n();
     return {
       chooseMonitoringErrorMessage: t('message.monitoringLine.chooseMonitoringError'),
-      chooseVarietyErrorMessage: t('message.monitoringLine.chooseVarietyError'),
+      chooseVarietyErrorMessage: t('message.chooseVarietyError'),
     };
   },
   data() {

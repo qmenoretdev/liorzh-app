@@ -5,7 +5,7 @@ class SowingScript {
     init(): Sowing {
         return {
             id: 0,
-            sowingDate: new Date(),
+            sowingDate: '',
             variety: varietyScript.init(),
         }
     }

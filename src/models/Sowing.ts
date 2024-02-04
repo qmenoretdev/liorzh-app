@@ -2,7 +2,7 @@ import type { Variety } from "./Variety";
 
 export interface Sowing {
     id: number;
-    sowingDate: Date;
+    sowingDate: string;
     location?: string;
     year?: number;
     variety: Variety;

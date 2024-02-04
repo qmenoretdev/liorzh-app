@@ -1,7 +1,7 @@
 import type { MonitoringLine } from "@/models/MonitoringLine";
 import monitoringScript from "./MonitoringScript";
 import varietyScript from "./VarietyScript";
-import sowingScript from "./Sowing";
+import sowingScript from "./SowingScript";
 import type { Harvest } from "@/models/Harvest";
 
 class MonitoringLineScript {
