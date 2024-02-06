@@ -22,6 +22,9 @@ export default {
                 deleteError: 'Impossible de supprimer le semis',
                 sowingDateError: 'Vous devez saisir une date de semis',
             },
+            variety: {
+                none: "Vous n'avez pas encore de variétés. Vous pouvez rechercher dans les variétés publiées les variétés existantes. Sinon vous pouvez en ajouter une."
+            },
             chooseVarietyError: 'Vous devez choisir une variété',
             chooseVariety: 'Choisir une variété',
         },
@@ -37,8 +40,12 @@ export default {
             title: 'Enregistrement'
         },
         variety: {
+            myVarieties: 'Mes Variétés',
+            publishedVarieties: 'Variétés publiées',
             label: 'Variété',
-            publish: 'Publier la variété'
+            publish: 'Publier la variété',
+            createTitle: 'Création d\'une variété',
+            updateTitle: 'Modification d\'une variété',
         },
         navigation: {
             home: 'Accueil',
@@ -87,12 +94,15 @@ export default {
             sowingDate: 'Date de semis',
             location: 'Condition',
             year: 'Année de production',
+            seedsNumber: 'Nombre de graines',
+            description: 'Description',
             createTitle: 'Création d\'un semis',
             updateTitle: 'Modification d\'un semis',
         },
         location: {
             locationOptions: {
               outside: 'Exterieur',
+              inside: 'Interieur',
               greenhouse: 'Serre',
               tunnel: 'Tunnel',
               other: 'Autre',
@@ -132,6 +142,9 @@ export default {
                 deleteError: 'Impossible to delete the sowing',
                 sowingDateError: 'You must set a sowing date',
             },
+            variety: {
+                none: "You don't have any varieties yet. You can search the published varieties for existing varieties. Otherwise you can add one."
+            },
             chooseVarietyError: 'You must choose a variety',
             chooseVariety: 'Choose a variety',
         },
@@ -147,7 +160,12 @@ export default {
             title: 'Sign-up'
         },
         variety: {
-            publish: 'Publish the variety'
+            myVarieties: 'My Varieties',
+            publishedVarieties: 'Published Varieties',
+            label: 'Variety',
+            publish: 'Publish the variety',
+            createTitle: 'Variety creation',
+            updateTitle: 'Variety update',
         },
         navigation: {
             home: 'Home',
@@ -196,12 +214,15 @@ export default {
             sowingDate: 'Sowing date',
             location: 'Condition',
             year: 'Year',
-            createTitle: 'Creation of a sowing',
-            updateTitle: 'Update of a sowing',
+            seedsNumber: 'Number of seeds',
+            description: 'Description',
+            createTitle: 'Sowing creation',
+            updateTitle: 'Sowing update',
         },       
         location: {
             locationOptions: {
               outside: 'Outside',
+              inside: 'Inside',
               greenhouse: 'Greenhouse',
               tunnel: 'Tunnel',
               other: 'Other',

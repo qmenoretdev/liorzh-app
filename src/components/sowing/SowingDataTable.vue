@@ -24,6 +24,8 @@
         </template>
       </Column>
       <Column field="year" :header="$t('sowing.year')"></Column>
+      <Column field="seedsNumber" :header="$t('sowing.seedsNumber')"></Column>
+      <Column field="description" :header="$t('sowing.description')"></Column>
       <Column v-if="editable || addable">
         <template #body="slotProps">
           <Button
@@ -53,7 +55,6 @@
 
 <script setup lang="ts">
 import type { Sowing } from "@/models/Sowing";
-import specyService from "@/services/SpecyService";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";

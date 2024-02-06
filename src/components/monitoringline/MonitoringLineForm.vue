@@ -164,13 +164,19 @@
       <div :class="getCssClass.container.default + ' col-6'" v-if="!isUpdateMode">
         <VarietyDataTable
           class="col-12"
-          v-if="userVarieties.length > 0"
-          :data="userVarieties"
+          v-if="getUserVarieties.length > 0"
+          :data="getUserVarieties"
           :addable="false"
           :editable="false"
           @selectVariety="selectVariety"
         />
-        <LoadingSpinner v-else-if="loadingVarieties" />
+        <template v-else>
+          <InlineMessage
+            class="col-12 mb-1"
+            :severity="'info'"
+            >{{ $t('message.variety.none') }}</InlineMessage
+          >
+        </template>
       </div>
       <InlineMessage
         class="col-12 mb-1"
@@ -210,13 +216,13 @@ import VarietyDataTable from "@/components/variety/VarietyDataTable.vue";
 import type { Variety } from "@/models/Variety";
 import toastService from "@/services/ToastService";
 import responseService from "@/services/ResponseService";
-import varietyService from "@/services/VarietyService";
 import type { ToastMessageOptions } from "primevue/toast";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { useI18n } from "vue-i18n";
 import { toInputDate, toStrDate } from "@/utils/date";
 import sowingService from "@/services/SowingService";
 import type { Sowing } from "@/models/Sowing";
+import { useVarietyStore } from "@/stores/variety";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -241,12 +247,7 @@ export default defineComponent({
       monitoringLine: monitoringLineScript.init(),
       formError: this.initFormError(),
       customType: "",
-      loadingVarieties: false,
-      userVarieties: [] as Variety[]
     };
-  },
-  mounted() {
-    this.getUserVarieties();
   },
   watch: {
     async monitoringLineToUpdate(newMonitoringLineToUpdate) {
@@ -282,8 +283,17 @@ export default defineComponent({
     getFormClass(): string {
       return " col-12" + (this.isUpdateMode ? "" : " md:col-6");
     },
+    getUserVarieties(): Variety[] {
+      const varietyStore = useVarietyStore();
+      return varietyStore.userVarieties;
+    },
   },
   methods: {
+    reset() {
+      this.monitoringLine = monitoringLineScript.init();
+      this.formError = this.initFormError();
+      this.customType = "";
+    },
     submit() {
       if (this.checkForm()) {
         this.$emit("submit", this.monitoringLine);
@@ -311,21 +321,16 @@ export default defineComponent({
         monitoringError: '',
       };
     },
-    async getUserVarieties() {
-      this.loadingVarieties = true;
+    async selectVariety(variety: Variety) {
+      this.monitoringLine.variety = variety;
       try {
-        this.userVarieties = await varietyService.getVarietiesByCurrentUser();
-        this.loadingVarieties = false;
+      this.monitoringLine.variety.sowings = await sowingService.getSowingsByVariety(variety.id);
       } catch(error: any) {
-        const toastOptions = toastService.getToastOptions('Impossible de récupérer vos variétés', responseService.getApiErrors(error))
+        const toastOptions = toastService.getToastOptions('Impossible de récupérer la liste des semis de cette variété', responseService.getApiErrors(error))
           toastOptions.forEach((toastOption: ToastMessageOptions) => {
           this.$toast.add(toastOption);
         });
       }
-    },
-    async selectVariety(variety: Variety) {
-      this.monitoringLine.variety = variety;
-      this.monitoringLine.variety.sowings = await sowingService.getSowingsByVariety(variety.id);
     },
     toStrDate(str: string) {
       return toStrDate(str);

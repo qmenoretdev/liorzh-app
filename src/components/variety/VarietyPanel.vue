@@ -3,7 +3,7 @@
     <Accordion :multiple="true" :activeIndex="[0]" class="col-12">
       <AccordionTab>
         <template #header>
-          <h2 class="p-0 m-0">Mes Variétés</h2>
+          <h2 class="p-0 m-0">{{ $t('variety.myVarieties') }}</h2>
         </template>
         <div class="mt-0 mb-2">
           <Button
@@ -16,9 +16,7 @@
         <div v-if="!loading">
           <div v-if="varietyStore.userVarieties.length === 0">
             <InlineMessage class="col-12 mb-1" severity="info"
-              >Vous n'avez pas encore de variétés. Vous pouvez rechercher dans les
-              variétés publiées les variétés existantes. Sinon vous pouvez en ajouter
-              une.</InlineMessage
+              > {{ $t('message.variety.none') }}</InlineMessage
             >
           </div>
           <div v-else>
@@ -35,7 +33,7 @@
       </AccordionTab>
       <AccordionTab>
         <template #header>
-          <h2 class="p-0 m-0">Variétés publiées</h2>
+          <h2 class="p-0 m-0">{{ $t('variety.publishedVarieties') }}</h2>
         </template>
         <div :class="cssClass.container.default + ' col-12'">
           <SearchVarietyComponent class="col-12 mb-2" @submit="searchVarieties" />
@@ -53,7 +51,7 @@
       </AccordionTab>
     </Accordion>
     <VarietyForm
-      :header="'Création d\'une variété'"
+      :header="$t('variety.createTitle')"
       :proposedVariety="proposedVariety"
       :visible="varietyCreationVisible"
       :apiErrors="apiErrors"
@@ -63,12 +61,12 @@
       @close="closeModal()"
     />
     <VarietyForm
-      :header="'Modification d\'une variété'"
+      :header="$t('variety.updateTitle')"
       :varietyToUpdate="varietyToUpdate"
       :visible="varietyUpdateVisible"
       :apiErrors="apiErrors"
       :loading="loadingForm"
-      :submitButtonLabel="'Modifier'"
+      :submitButtonLabel="$t('button.update')"
       @submit="updateVariety"
       @close="closeModal()"
     />
@@ -146,9 +144,9 @@ function resetForm() {
 async function getUserVarieties() {
   loading.value = true;
   try {
-  const varieties = await varietyService.getVarietiesByCurrentUser();
-  varietyStore.setUserVarieties(varieties);
-  loading.value = false;
+    const varieties = await varietyService.getVarietiesByCurrentUser();
+    varietyStore.setUserVarieties(varieties);
+    loading.value = false;
   } catch(error: any) {
     const toastOptions = toastService.getToastOptions('Impossible de récupérer vos variétés', responseService.getApiErrors(error))
       toastOptions.forEach((toastOption: ToastMessageOptions) => {

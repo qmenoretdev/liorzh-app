@@ -85,9 +85,9 @@ const apiErrors = ref([] as ApiError[]);
 const sowingStore = useSowingStore();
 const sowingCreationVisible = ref(false);
 const sowingUpdateVisible = ref(false);
-// Variété proposée si l'utilisateur souhaite créé une variété du même ID
+// Semis proposée si l'utilisateur souhaite créé une variété du même ID
 const proposedSowing = ref(sowingScript.init() as Sowing);
-// Variété passé en prop pour mise à jour
+// Semis passé en prop pour mise à jour
 const sowingToUpdate = ref(sowingScript.init() as Sowing);
 
 const confirm = useConfirm();
@@ -119,9 +119,9 @@ function resetForm() {
 async function getUserSowings() {
   loading.value = true;
   try {
-  const sowings = await sowingService.getSowingsByCurrentUser();
-  sowingStore.setUserSowings(sowings);
-  loading.value = false;
+    const sowings = await sowingService.getSowingsByCurrentUser();
+    sowingStore.setUserSowings(sowings);
+    loading.value = false;
   } catch(error: any) {
     const toastOptions = toastService.getToastOptions(t('message.sowing.getError'), responseService.getApiErrors(error))
       toastOptions.forEach((toastOption: ToastMessageOptions) => {
