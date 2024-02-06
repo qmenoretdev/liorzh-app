@@ -61,17 +61,49 @@
           </div>
           <FormMessage class="col-12" :message="formError.sowingDateError" />
         </div>
+        <div class="field grid">
+          <label for="seedsNumber" class="col-12 sm:col-3 mb-0">{{ $t('sowing.seedsNumber') }}</label>
+          <div class="col-12 sm:col-8">
+            <input
+              id="seedsNumber"
+              placeholder="0"
+              type="number"
+              :class="getCssClass.input.default"
+              v-model.number="sowing.seedsNumber"
+              @keyup.enter="submit()"
+            />
+          </div>
+        </div>
+        <div class="field grid">
+          <label for="description" class="col-12 sm:col-3"
+            >{{ $t('sowing.description') }}</label>
+          <div class="col-12 sm:col-8">
+            <textarea
+              id="description"
+              placeholder=""
+              type="text"
+              :class="getCssClass.input.default"
+              v-model="sowing.description"
+            />
+          </div>
+        </div>
       </div>
       <div :class="getCssClass.container.default + ' col-6'" v-if="!isUpdateMode">
         <VarietyDataTable
           class="col-12"
-          v-if="userVarieties.length > 0"
-          :data="userVarieties"
+          v-if="getUserVarieties.length > 0"
+          :data="getUserVarieties"
           :addable="false"
           :editable="false"
           @selectVariety="selectVariety"
         />
-        <LoadingSpinner v-else-if="loadingVarieties" />
+        <template v-else>
+          <InlineMessage
+            class="col-12 mb-1"
+            :severity="'info'"
+            >{{ $t('message.variety.none') }}</InlineMessage
+          >
+        </template>
       </div>
       <InlineMessage
         class="col-12 mb-1"
@@ -107,15 +139,12 @@ import Checkbox from "primevue/checkbox";
 import sowingScript from "@/scripts/SowingScript";
 import VarietyDataTable from "@/components/variety/VarietyDataTable.vue";
 import type { Variety } from "@/models/Variety";
-import toastService from "@/services/ToastService";
-import responseService from "@/services/ResponseService";
-import varietyService from "@/services/VarietyService";
-import type { ToastMessageOptions } from "primevue/toast";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { useI18n } from "vue-i18n";
 import { toInputDate } from "@/utils/date";
 import type SelectOption from "@/models/form/SelectOption"
 import { locationOptions } from "@/utils/location"
+import { useVarietyStore } from "@/stores/variety";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -140,12 +169,7 @@ export default defineComponent({
       sowing: sowingScript.init(),
       formError: this.initFormError(),
       customType: "",
-      loadingVarieties: false,
-      userVarieties: [] as Variety[]
     };
-  },
-  mounted() {
-    this.getUserVarieties();
   },
   watch: {
     sowingToUpdate(newSowingToUpdate) {
@@ -168,6 +192,10 @@ export default defineComponent({
     },
     getLocations(): SelectOption[] {
       return locationOptions;
+    },
+    getUserVarieties(): Variety[] {
+      const varietyStore = useVarietyStore();
+      return varietyStore.userVarieties;
     },
   },
   methods: {
@@ -197,18 +225,6 @@ export default defineComponent({
         varietyError: '',
         sowingDateError: '',
       };
-    },
-    async getUserVarieties() {
-      this.loadingVarieties = true;
-      try {
-        this.userVarieties = await varietyService.getVarietiesByCurrentUser();
-        this.loadingVarieties = false;
-      } catch(error: any) {
-        const toastOptions = toastService.getToastOptions('Impossible de récupérer vos variétés', responseService.getApiErrors(error))
-          toastOptions.forEach((toastOption: ToastMessageOptions) => {
-          this.$toast.add(toastOption);
-        });
-      }
     },
     async selectVariety(variety: Variety) {
       this.sowing.variety = variety;

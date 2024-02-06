@@ -5,5 +5,7 @@ export interface Sowing {
     sowingDate: string;
     location?: string;
     year?: number;
+    description: string;
+    seedsNumber: number;
     variety: Variety;
 }

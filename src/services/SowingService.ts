@@ -8,6 +8,8 @@ class SowingService {
           sowingDate: toDateTime(sowing.sowingDate),
           location: sowing.location,
           year: sowing.year,
+          seedsNumber: sowing.seedsNumber,
+          description: sowing.description,
           variety: {
             id: sowing.variety.id,
           },
@@ -19,6 +21,8 @@ class SowingService {
             sowingDate: toDateTime(sowing.sowingDate),
             location: sowing.location,
             year: sowing.year,
+            seedsNumber: sowing.seedsNumber,
+            description: sowing.description,
         } as Sowing);
         return response.status === 200;
     }

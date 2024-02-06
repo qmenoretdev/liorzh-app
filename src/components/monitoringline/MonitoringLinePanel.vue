@@ -16,6 +16,7 @@
         @harvest="openHarvestMonitoringLine" />
     </template>
     <MonitoringLineForm
+      ref="createMonitoringLineFormRef"
       :header="$t('monitoringLine.createTitle')"
       :visible="monitoringLineCreationVisible || monitoringToAddLine.id !== 0"
       :apiErrors="apiErrors"
@@ -26,6 +27,7 @@
       @close="closeModal()"
     />
     <MonitoringLineForm
+      ref="updateMonitoringLineFormRef"
       :header="$t('monitoringLine.updateTitle')"
       :monitoringLineToUpdate="selectedMonitoringLine"
       :visible="monitoringLineUpdateVisible"
@@ -68,6 +70,8 @@ import monitoringScript from "@/scripts/MonitoringScript";
 import HarvestForm from "@/components/monitoringline/HarvestForm.vue";
 
 const harvestFormRef = ref();
+const updateMonitoringLineFormRef = ref();
+const createMonitoringLineFormRef = ref();
 
 const monitoringStore = useMonitoringStore();
 const confirm = useConfirm();
@@ -106,12 +110,18 @@ const props = defineProps({
   },
 });
 
+function resetForms() {
+  updateMonitoringLineFormRef.value.reset();
+  createMonitoringLineFormRef.value.reset();
+  harvestFormRef.value.reset();
+}
+
 function closeModal() {
   monitoringLineCreationVisible.value = false;
   monitoringLineUpdateVisible.value = false;
   monitoringLineHarvestVisible.value = false;
   emit("resetMonitoringToAddLine");
-  harvestFormRef.value.reset();
+  resetForms();
 }
 async function createMonitoringLine(monitoringLine: MonitoringLine) {
   try {
@@ -146,6 +156,8 @@ async function updateMonitoringLine(monitoringLine: MonitoringLine) {
       monitoringLineUpdateVisible.value = false;
       monitoringLineHarvestVisible.value = false;
       harvestFormRef.value.reset();
+      updateMonitoringLineFormRef.value.reset();
+      monitoringStore.updateMonitoringLine(monitoringLine);
     }
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
@@ -167,18 +179,7 @@ async function deleteMonitoringLine(monitoringLine: MonitoringLine) {
           },
         ];
       } else {
-        monitoringStore.selectedMonitorings.forEach(monitoring => {
-          if (monitoring.id === monitoringLine.monitoring.id) {
-            monitoring.monitoringLines = monitoring.monitoringLines?.filter(
-              monitoringLineIn => monitoringLineIn.id !== monitoringLine.id);
-          }
-        });
-        monitoringStore.monitorings.forEach(monitoring => {
-          if (monitoring.id === monitoringLine.monitoring.id) {
-            monitoring.monitoringLines = monitoring.monitoringLines?.filter(
-              monitoringLineIn => monitoringLineIn.id !== monitoringLine.id);
-          }
-        })
+        monitoringStore.removeMonitoringLine(monitoringLine);
       }
     } catch (error: any) {
       apiErrors.value = responseService.getApiErrors(error);

@@ -18,7 +18,7 @@
               type="number"
               :class="getCssClass.input.default"
               v-model.number="harvestNumber"
-              @keyup.enter="submit()"
+              @keyup.enter="add()"
             />
           </div>
           <label for="harvestWeight" class="col-12 sm:col-3 mb-0">{{ $t('monitoringLine.harvest.addWeight') }}</label>
@@ -29,7 +29,7 @@
               type="number"
               :class="getCssClass.input.default"
               v-model.number="harvestWeight"
-              @keyup.enter="submit()"
+              @keyup.enter="add()"
             />
           </div>
         </div>
