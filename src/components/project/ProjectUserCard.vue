@@ -22,6 +22,15 @@
             @click.stop="openUpdateProject()"
           />
           <Button
+            v-if="projectUser.roles.includes(PROJECT_ROLES.OWNER)"
+            icon="pi pi-plus-circle"
+            class="m-1"
+            raised
+            rounded
+            title="Modifier le projet"
+            @click.stop="openAddUserToProject()"
+          />
+          <Button
             icon="pi pi-minus-circle"
             class="m-1"
             raised
@@ -51,7 +60,7 @@ import projectUserScript from "@/scripts/ProjectUserScript";
 import { PROJECT_ROLES } from "@/utils/constant";
 import Button from "primevue/button";
 
-const emit = defineEmits(["openUpdateProject", "deleteProject", "selectProjectUser", "quitProject"]);
+const emit = defineEmits(["openUpdateProject", "openAddUserToProject", "deleteProject", "selectProjectUser", "quitProject"]);
 const props = defineProps({
   projectUser: {
     default: projectUserScript.init(),
@@ -67,6 +76,9 @@ function getCardClass() {
 }
 function openUpdateProject() {
   emit("openUpdateProject", props.projectUser.project);
+}
+function openAddUserToProject() {
+  emit("openAddUserToProject", props.projectUser.project);
 }
 function deleteProject() {
   emit("deleteProject", props.projectUser.project.id);

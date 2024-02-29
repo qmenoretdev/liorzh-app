@@ -46,7 +46,9 @@ class ProjectService {
     }
     async addUserToProject(project: Project, user: User, roles: string[]): Promise<boolean> {
         const response = await axiosJwtProtected.put(`projects/${project.id}/add-user`, {
-            user: user,
+            user: {
+                email: user.email,
+            },
             project: project,
             roles: roles,
         } as ProjectUser);

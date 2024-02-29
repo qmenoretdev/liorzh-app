@@ -18,6 +18,7 @@
             :projectUser="projectUser"
             class="col-12 md:col-6 lg:col-4"
             @openUpdateProject="openUpdateProject"
+            @openAddUserToProject="openAddUserToProject"
             @deleteProject="deleteProject"
             @quitProject="quitProject"
             @selectProjectUser="selectProjectUser"
@@ -42,6 +43,16 @@
       @submit="updateProject"
       @close="closeModal()"
     />
+    <ProjectAddUser
+      :visible="projectAddUserVisible"
+      :apiErrors="apiErrors"
+      :project="selectedProject"
+      :header="'Ajouter un utilisateur'"
+      :submitButtonLabel="'Ajouter'"
+      :loading="loadingForm"
+      @submit="addUserToProject"
+      @close="closeModal()"
+    />
   </div>
   <LoadingSpinner v-else />
 </template>
@@ -64,11 +75,17 @@ import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
 import InlineMessage from "primevue/inlinemessage";
 import { useUserStore } from "@/stores/user";
 import userService from "@/services/UserService";
+import ProjectAddUser from "@/components/project/ProjectAddUser.vue";
+import type { User } from "@/models/User";
+import { useToast } from "primevue/usetoast";
+import toastService from "@/services/ToastService";
 
+const toast = useToast();
 const confirm = useConfirm();
 const userStore = useUserStore();
 const projectCreationVisible = ref(false);
 const projectUpdateVisible = ref(false);
+const projectAddUserVisible = ref (false);
 
 const loading = ref(false);
 const loadingForm = ref(false);
@@ -101,6 +118,11 @@ function openUpdateProject(project: Project) {
   selectedProject.value = project;
 }
 
+function openAddUserToProject(project: Project) {
+  projectAddUserVisible.value = true;
+  selectedProject.value = project;
+}
+
 async function updateProject(project: Project) {
   try {
     loadingForm.value = true;
@@ -111,6 +133,23 @@ async function updateProject(project: Project) {
       ];
     } else {
       projectUpdateVisible.value = false;
+    }
+  } catch (error: any) {
+    apiErrors.value = responseService.getApiErrors(error);
+  }
+  loadingForm.value = false;
+}
+
+async function addUserToProject(project: Project, user: User, roles: string[]) {
+  try {
+    loadingForm.value = true;
+    const isAdded = await projectService.addUserToProject(project, user, roles);
+    if (!isAdded) {
+      apiErrors.value = [
+        { message: "Impossible d'ajouter l'utilisateur'", code: "", level: "error" },
+      ];
+    } else {
+      toast.add(toastService.showSuccess("Utilisateur ajouté !", ''));
     }
   } catch (error: any) {
     apiErrors.value = responseService.getApiErrors(error);
