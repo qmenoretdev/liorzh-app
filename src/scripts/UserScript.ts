@@ -9,6 +9,7 @@ class UserScript {
             password: "",
             name: "",
             roles: [],
+            projectUsers: [],
         }
     }
 }

@@ -47,7 +47,11 @@ async function getUser() {
     try {
       const user = await userService.getUser();
       userStore.setUser(user);
-      router.push({ path: "/workspace" });
+      if (userStore.activeProjectUser.id !== 0) {
+        router.push({ path: "/workspace" });
+      } else {
+        router.push({ path: "/project" });
+      }
     } catch (error: any) {
       apiErrors.value = responseService.getApiErrors(error);
     }

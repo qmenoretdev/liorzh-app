@@ -49,6 +49,7 @@ export default {
         },
         navigation: {
             home: 'Accueil',
+            project: 'Projets',
             account: 'Compte',
             profile: 'Profil',
             login: 'Se connecter',
@@ -169,6 +170,7 @@ export default {
         },
         navigation: {
             home: 'Home',
+            project: 'Projects',
             account: 'Account',
             profile: 'Profile',
             login: 'Log-in',

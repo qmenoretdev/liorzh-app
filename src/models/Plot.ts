@@ -1,3 +1,5 @@
+import type { Project } from "./Project";
+
 export interface Plot {
     id: number;
     name: string;
@@ -6,4 +8,5 @@ export interface Plot {
     region: string | null;
     subRegion: string | null;
     city: string | null;
+    project: Project | null;
 }

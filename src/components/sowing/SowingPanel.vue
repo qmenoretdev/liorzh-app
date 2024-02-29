@@ -74,6 +74,8 @@ import toastService from "@/services/ToastService";
 import type { ToastMessageOptions } from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import { useI18n } from "vue-i18n";
+import { useUserStore } from "@/stores/user";
+import projectService from "@/services/ProjectService";
 const { t } = useI18n();
 
 const toast = useToast();
@@ -82,6 +84,7 @@ const loading = ref(false);
 const loadingForm = ref(false);
 
 const apiErrors = ref([] as ApiError[]);
+const userStore = useUserStore();
 const sowingStore = useSowingStore();
 const sowingCreationVisible = ref(false);
 const sowingUpdateVisible = ref(false);
@@ -93,7 +96,7 @@ const sowingToUpdate = ref(sowingScript.init() as Sowing);
 const confirm = useConfirm();
 
 onMounted(async () => {
-  getUserSowings();
+  getProjectSowings();
 });
 
 function closeModal() {
@@ -116,10 +119,10 @@ function resetForm() {
   proposedSowing.value = sowingScript.init();
 }
 
-async function getUserSowings() {
+async function getProjectSowings() {
   loading.value = true;
   try {
-    const sowings = await sowingService.getSowingsByCurrentUser();
+    const sowings = await projectService.getSowingsByProject(userStore.activeProjectUser.project);
     sowingStore.setUserSowings(sowings);
     loading.value = false;
   } catch(error: any) {

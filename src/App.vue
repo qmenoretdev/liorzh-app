@@ -45,12 +45,20 @@ const menuItems = computed(() => [
     },
   },
   {
+    label: t('navigation.project'),
+    //icon: "pi pi-fw pi-gear",
+    command: () => {
+      router.push({ name: "project" });
+    },
+    visible: authStore.authenticated,
+  },
+  {
     label: t('navigation.workspace'),
     icon: "pi pi-fw pi-desktop",
     command: () => {
       router.push({ name: "workspace" });
     },
-    visible: authStore.authenticated,
+    visible: authStore.authenticated && userStore.activeProjectUser.id !== 0,
   },
   {
     label: t('navigation.account'),

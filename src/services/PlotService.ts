@@ -1,12 +1,10 @@
 import type { Plot } from "@/models/Plot";
 import { axiosJwtProtected } from '@/axios.config';
+import { useUserStore } from "@/stores/user";
 
 class PlotService {
-    async getPlots(): Promise<Plot[]> {
-        const response = await axiosJwtProtected.get('plots');
-        return response.data;
-    }
     async createPlot(plot: Plot): Promise<Plot> {
+        const userStore = useUserStore();
         const response = await axiosJwtProtected.post('plots', {
             name: plot.name,
             country: plot.country,
@@ -14,6 +12,7 @@ class PlotService {
             subRegion: plot.subRegion,
             city: plot.city,
             description: plot.description,
+            project: userStore.activeProjectUser.project,
         } as Plot);
         return response.data;
     }

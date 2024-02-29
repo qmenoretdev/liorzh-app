@@ -68,10 +68,13 @@ import PlotCard from "@/components/plot/PlotCard.vue";
 import { useConfirm } from "primevue/useconfirm";
 import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
 import InlineMessage from "primevue/inlinemessage";
+import projectService from '@/services/ProjectService';
+import { useUserStore } from "@/stores/user";
 
 const emit = defineEmits(["selectPlot"]);
 
 const confirm = useConfirm();
+const userStore = useUserStore();
 const plotStore = usePlotStore();
 const plotCreationVisible = ref(false);
 const plotUpdateVisible = ref(false);
@@ -153,7 +156,7 @@ async function deletePlot(id: number) {
 
 async function getPlots() {
   loading.value = true;
-  const plots = await plotService.getPlots();
+  const plots = await projectService.getPlotsByProject(userStore.activeProjectUser.project);
   plotStore.setPlots(plots);
   loading.value = false;
 }
