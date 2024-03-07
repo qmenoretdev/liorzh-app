@@ -1,3 +1,5 @@
+import type { ProjectUser } from "./ProjectUser";
+
 export interface User {
     id: number;
     email: string;
@@ -5,4 +7,5 @@ export interface User {
     password?: string;
     active: boolean;
     name: string;
+    projectUsers: ProjectUser[];
 }

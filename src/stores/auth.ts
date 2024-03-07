@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from "@/stores/user";
 import userScript from '@/scripts/UserScript'
+import projectUserScript from '@/scripts/ProjectUserScript';
 
 export const useAuthStore = defineStore('authStore', () => {
   const authenticated = ref(localStorage.getItem('authenticated') === 'success');
@@ -28,6 +29,7 @@ export const useAuthStore = defineStore('authStore', () => {
     removeJwt();
     const userStore = useUserStore();
     userStore.setUser(userScript.init());
+    userStore.setActiveProjectUser(projectUserScript.init())
   }
   return { jwt, setJwt, authenticated, logout, setAuthenticated }
 })

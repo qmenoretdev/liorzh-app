@@ -3,7 +3,7 @@
     <div class="col-12 lg:col-2">
       <Menu :model="menuItems" />
     </div>
-    <div class="col-12 lg:col-10">
+    <div class="col-12 lg:col-10" v-if="userStore.user.id !== 0">
       <MonitoringPanel v-show="workspaceStore.selectedItemNumber === 0" />
       <VarietyPanel v-show="workspaceStore.selectedItemNumber === 1" />
       <SowingPanel v-show="workspaceStore.selectedItemNumber === 2" />
@@ -19,12 +19,14 @@ import VarietyPanel from "@/components/variety/VarietyPanel.vue";
 import SowingPanel from "@/components/sowing/SowingPanel.vue";
 import { useWorkspaceStore } from "@/stores/workspace";
 import { useI18n } from "vue-i18n";
+import { useUserStore } from "@/stores/user";
 const { t } = useI18n();
 const workspaceStore = useWorkspaceStore();
+const userStore = useUserStore();
 
 const menuItems = computed(() => [
   {
-    label: t('navigation.workspace'),
+    label: userStore.activeProjectUser.project.name,
     items: [
       {
         label: t('navigation.monitoring'),

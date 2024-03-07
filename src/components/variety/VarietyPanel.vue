@@ -98,6 +98,8 @@ import toastService from "@/services/ToastService";
 import type { ToastMessageOptions } from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import authorizationService from "@/services/AuthorizationService";
+import projectService from "@/services/ProjectService";
+import { useUserStore } from "@/stores/user";
 
 const toast = useToast();
 
@@ -106,6 +108,7 @@ const loadingForm = ref(false);
 const loadingSearchVarieties = ref(false);
 
 const apiErrors = ref([] as ApiError[]);
+const userStore = useUserStore();
 const varietyStore = useVarietyStore();
 const varietyCreationVisible = ref(false);
 const varietyUpdateVisible = ref(false);
@@ -144,7 +147,7 @@ function resetForm() {
 async function getUserVarieties() {
   loading.value = true;
   try {
-    const varieties = await varietyService.getVarietiesByCurrentUser();
+    const varieties = await projectService.getVarietiesByProject(userStore.activeProjectUser.project);
     varietyStore.setUserVarieties(varieties);
     loading.value = false;
   } catch(error: any) {
@@ -217,7 +220,7 @@ async function updateVariety(variety: Variety) {
 }
 async function addUserToVariety(variety: Variety) {
   try {
-    const isAdd = await varietyService.addUserToVariety(variety);
+    const isAdd = await projectService.addVarietyToProject(userStore.activeProjectUser.project, variety);
     if (!isAdd) {
       toast.add(toastService.showError("Impossible d'ajouter la variété !", variety.specy.botanicalName + ' ' + variety.name));
     } else {
@@ -255,7 +258,7 @@ async function removeVarietyFromUser(variety: Variety) {
     " ?";
   confirmDialog.accept = async () => {
     try {
-      const isDeleted = await varietyService.removeUserFromVariety(variety);
+      const isDeleted = await projectService.removeVarietyToProject(userStore.activeProjectUser.project, variety);
       if (!isDeleted) {
         apiErrors.value = [
           {

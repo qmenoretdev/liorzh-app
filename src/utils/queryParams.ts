@@ -4,5 +4,11 @@ export const queryParams = {
             signup: 'signup',
             jwtExpiration: 'jwtExpiration',
         }
+    },
+    variety: {
+        id: 'varietyId',
+    },
+    user: {
+        id: 'userId',
     }
 }

@@ -30,10 +30,6 @@ class SowingService {
         const response = await axiosJwtProtected.delete(`sowings/${sowingId}`);
         return response.status === 204;
     }
-    async getSowingsByCurrentUser(): Promise<Sowing[]> {
-        const response = await axiosJwtProtected.get('user-sowings');
-        return response.data;
-    }
     async getSowingsByVariety(varietyId: number): Promise<Sowing[]> {
         const response = await axiosJwtProtected.get(`sowings?varietyId=${varietyId}`);
         return response.data;
