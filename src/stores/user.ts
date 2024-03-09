@@ -10,7 +10,9 @@ export const useUserStore = defineStore('userStore', () => {
   const activeProjectUser = ref(projectUserScript.init());
   function setUser(newUser: User) {
     user.value = newUser;
-    findAndSetActiveProjectUser(user.value.projectUsers);
+    if (user.value.projectUsers) {
+      findAndSetActiveProjectUser(user.value.projectUsers);
+    }
   }
   function setActiveProjectUser(projectUser: ProjectUser) {
     activeProjectUser.value = projectUser;
