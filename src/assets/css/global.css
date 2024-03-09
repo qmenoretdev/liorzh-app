@@ -1,0 +1,60 @@
+:root {
+  /* colors */
+  --surface-card: #f9fafb !important;
+}
+
+/* policy uniformization */
+body {
+  font-family: var(--font-family);
+  padding: 20px;
+}
+
+.container {
+  border-radius: 10px;
+  background-color: var(--surface-card);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 0px 3px;
+}
+
+.input-invalid {
+  border-color: var(--red-300) !important;
+}
+
+.clickable-card:hover {
+  background-color: var(--highlight-bg);
+}
+
+.selectable-card:hover {
+  background-color: var(--highlight-bg);
+}
+
+.no-puce {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ul-icon {
+  vertical-align: middle; 
+  margin-right: 4px; 
+  margin-bottom: 4px;
+}
+
+.selected-card {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-color-text);
+}
+
+.unabled-card {
+  text-decoration: line-through;
+}
+
+.fieldset-with-legend {
+  border-radius: 10px;
+  border: 1px solid var(--primary-color);
+}
+
+.fieldset-legend {
+  color: var(--primary-color);
+  font-weight: bold;
+  padding: 8px;
+}

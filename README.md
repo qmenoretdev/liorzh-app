@@ -69,3 +69,10 @@ npm run test:e2e -- --debug
 ```sh
 npm run lint
 ```
+
+### Icons
+
+- Primevue icons
+- Pichon icons : 
+    - Vue des parcelles : Cute Color
+    - Visibilité des espèces et variétés : Material Outlined
