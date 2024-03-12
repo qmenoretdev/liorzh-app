@@ -16,5 +16,5 @@ export function getOwner(isPublic: boolean) {
     return PUBLIC;
   }
   const userStore = useUserStore();
-  return userStore.user.email;
+  return userStore.activeProjectUser.project.name;
 }
