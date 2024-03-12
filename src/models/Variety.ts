@@ -1,3 +1,4 @@
+import type { Project } from "./Project";
 import type { Sowing } from "./Sowing";
 import type { Specy } from "./Specy";
 
@@ -9,4 +10,5 @@ export interface Variety {
     valid: string;
     owner: string;
     sowings?: Sowing[];
+    projects?: Project[];
 }

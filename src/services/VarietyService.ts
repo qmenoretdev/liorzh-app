@@ -2,7 +2,6 @@ import { axiosJwtProtected } from '@/axios.config';
 import type { Specy } from '@/models/Specy';
 import type { Variety } from '@/models/Variety';
 import type { SearchVariety } from '@/models/request/search/SearchVariety';
-
 class VarietyService {
     async createVariety(variety: Variety): Promise<Variety> {
         const response = await axiosJwtProtected.post('varieties', {
@@ -13,6 +12,7 @@ class VarietyService {
             } as Specy,
             valid: variety.valid,
             owner: variety.owner,
+            projects: variety.projects
         } as Variety);
         return response.data;
     }

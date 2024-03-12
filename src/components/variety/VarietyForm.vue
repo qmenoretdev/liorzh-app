@@ -51,9 +51,11 @@
               </template>
             </Column>
             <Column field="upovCode" header="Code UPOV" />
-            <Column field="valid" header="Validée ?"><template #body="slotProps">
+            <Column field="valid" header="Validée ?"
+              ><template #body="slotProps">
                 {{ showValidity(slotProps.data.valid) }}
-              </template></Column>
+              </template></Column
+            >
             <Column>
               <template #body="slotProps">
                 <Button
@@ -109,14 +111,18 @@
               >Public&nbsp;
               <div
                 class="pi pi-question-circle"
-                v-tooltip="'Une variété publique est partagée avec les autres utilisateurs. Une variété publique ne peut être modifiée que par un Administrateur.'"
+                v-tooltip="
+                  'Une variété publique est partagée avec les autres utilisateurs. Une variété publique ne peut être modifiée que par un Administrateur.'
+                "
               ></div
             ></label>
             <div class="col-12 sm:col-8">
-              <Checkbox id="isPublicVariety"
+              <Checkbox
+                id="isPublicVariety"
                 v-model="isPublicVariety"
                 :binary="true"
-                :disabled="varietyToUpdate.id !== 0">
+                :disabled="varietyToUpdate.id !== 0"
+              >
               </Checkbox>
             </div>
           </div>
@@ -184,6 +190,7 @@ import responseService from "@/services/ResponseService";
 import toastService from "@/services/ToastService";
 import type { ToastMessageOptions } from "primevue/toast";
 import authorizationService from "@/services/AuthorizationService";
+import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
   extends: ModalFormCommon,
@@ -222,8 +229,8 @@ export default defineComponent({
       isPublicVariety: true,
       searchSpecyFilter: {
         onAllSpecies: false,
-        validityValues: [VALIDITY.TRUE]
-      }
+        validityValues: [VALIDITY.TRUE],
+      },
     };
   },
   watch: {
@@ -263,7 +270,7 @@ export default defineComponent({
     },
     publicOwner(): string {
       return PUBLIC;
-    }
+    },
   },
   methods: {
     submit() {
@@ -273,17 +280,24 @@ export default defineComponent({
         );
         this.variety.specy.owner = getOwner(this.isPublicSpecy);
         this.variety.owner = getOwner(this.isPublicSpecy && this.isPublicVariety);
+        const userStore = useUserStore();
+        this.variety.projects = [userStore.activeProjectUser.project];
         this.$emit("submit", this.variety);
       }
     },
     async searchSpecies() {
       this.loadingSearchStep = 1;
       this.searchSpecy.owner = this.searchSpecyFilter.onAllSpecies ? null : PUBLIC;
-      this.searchSpecy.validity = selectOptionsToValidity(this.searchSpecyFilter.validityValues);
+      this.searchSpecy.validity = selectOptionsToValidity(
+        this.searchSpecyFilter.validityValues
+      );
       try {
         this.searchedSpecies = await specyService.searchSpecies(this.searchSpecy);
       } catch (error: any) {
-        const toastOptions = toastService.getToastOptions('Erreur lors de la recherche des espèces', responseService.getApiErrors(error))
+        const toastOptions = toastService.getToastOptions(
+          "Erreur lors de la recherche des espèces",
+          responseService.getApiErrors(error)
+        );
         toastOptions.forEach((toastOption: ToastMessageOptions) => {
           this.$toast.add(toastOption);
         });
@@ -326,7 +340,7 @@ export default defineComponent({
     },
     isAdmin(): boolean {
       return authorizationService.isAdmin();
-    }
+    },
   },
 });
 </script>
