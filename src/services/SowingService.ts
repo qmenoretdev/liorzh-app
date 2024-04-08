@@ -1,9 +1,11 @@
 import { axiosJwtProtected } from '@/axios.config';
 import type { Sowing } from '@/models/Sowing';
+import { useUserStore } from '@/stores/user';
 import { toDateTime } from '@/utils/date';
 
 class SowingService {
     async createSowing(sowing: Sowing): Promise<Sowing> {
+        const userStore = useUserStore();
         const response = await axiosJwtProtected.post('sowings', {
           sowingDate: toDateTime(sowing.sowingDate),
           location: sowing.location,
@@ -13,6 +15,7 @@ class SowingService {
           variety: {
             id: sowing.variety.id,
           },
+          project: userStore.activeProjectUser.project,
         } as Sowing);
         return response.data;
     }
