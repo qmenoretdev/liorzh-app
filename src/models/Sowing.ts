@@ -1,3 +1,4 @@
+import type { Project } from "./Project";
 import type { Variety } from "./Variety";
 
 export interface Sowing {
@@ -8,4 +9,5 @@ export interface Sowing {
     description: string;
     seedsNumber: number;
     variety: Variety;
+    project: Project;
 }
