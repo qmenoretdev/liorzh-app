@@ -71,15 +71,19 @@
           >Public&nbsp;
           <div
             class="pi pi-question-circle"
-            v-tooltip="'Une espèce publique est partagée avec les autres utilisateurs. Une espèce publique ne peut être modifiée que par un Administrateur.'"
+            v-tooltip="
+              'Une espèce publique est partagée avec les autres utilisateurs. Une espèce publique ne peut être modifiée que par un Administrateur.'
+            "
           ></div
         ></label>
         <div class="col-12 sm:col-8">
-          <Checkbox id="isPublicSpecy"
+          <Checkbox
+            id="isPublicSpecy"
             v-model="isPublicSpecyData"
             :binary="true"
             @input="$emit('update:isPublicSpecy', $event)"
-            :disabled="readonly">
+            :disabled="readonly"
+          >
           </Checkbox>
         </div>
       </div>
@@ -96,7 +100,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ModalFormCommon from "@/components/common/ModalFormCommon.vue";
+import FormCommon from "@/components/common/FormCommon.vue";
 import Button from "primevue/button";
 import InlineMessage from "primevue/inlinemessage";
 import { cssClass, getInputClass } from "@/utils/style";
@@ -107,7 +111,7 @@ import type { FormErrorSpecy } from "@/models/form/FormErrorSpecy";
 import Checkbox from "primevue/checkbox";
 
 export default defineComponent({
-  extends: ModalFormCommon,
+  extends: FormCommon,
   components: { Button, InlineMessage, FormMessage, Checkbox },
   emits: [
     "submit",

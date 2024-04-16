@@ -1,94 +1,90 @@
 <template>
-  <div>
-    <Dialog
-      :header="header"
-      v-model:visible="visibleData"
-      modal
-      :style="{ width: '50vw' }"
-      @update:visible="closeModal"
-    >
-      <div :class="getCssClass.container.default">
-        <div class="field grid">
-          <label for="name" class="col-12 sm:col-3"
-            >Nom*&nbsp;
-            <div
-              class="pi pi-question-circle"
-              v-tooltip="'Champ personnel pour nommer votre suivi.'"
-            ></div
-          ></label>
-          <div class="col-12 sm:col-8">
-            <input
-              id="name"
-              placeholder="2023-Annuel"
-              type="text"
-              :class="getInputClass(formError.nameError)"
-              v-model="monitoring.name"
-              @keyup.enter="submit()"
-              maxlength="32"
-            />
-          </div>
-        </div>
-        <FormMessage :message="formError.nameError" />
-        <div class="field grid">
-          <label for="type" class="col-12 sm:col-3">Type</label>
-          <div class="col-12 sm:col-4">
-            <select id="type" v-model="proposeType" :class="getCssClass.input.default">
-              <option v-for="type in monitoringTypes" :key="type" :value="type">
-                {{ getMonitoringTypeLabel(type) }}
-              </option>
-            </select>
-          </div>
-          <div class="col-12 sm:col-4" v-if="proposeType === monitoringTypes[3].code">
-            <input
-              id="customType"
-              placeholder="Type personnalisé"
-              type="text"
-              :class="getInputClass(formError.typeError)"
-              v-model="customType"
-              @keyup.enter="submit()"
-              maxlength="32"
-            />
-          </div>
-        </div>
-        <div class="field grid">
-          <label for="enabled" class="col-12 sm:col-3"
-            >Actif&nbsp;
-            <div
-              class="pi pi-question-circle"
-              v-tooltip="
-                'Rendre inactif un suivi signifie que les cultures et récoltes associées sont terminées. Facilite le tri dans le workspace.'
-              "
-            ></div
-          ></label>
-          <div class="col-12 sm:col-8">
-            <Checkbox v-model="monitoring.enabled" :binary="true" id="enabled">
-            </Checkbox>
-          </div>
-        </div>
-      </div>
-      <InlineMessage
-        class="col-12 mb-1"
-        v-for="apiError in apiErrors"
-        :key="apiError"
-        :severity="apiError.level"
-        >{{ apiError.message }}</InlineMessage
-      >
-      <div class="col-12">
-        <Button
-          rounded
-          :label="submitButtonLabel"
-          @click="submit()"
-          class="col-4 md:col-3 col-offset-4"
-          :loading="loading"
+  <div :class="getCssClass.container.default + ' col-12 sm:col-6'">
+    <div class="field grid">
+      <label for="name" class="col-12 sm:col-3"
+        >Nom*&nbsp;
+        <div
+          class="pi pi-question-circle"
+          v-tooltip="'Champ personnel pour nommer votre suivi.'"
+        ></div
+      ></label>
+      <div class="col-12 sm:col-8">
+        <input
+          id="name"
+          placeholder="2023-Annuel"
+          type="text"
+          :class="getInputClass(formError.nameError)"
+          v-model="monitoring.name"
+          @keyup.enter="submit()"
+          maxlength="32"
         />
       </div>
-    </Dialog>
+    </div>
+    <FormMessage :message="formError.nameError" />
+    <div class="field grid">
+      <label for="type" class="col-12 sm:col-3">Type</label>
+      <div class="col-12 sm:col-4">
+        <select id="type" v-model="proposeType" :class="getCssClass.input.default">
+          <option v-for="type in monitoringTypes" :key="type" :value="type">
+            {{ getMonitoringTypeLabel(type) }}
+          </option>
+        </select>
+      </div>
+      <div class="col-12 sm:col-4" v-if="proposeType === monitoringTypes[3].code">
+        <input
+          id="customType"
+          placeholder="Type personnalisé"
+          type="text"
+          :class="getInputClass(formError.typeError)"
+          v-model="customType"
+          @keyup.enter="submit()"
+          maxlength="32"
+        />
+      </div>
+    </div>
+    <div class="field grid">
+      <label for="enabled" class="col-12 sm:col-3"
+        >Actif&nbsp;
+        <div
+          class="pi pi-question-circle"
+          v-tooltip="
+            'Rendre inactif un suivi signifie que les cultures et récoltes associées sont terminées. Facilite le tri dans le workspace.'
+          "
+        ></div
+      ></label>
+      <div class="col-12 sm:col-8">
+        <Checkbox v-model="monitoring.enabled" :binary="true" id="enabled"> </Checkbox>
+      </div>
+    </div>
+    <InlineMessage
+      class="col-12 mb-1"
+      v-for="apiError in apiErrors"
+      :key="apiError"
+      :severity="apiError.level"
+      >{{ apiError.message }}</InlineMessage
+    >
+    <div class="col-12">
+      <Button
+        rounded
+        :label="submitButtonLabel"
+        @click="submit()"
+        class="col-5 md:col-4 mr-2"
+        :loading="loading"
+      />
+      <Button
+        rounded
+        :label="'Annuler'"
+        @click="quit()"
+        class="col-5 md:col-4"
+        severity="secondary"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ModalFormCommon from "@/components/common/ModalFormCommon.vue";
+import FormCommon from "@/components/common/FormCommon.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import InlineMessage from "primevue/inlinemessage";
@@ -100,7 +96,7 @@ import Checkbox from "primevue/checkbox";
 import { useI18n } from "vue-i18n";
 
 export default defineComponent({
-  extends: ModalFormCommon,
+  extends: FormCommon,
   components: { Dialog, Button, InlineMessage, FormMessage, Checkbox },
   props: {
     monitoringToUpdate: {
@@ -171,7 +167,7 @@ export default defineComponent({
       const { t } = useI18n();
       const key = monitoringScript.getMonitoringTypeI18nKey(code);
       return t(key);
-    }
+    },
   },
 });
 </script>

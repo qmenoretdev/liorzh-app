@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from "@/stores/auth";
+import MonitoringUpdate from '@/components/monitoring/MonitoringUpdate.vue';
+import MonitoringPanel from '@/components/monitoring/MonitoringPanel.vue';
+import MonitoringCreate from '@/components/monitoring/MonitoringCreate.vue';
+import MonitoringLineUpdate from '@/components/monitoringline/MonitoringLineUpdate.vue';
+import MonitoringLineCreate from '@/components/monitoringline/MonitoringLineCreate.vue';
 
 const securedRoutes = [
   {
@@ -10,17 +15,51 @@ const securedRoutes = [
   {
     path: '/workspace',
     name: 'workspace',
-    // route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import('@/views/WorkspaceView.vue')
+    redirect: () => { return '/monitoring'},
+    component: () => import('@/views/WorkspaceView.vue'),
+    children: [
+      {
+        path: '/monitoring',
+        name: 'MonitoringPanel',
+        component: MonitoringPanel,
+      },
+      {
+        path: '/monitoring/update/:id',
+        name: 'MonitoringUpdate',
+        props: true,
+        component: MonitoringUpdate,
+      },
+      {
+        path: '/monitoring/create',
+        name: 'MonitoringCreate',
+        component: MonitoringCreate,
+      },
+      {
+        path: '/monitoring-line/create',
+        name: 'MonitoringLineCreate',
+        component: MonitoringLineCreate,
+      },
+      {
+        path: '/monitoring-line/update/:id',
+        name: 'MonitoringLineUpdate',
+        props: true,
+        component: MonitoringLineUpdate,
+      },
+      {
+        path: '/variety',
+        name: 'VarietyPanel',
+        component: () => import('@/components/variety/VarietyPanel.vue')
+      },
+      {
+        path: '/sowing',
+        name: 'SowingPanel',
+        component: () => import('@/components/sowing/SowingPanel.vue')
+      },
+    ]
   },
   {
     path: '/project',
     name: 'project',
-    // route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import('@/views/ProjectView.vue')
   },
 ];

@@ -17,7 +17,7 @@
           class="mr-4"
           label="Nouveau suivi"
           icon="pi pi-plus-circle"
-          @click="monitoringCreationVisible = true"
+          @click="goToCreateMonitoring"
         />
         <div class="flex align-items-center">
           <label for="enabledOnlyFilter" class="mr-2">Actif uniquement</label>
@@ -35,7 +35,7 @@
             <MonitoringCard
               :monitoring="monitoring"
               class="col-12 md:col-8 lg:col-4"
-              @openUpdateMonitoring="openUpdateMonitoring"
+              @goToUpdateMonitoring="goToUpdateMonitoring"
               @deleteMonitoring="deleteMonitoring"
               @selectMonitoring="selectMonitoring"
               @addMonitoringLine="addMonitoringLine"
@@ -44,8 +44,6 @@
           <MonitoringLinePanel
             class="col-12"
             :monitoringToAddLine="monitoringToAddLine"
-            :loading="loadingMonitoringLines"
-            @resetMonitoringToAddLine="monitoringToAddLine = monitoringScript.init()"
           />
         </div>
       </div>
@@ -57,25 +55,6 @@
         :severity="apiError.level"
         >{{ apiError.message }}</InlineMessage
       >
-      <MonitoringForm
-        :header="'Création d\'un suivi'"
-        :visible="monitoringCreationVisible"
-        :apiErrors="apiErrors"
-        :loading="loadingForm"
-        :submitButtonLabel="$t('button.create')"
-        @submit="createMonitoring"
-        @close="closeModal()"
-      />
-      <MonitoringForm
-        :header="'Modification d\'un suivi'"
-        :monitoringToUpdate="selectedMonitoring"
-        :visible="monitoringUpdateVisible"
-        :apiErrors="apiErrors"
-        :loading="loadingForm"
-        :submitButtonLabel="$t('button.update')"
-        @submit="updateMonitoring"
-        @close="closeModal()"
-      />
     </div>
   </div>
 </template>
@@ -92,7 +71,6 @@ import type { ApiError } from "@/models/ApiError";
 import responseService from "@/services/ResponseService";
 import InlineMessage from "primevue/inlinemessage";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
-import MonitoringForm from "@/components/monitoring/MonitoringForm.vue";
 import type { Monitoring } from "@/models/Monitoring";
 import MonitoringCard from "@/components/monitoring/MonitoringCard.vue";
 import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
@@ -102,6 +80,8 @@ import { useWorkspaceStore } from "@/stores/workspace";
 import Checkbox from "primevue/checkbox";
 import MonitoringLinePanel from "@/components/monitoringline/MonitoringLinePanel.vue";
 import monitoringLineService from "@/services/MonitoringLineService";
+import router from "@/router";
+import links from "@/utils/links";
 
 const monitoringStore = useMonitoringStore();
 const plotStore = usePlotStore();
@@ -110,13 +90,8 @@ const plotPanelVisible = ref(true);
 const apiErrors = ref([] as ApiError[]);
 const apiGetErrors = ref([] as ApiError[]);
 const loading = ref(false);
-const loadingForm = ref(false);
-const monitoringCreationVisible = ref(false);
-const monitoringUpdateVisible = ref(false);
 const confirm = useConfirm();
-const selectedMonitoring = ref(monitoringScript.init());
 const monitoringToAddLine = ref(monitoringScript.init());
-const loadingMonitoringLines = ref(false);
 
 const filteredMonitorings = computed(() =>
   filterMonitorings(monitoringStore.monitorings)
@@ -143,44 +118,7 @@ async function getMonitoringsByPlot(plot: Plot) {
   }
   loading.value = false;
 }
-function closeModal() {
-  monitoringCreationVisible.value = false;
-  monitoringUpdateVisible.value = false;
-}
-async function createMonitoring(monitoring: Monitoring) {
-  try {
-    loadingForm.value = true;
-    monitoring.plot = plotStore.selectedPlot;
-    const createdMonitoring = await monitoringService.createMonitoring(monitoring);
-    if (createdMonitoring) {
-      closeModal();
-      monitoringStore.monitorings.push(createdMonitoring);
-    } else {
-      apiErrors.value = [
-        { message: "Impossible de créer le suivi", code: "", level: "error" },
-      ];
-    }
-  } catch (error: any) {
-    apiErrors.value = responseService.getApiErrors(error);
-  }
-  loadingForm.value = false;
-}
-async function updateMonitoring(monitoring: Monitoring) {
-  try {
-    loadingForm.value = true;
-    const isUpdated = await monitoringService.updateMonitoring(monitoring);
-    if (!isUpdated) {
-      apiErrors.value = [
-        { message: "Impossible de modifier le suivi", code: "", level: "error" },
-      ];
-    } else {
-      monitoringUpdateVisible.value = false;
-    }
-  } catch (error: any) {
-    apiErrors.value = responseService.getApiErrors(error);
-  }
-  loadingForm.value = false;
-}
+
 async function deleteMonitoring(id: number) {
   let confirmDialog = defaultConfirmDialogOptions;
   confirmDialog.message = "Etes-vous certain de vouloir supprimer ce suivi ?";
@@ -220,19 +158,21 @@ async function selectMonitoring(monitoring: Monitoring) {
       )
     );
   } else {
-    loadingMonitoringLines.value = true;
-    monitoring.monitoringLines = []
+    monitoring.monitoringLines = [];
     monitoringStore.selectedMonitorings.push(monitoring);
-    monitoring.monitoringLines = await monitoringLineService.getMonitoringLinesByMonitoring(monitoring.id);
-    loadingMonitoringLines.value = false;
+    monitoring.monitoringLines = await monitoringLineService.getMonitoringLinesByMonitoring(
+      monitoring.id
+    );
   }
 }
-function openUpdateMonitoring(monitoring: Monitoring) {
-  selectedMonitoring.value = monitoring;
-  monitoringUpdateVisible.value = true;
+function goToUpdateMonitoring(monitoring: Monitoring) {
+  router.push({ name: "MonitoringUpdate", params: { id: monitoring.id } });
+}
+function goToCreateMonitoring() {
+  router.push({ name: "MonitoringCreate" });
 }
 function addMonitoringLine(monitoring: Monitoring) {
-  monitoringToAddLine.value = monitoring;
+  router.push(links.addMonitoringLine(monitoring));
 }
 function filterMonitorings(monitorings: Monitoring[]) {
   let filteredMonitorings = [] as Monitoring[];
@@ -248,12 +188,5 @@ function filterMonitorings(monitorings: Monitoring[]) {
     )
   );
   return filteredMonitorings;
-}
-function getFilterClass(isSelectedFilter: boolean) {
-  let filterClass = "col-2 selectable-filter";
-  if (isSelectedFilter) {
-    filterClass += " selected-filter";
-  }
-  return filterClass;
 }
 </script>

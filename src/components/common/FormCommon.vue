@@ -3,11 +3,8 @@ import type { ApiError } from "@/models/ApiError";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  emits: ["close", "submit"],
+  emits: ["quit", "submit"],
   props: {
-    visible: {
-      default: false,
-    },
     header: {
       default: "Create",
     },
@@ -15,25 +12,15 @@ export default defineComponent({
       default: [] as ApiError[],
     },
     submitButtonLabel: {
-      default: 'Create',
+      default: "Create",
     },
     loading: {
       default: false,
     },
   },
-  data() {
-    return {
-      visibleData: false,
-    };
-  },
-  watch: {
-    visible(newVisibility) {
-      this.visibleData = newVisibility;
-    },
-  },
   methods: {
-    closeModal() {
-      this.$emit("close");
+    quit() {
+      this.$emit("quit");
     },
   },
 });

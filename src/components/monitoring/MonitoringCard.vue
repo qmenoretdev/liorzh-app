@@ -3,9 +3,7 @@
     <div :class="getCardClass()" style="height: 100%" @click="selectMonitoring">
       <div class="grid p-2">
         <div class="col-6">
-          {{ monitoring.name }} ({{
-            getMonitoringTypeLabel(monitoring.type)
-          }})
+          {{ monitoring.name }} ({{ getMonitoringTypeLabel(monitoring.type) }})
         </div>
         <div class="col-6">
           <Button
@@ -13,7 +11,7 @@
             class="m-1"
             raised
             rounded
-            @click.stop="openUpdateMonitoring()"
+            @click.stop="goToUpdateMonitoring()"
           />
           <Button
             icon="pi pi-plus-circle"
@@ -46,7 +44,7 @@ import { useI18n } from "vue-i18n";
 const monitoringStore = useMonitoringStore();
 
 const emit = defineEmits([
-  "openUpdateMonitoring",
+  "goToUpdateMonitoring",
   "deleteMonitoring",
   "selectMonitoring",
   "addMonitoringLine",
@@ -76,8 +74,8 @@ function getMonitoringTypeLabel(code: string) {
   const key = monitoringScript.getMonitoringTypeI18nKey(code);
   return t(key);
 }
-function openUpdateMonitoring() {
-  emit("openUpdateMonitoring", props.monitoring);
+function goToUpdateMonitoring() {
+  emit("goToUpdateMonitoring", props.monitoring);
 }
 function deleteMonitoring() {
   emit("deleteMonitoring", props.monitoring.id);
@@ -86,6 +84,6 @@ function selectMonitoring() {
   emit("selectMonitoring", props.monitoring);
 }
 function addMonitoringLine() {
-  emit("addMonitoringLine", props.monitoring)
+  emit("addMonitoringLine", props.monitoring);
 }
 </script>

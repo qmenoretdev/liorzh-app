@@ -10,5 +10,11 @@ export const queryParams = {
     },
     user: {
         id: 'userId',
-    }
+    },
+    monitoring: {
+        id: 'monitoringId',
+    },
+    project: {
+        id: 'projectId',
+    },
 }

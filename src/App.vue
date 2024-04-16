@@ -38,14 +38,14 @@ onMounted(async () => {
 // Menu
 const menuItems = computed(() => [
   {
-    label: t('navigation.home'),
+    label: t("navigation.home"),
     icon: "pi pi-fw pi-home",
     command: () => {
       router.push({ name: "home" });
     },
   },
   {
-    label: t('navigation.project'),
+    label: t("navigation.project"),
     //icon: "pi pi-fw pi-gear",
     command: () => {
       router.push({ name: "project" });
@@ -53,7 +53,7 @@ const menuItems = computed(() => [
     visible: authStore.authenticated,
   },
   {
-    label: t('navigation.workspace'),
+    label: t("navigation.workspace"),
     icon: "pi pi-fw pi-desktop",
     command: () => {
       router.push({ name: "workspace" });
@@ -61,10 +61,10 @@ const menuItems = computed(() => [
     visible: authStore.authenticated && userStore.activeProjectUser.id !== 0,
   },
   {
-    label: t('navigation.account'),
+    label: t("navigation.account"),
     items: [
       {
-        label: t('navigation.signup'),
+        label: t("navigation.signup"),
         icon: "pi pi-fw pi-user",
         command: () => {
           router.push({ name: "signup" });
@@ -72,7 +72,7 @@ const menuItems = computed(() => [
         visible: !authStore.authenticated,
       },
       {
-        label: t('navigation.profile'),
+        label: t("navigation.profile"),
         icon: "pi pi-fw pi-id-card",
         command: () => {
           router.push({ name: "profil" });
@@ -80,7 +80,7 @@ const menuItems = computed(() => [
         visible: authStore.authenticated,
       },
       {
-        label: t('navigation.login'),
+        label: t("navigation.login"),
         icon: "pi pi-fw pi-sign-in",
         command: () => {
           router.push({ name: "login" });
@@ -88,7 +88,7 @@ const menuItems = computed(() => [
         visible: !authStore.authenticated,
       },
       {
-        label: t('navigation.logout'),
+        label: t("navigation.logout"),
         icon: "pi pi-fw pi-sign-out",
         visible: authStore.authenticated,
         command: () => {

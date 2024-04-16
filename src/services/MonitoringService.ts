@@ -2,6 +2,10 @@ import type { Monitoring } from "@/models/Monitoring";
 import { axiosJwtProtected } from '@/axios.config';
 
 class MonitoringService {
+    async getMonitoring(monitoringId: number): Promise<Monitoring> {
+        const response = await axiosJwtProtected.get(`monitorings/${monitoringId}`);
+        return response.data;
+    }
     async getMonitoringsByPlot(plotId: number): Promise<Monitoring[]> {
         const response = await axiosJwtProtected.get(`monitorings?plotId=${plotId}`);
         return response.data;

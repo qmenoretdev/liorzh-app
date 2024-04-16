@@ -1,172 +1,163 @@
 <template>
-  <div>
-    <Dialog
-      :header="header"
-      v-model:visible="visibleData"
-      modal
-      :style="{ width: isUpdateMode ? '45vw' : '90vw' }"
-      @update:visible="closeModal"
-    >
-      <div class="grid">
-        <SpecyForm
-          :class="getFormClass"
-          :formError="formErrorSpecy"
-          v-model:botanicalName="variety.specy.botanicalName"
-          v-model:frenchCommonNames="frenchCommonNames"
-          v-model:upovCode="variety.specy.upovCode"
-          v-model:isPublicSpecy="isPublicSpecy"
-          :readonly="isUpdateMode"
-        />
-        <div v-if="!isUpdateMode" class="col-6">
-          <div>
-            <h3>Recherche d'espèce</h3>
-            <SearchSpecy
-              class="col-12 mb-2"
-              v-model:botanicalName="searchSpecy.botanicalName"
-              v-model:frenchCommonName="searchSpecy.frenchCommonName"
-              v-model:validityValues="searchSpecyFilter.validityValues"
-              v-model:onAllSpecies="searchSpecyFilter.onAllSpecies"
-              @submit="searchSpecies"
-            />
-            <Button class="col-12" icon="pi pi-search" @click="searchSpecies"
-              >Rechercher</Button
-            >
-          </div>
-          <LoadingSpinner v-if="loadingSearchStep == 1" />
-          <DataTable
-            v-if="loadingSearchStep == 2 && searchedSpecies.length > 0"
-            :value="searchedSpecies"
-            scrollable
-            scrollHeight="300px"
-            dataKey="id"
-          >
-            <Column field="botanicalName" header="Nom botanique">
-              <template #body="slotProps">
-                <i>{{ slotProps.data.botanicalName }}</i>
-              </template>
-            </Column>
-            <Column field="frenchCommonNames" header="Nom(s) commun(s)">
-              <template #body="slotProps">
-                {{ commonNamesArrayToString(slotProps.data.frenchCommonNames) }}
-              </template>
-            </Column>
-            <Column field="upovCode" header="Code UPOV" />
-            <Column field="valid" header="Validée ?"
-              ><template #body="slotProps">
-                {{ showValidity(slotProps.data.valid) }}
-              </template></Column
-            >
-            <Column>
-              <template #body="slotProps">
-                <Button
-                  icon="pi pi-plus-circle"
-                  text
-                  raised
-                  rounded
-                  @click="selectSpecy(slotProps.data)"
-                  title="Sélectionner cette espèce"
-                />
-              </template>
-            </Column>
-          </DataTable>
-          <div v-else-if="loadingSearchStep == 2 && searchedSpecies.length == 0">
-            <InlineMessage class="col-12 mb-1" severity="info"
-              >Aucun résultat</InlineMessage
-            >
-          </div>
-        </div>
-      </div>
-      <div class="grid mb-2">
-        <div :class="getCssClass.container.default + ' ' + getFormClass">
-          <h3 style="margin-top: -5px">Variété</h3>
-          <div class="field grid">
-            <label for="name" class="col-12 sm:col-3 mb-0">Nom de la variété</label>
-            <div class="col-12 sm:col-8">
-              <input
-                id="name"
-                placeholder="Chioggia"
-                type="text"
-                :class="getInputClass(formError.nameError)"
-                v-model="variety.name"
-                @keyup.enter="submit()"
-                maxlength="128"
-              />
-            </div>
-            <FormMessage class="col-12" :message="formError.nameError" />
-          </div>
-          <div class="field grid">
-            <label for="name" class="col-12 sm:col-3">Description</label>
-            <div class="col-12 sm:col-8">
-              <textarea
-                id="description"
-                placeholder="La Betterave de Chioggia est une variété ancienne italienne très hâtive à racine ronde et à la chair sucrée, rose veinée de blanc."
-                type="text"
-                :class="getCssClass.input.default"
-                v-model="variety.description"
-              />
-            </div>
-          </div>
-          <div class="field grid" v-if="isPublicSpecy">
-            <label for="isPublicVariety" class="col-12 sm:col-3"
-              >Public&nbsp;
-              <div
-                class="pi pi-question-circle"
-                v-tooltip="
-                  'Une variété publique est partagée avec les autres utilisateurs. Une variété publique ne peut être modifiée que par un Administrateur.'
-                "
-              ></div
-            ></label>
-            <div class="col-12 sm:col-8">
-              <Checkbox
-                id="isPublicVariety"
-                v-model="isPublicVariety"
-                :binary="true"
-                :disabled="varietyToUpdate.id !== 0"
-              >
-              </Checkbox>
-            </div>
-          </div>
-        </div>
-        <div
-          v-if="proposedVariety.id !== 0"
-          :class="getCssClass.container.default + ' col-12 md:col-6 mt-1'"
-        >
-          <div class="col-12 mb-2">
-            <VarietyDetails :variety="proposedVariety" />
-          </div>
-          <Button
-            rounded
-            icon="pi pi-plus-circle"
-            label="Ajouter la variété existante"
-            @click="addUserToVariety()"
-            class="col-12 md:col-6"
+  <div class="grid">
+    <div class="grid">
+      <SpecyForm
+        :class="getFormClass"
+        :formError="formErrorSpecy"
+        v-model:botanicalName="variety.specy.botanicalName"
+        v-model:frenchCommonNames="frenchCommonNames"
+        v-model:upovCode="variety.specy.upovCode"
+        v-model:isPublicSpecy="isPublicSpecy"
+        :readonly="isUpdateMode"
+      />
+      <div v-if="!isUpdateMode" class="col-6">
+        <div>
+          <h3>Recherche d'espèce</h3>
+          <SearchSpecy
+            class="col-12 mb-2"
+            v-model:botanicalName="searchSpecy.botanicalName"
+            v-model:frenchCommonName="searchSpecy.frenchCommonName"
+            v-model:validityValues="searchSpecyFilter.validityValues"
+            v-model:onAllSpecies="searchSpecyFilter.onAllSpecies"
+            @submit="searchSpecies"
           />
+          <Button class="col-12" icon="pi pi-search" @click="searchSpecies"
+            >Rechercher</Button
+          >
+        </div>
+        <LoadingSpinner v-if="loadingSearchStep == 1" />
+        <DataTable
+          v-if="loadingSearchStep == 2 && searchedSpecies.length > 0"
+          :value="searchedSpecies"
+          scrollable
+          scrollHeight="300px"
+          dataKey="id"
+        >
+          <Column field="botanicalName" header="Nom botanique">
+            <template #body="slotProps">
+              <i>{{ slotProps.data.botanicalName }}</i>
+            </template>
+          </Column>
+          <Column field="frenchCommonNames" header="Nom(s) commun(s)">
+            <template #body="slotProps">
+              {{ commonNamesArrayToString(slotProps.data.frenchCommonNames) }}
+            </template>
+          </Column>
+          <Column field="upovCode" header="Code UPOV" />
+          <Column field="valid" header="Validée ?"
+            ><template #body="slotProps">
+              {{ showValidity(slotProps.data.valid) }}
+            </template></Column
+          >
+          <Column>
+            <template #body="slotProps">
+              <Button
+                icon="pi pi-plus-circle"
+                text
+                raised
+                rounded
+                @click="selectSpecy(slotProps.data)"
+                title="Sélectionner cette espèce"
+              />
+            </template>
+          </Column>
+        </DataTable>
+        <div v-else-if="loadingSearchStep == 2 && searchedSpecies.length == 0">
+          <InlineMessage class="col-12 mb-1" severity="info"
+            >Aucun résultat</InlineMessage
+          >
         </div>
       </div>
-      <InlineMessage
-        class="col-12 mb-1"
-        v-for="apiError in apiErrors"
-        :key="apiError"
-        :severity="apiError.level"
-        >{{ apiError.message }}</InlineMessage
+    </div>
+    <div class="grid mb-2">
+      <div :class="getCssClass.container.default + ' ' + getFormClass">
+        <h3 style="margin-top: -5px">Variété</h3>
+        <div class="field grid">
+          <label for="name" class="col-12 sm:col-3 mb-0">Nom de la variété</label>
+          <div class="col-12 sm:col-8">
+            <input
+              id="name"
+              placeholder="Chioggia"
+              type="text"
+              :class="getInputClass(formError.nameError)"
+              v-model="variety.name"
+              @keyup.enter="submit()"
+              maxlength="128"
+            />
+          </div>
+          <FormMessage class="col-12" :message="formError.nameError" />
+        </div>
+        <div class="field grid">
+          <label for="name" class="col-12 sm:col-3">Description</label>
+          <div class="col-12 sm:col-8">
+            <textarea
+              id="description"
+              placeholder="La Betterave de Chioggia est une variété ancienne italienne très hâtive à racine ronde et à la chair sucrée, rose veinée de blanc."
+              type="text"
+              :class="getCssClass.input.default"
+              v-model="variety.description"
+            />
+          </div>
+        </div>
+        <div class="field grid" v-if="isPublicSpecy">
+          <label for="isPublicVariety" class="col-12 sm:col-3"
+            >Public&nbsp;
+            <div
+              class="pi pi-question-circle"
+              v-tooltip="
+                'Une variété publique est partagée avec les autres utilisateurs. Une variété publique ne peut être modifiée que par un Administrateur.'
+              "
+            ></div
+          ></label>
+          <div class="col-12 sm:col-8">
+            <Checkbox
+              id="isPublicVariety"
+              v-model="isPublicVariety"
+              :binary="true"
+              :disabled="varietyToUpdate.id !== 0"
+            >
+            </Checkbox>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="proposedVariety.id !== 0"
+        :class="getCssClass.container.default + ' col-12 md:col-6 mt-1'"
       >
-      <div class="col-12">
+        <div class="col-12 mb-2">
+          <VarietyDetails :variety="proposedVariety" />
+        </div>
         <Button
           rounded
-          :label="submitButtonLabel"
-          @click="submit()"
-          class="col-4 md:col-3 col-offset-4"
-          :loading="loading"
+          icon="pi pi-plus-circle"
+          label="Ajouter la variété existante"
+          @click="addUserToVariety()"
+          class="col-12 md:col-6"
         />
       </div>
-    </Dialog>
+    </div>
+    <InlineMessage
+      class="col-12 mb-1"
+      v-for="apiError in apiErrors"
+      :key="apiError"
+      :severity="apiError.level"
+      >{{ apiError.message }}</InlineMessage
+    >
+    <div class="col-12">
+      <Button
+        rounded
+        :label="submitButtonLabel"
+        @click="submit()"
+        class="col-4 md:col-3 col-offset-4"
+        :loading="loading"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import ModalFormCommon from "@/components/common/ModalFormCommon.vue";
-import Dialog from "primevue/dialog";
+import FormCommon from "@/components/common/FormCommon.vue";
 import Button from "primevue/button";
 import InlineMessage from "primevue/inlinemessage";
 import { cssClass, getInputClass } from "@/utils/style";
@@ -193,10 +184,9 @@ import authorizationService from "@/services/AuthorizationService";
 import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
-  extends: ModalFormCommon,
+  extends: FormCommon,
   emits: ["addUserToVariety", "submit"],
   components: {
-    Dialog,
     Button,
     InlineMessage,
     FormMessage,
@@ -242,19 +232,6 @@ export default defineComponent({
         );
         this.isPublicVariety = newVarietyToUpdate.owner === PUBLIC;
         this.isPublicSpecy = newVarietyToUpdate.specy.owner === PUBLIC;
-      }
-    },
-    visible(newVisibility) {
-      if (newVisibility) {
-        // Reset du formulaire
-        if (this.varietyToUpdate.id === 0) {
-          this.variety = varietyScript.init();
-        }
-        this.searchedSpecies = [] as Specy[];
-        this.searchSpecy = specyScript.initSearch();
-        this.formError = this.initFormError();
-        this.formErrorSpecy = specyScript.initFormError();
-        this.loadingSearchStep = 0;
       }
     },
   },

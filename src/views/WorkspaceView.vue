@@ -4,49 +4,55 @@
       <Menu :model="menuItems" />
     </div>
     <div class="col-12 lg:col-10" v-if="userStore.user.id !== 0">
-      <MonitoringPanel v-show="workspaceStore.selectedItemNumber === 0" />
-      <VarietyPanel v-show="workspaceStore.selectedItemNumber === 1" />
-      <SowingPanel v-show="workspaceStore.selectedItemNumber === 2" />
+      <RouterView v-slot="{ Component }">
+        <keep-alive :exclude="keepAliveExcludes"
+          ><component :is="Component"
+        /></keep-alive>
+      </RouterView>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import Menu from "primevue/menu";
-import { computed } from "vue";
-import MonitoringPanel from "@/components/monitoring/MonitoringPanel.vue";
-import VarietyPanel from "@/components/variety/VarietyPanel.vue";
-import SowingPanel from "@/components/sowing/SowingPanel.vue";
-import { useWorkspaceStore } from "@/stores/workspace";
+import { computed, ref } from "vue";
+import { RouterView } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/stores/user";
 const { t } = useI18n();
-const workspaceStore = useWorkspaceStore();
 const userStore = useUserStore();
+import router from "@/router";
+
+const keepAliveExcludes = ref([
+  "MonitoringUpdate",
+  "MonitoringCreate",
+  "MonitoringLineUpdate",
+  "MonitoringLineCreate",
+]);
 
 const menuItems = computed(() => [
   {
     label: userStore.activeProjectUser.project.name,
     items: [
       {
-        label: t('navigation.monitoring'),
+        label: t("navigation.monitoring"),
         icon: "pi pi-fw pi-chart-bar",
         command: () => {
-          workspaceStore.setSelectedItemNumber(0);
+          router.push({ name: "MonitoringPanel" });
         },
       },
       {
-        label: t('navigation.variety'),
+        label: t("navigation.variety"),
         icon: "pi pi-fw pi-apple",
         command: () => {
-          workspaceStore.setSelectedItemNumber(1);
+          router.push({ name: "VarietyPanel" });
         },
       },
       {
-        label: t('navigation.sowing'),
+        label: t("navigation.sowing"),
         icon: "pi pi-fw pi-database",
         command: () => {
-          workspaceStore.setSelectedItemNumber(2);
+          router.push({ name: "SowingPanel" });
         },
       },
     ],
