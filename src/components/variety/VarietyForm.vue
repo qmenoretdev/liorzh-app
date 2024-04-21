@@ -1,5 +1,5 @@
 <template>
-  <div class="grid">
+  <div :class="getCssClass.container.default + ' col-12'">
     <div class="grid">
       <SpecyForm
         :class="getFormClass"
@@ -131,7 +131,7 @@
           rounded
           icon="pi pi-plus-circle"
           label="Ajouter la variété existante"
-          @click="addUserToVariety()"
+          @click="addVarietyToProject()"
           class="col-12 md:col-6"
         />
       </div>
@@ -148,8 +148,15 @@
         rounded
         :label="submitButtonLabel"
         @click="submit()"
-        class="col-4 md:col-3 col-offset-4"
+        class="col-5 md:col-4 md:col-offset-2 mr-2"
         :loading="loading"
+      />
+      <Button
+        rounded
+        :label="$t('button.cancel')"
+        @click="quit()"
+        class="col-5 md:col-4"
+        severity="secondary"
       />
     </div>
   </div>
@@ -185,7 +192,7 @@ import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
   extends: FormCommon,
-  emits: ["addUserToVariety", "submit"],
+  emits: ["addVarietyToProject"],
   components: {
     Button,
     InlineMessage,
@@ -281,8 +288,8 @@ export default defineComponent({
       }
       this.loadingSearchStep = 2;
     },
-    addUserToVariety() {
-      this.$emit("addUserToVariety", this.proposedVariety);
+    addVarietyToProject() {
+      this.$emit("addVarietyToProject", this.proposedVariety);
     },
     getInputClass(error: string): string {
       return getInputClass(error);

@@ -12,5 +12,13 @@ export const usePlotStore = defineStore('plotStore', () => {
   function setSelectedPlot(plotsValue: Plot) {
     selectedPlot.value = plotsValue;
   }
-  return { plots, setPlots, selectedPlot, setSelectedPlot }
+  function updatePlot(plot: Plot) {
+    plots.value.forEach((plotIn: Plot, i: number) => {
+      if (plotIn.id === plot.id) {
+        plots.value[i] = plot
+        return;
+      }
+    });
+  }
+  return { plots, setPlots, selectedPlot, setSelectedPlot, updatePlot }
 })

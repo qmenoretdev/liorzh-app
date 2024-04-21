@@ -21,7 +21,7 @@ import { onMounted, ref } from "vue";
 import type { ApiError } from "@/models/ApiError";
 import type { MonitoringLine } from "@/models/MonitoringLine";
 import responseService from "@/services/ResponseService";
-import MonitoringLineForm from "./MonitoringLineForm.vue";
+import MonitoringLineForm from "@/components/monitoringline/MonitoringLineForm.vue";
 import router from "@/router";
 import { useRoute } from "vue-router";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";

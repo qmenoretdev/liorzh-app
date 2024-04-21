@@ -17,44 +17,26 @@
         rounded
         label="Nouvelle parcelle"
         icon="pi pi-plus-circle"
-        @click="plotCreationVisible = true"
+        @click="goToCreatePlot"
       />
       <div class="grid col-12 mt-1" v-if="plotStore.plots.length > 0">
         <template v-for="plot in plotStore.plots" :key="plot.id">
           <PlotCard
             :plot="plot"
             class="col-12 md:col-6 lg:col-4"
-            @openUpdatePlot="openUpdatePlot"
+            @openUpdatePlot="goToUpdatePlot"
             @deletePlot="deletePlot"
             @selectPlot="selectPlot"
           />
         </template>
       </div>
     </div>
-    <PlotForm
-      :visible="plotCreationVisible"
-      :apiErrors="apiErrors"
-      :loading="loadingForm"
-      @submit="createPlot"
-      @close="closeModal()"
-    />
-    <PlotForm
-      :visible="plotUpdateVisible"
-      :apiErrors="apiErrors"
-      :plotToUpdate="selectedPlot"
-      :header="'Modification d\'une parcelle'"
-      :submitButtonLabel="'Modifier'"
-      :loading="loadingForm"
-      @submit="updatePlot"
-      @close="closeModal()"
-    />
   </div>
   <LoadingSpinner v-else />
 </template>
 
 <script setup lang="ts">
 import Button from "primevue/button";
-import PlotForm from "@/components/plot/PlotForm.vue";
 import { usePlotStore } from "@/stores/plot";
 import { ref } from "vue";
 import type { Plot } from "@/models/Plot";
@@ -63,71 +45,35 @@ import type { ApiError } from "@/models/ApiError";
 import responseService from "@/services/ResponseService";
 import { onMounted } from "vue";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
-import plotScript from "@/scripts/PlotScript";
 import PlotCard from "@/components/plot/PlotCard.vue";
 import { useConfirm } from "primevue/useconfirm";
 import { defaultConfirmDialogOptions } from "@/scripts/CommonScript";
 import InlineMessage from "primevue/inlinemessage";
-import projectService from '@/services/ProjectService';
+import projectService from "@/services/ProjectService";
 import { useUserStore } from "@/stores/user";
+import links from "@/utils/links";
+import router from "@/router";
 
 const emit = defineEmits(["selectPlot"]);
 
 const confirm = useConfirm();
 const userStore = useUserStore();
 const plotStore = usePlotStore();
-const plotCreationVisible = ref(false);
-const plotUpdateVisible = ref(false);
 
 const loading = ref(false);
-const loadingForm = ref(false);
 
 const apiErrors = ref([] as ApiError[]);
-
-const selectedPlot = ref(plotScript.init());
 
 onMounted(async () => {
   getPlots();
 });
 
-async function createPlot(plot: Plot) {
-  try {
-    loadingForm.value = true;
-    const createdPlot = await plotService.createPlot(plot);
-    if (createdPlot) {
-      plotCreationVisible.value = false;
-      getPlots();
-    } else {
-      apiErrors.value = [
-        { message: "Impossible de créer la parcelle", code: "", level: "error" },
-      ];
-    }
-  } catch (error: any) {
-    apiErrors.value = responseService.getApiErrors(error);
-  }
-  loadingForm.value = false;
+function goToCreatePlot() {
+  router.push(links.plotCreate());
 }
 
-function openUpdatePlot(plot: Plot) {
-  plotUpdateVisible.value = true;
-  selectedPlot.value = plot;
-}
-
-async function updatePlot(plot: Plot) {
-  try {
-    loadingForm.value = true;
-    const isUpdated = await plotService.updatePlot(plot);
-    if (!isUpdated) {
-      apiErrors.value = [
-        { message: "Impossible de modifier la parcelle", code: "", level: "error" },
-      ];
-    } else {
-      plotUpdateVisible.value = false;
-    }
-  } catch (error: any) {
-    apiErrors.value = responseService.getApiErrors(error);
-  }
-  loadingForm.value = false;
+function goToUpdatePlot(plot: Plot) {
+  router.push(links.plotUpdate(plot));
 }
 
 async function deletePlot(id: number) {
@@ -156,16 +102,11 @@ async function deletePlot(id: number) {
 
 async function getPlots() {
   loading.value = true;
-  const plots = await projectService.getPlotsByProject(userStore.activeProjectUser.project);
+  const plots = await projectService.getPlotsByProject(
+    userStore.activeProjectUser.project
+  );
   plotStore.setPlots(plots);
   loading.value = false;
-}
-
-function closeModal() {
-  plotCreationVisible.value = false;
-  plotUpdateVisible.value = false;
-  selectedPlot.value = plotScript.init();
-  getPlots();
 }
 
 function selectPlot(plot: Plot) {

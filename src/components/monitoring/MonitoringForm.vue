@@ -73,7 +73,7 @@
       />
       <Button
         rounded
-        :label="'Annuler'"
+        :label="$t('button.cancel')"
         @click="quit()"
         class="col-5 md:col-4"
         severity="secondary"

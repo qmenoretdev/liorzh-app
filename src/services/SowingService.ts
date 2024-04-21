@@ -39,6 +39,10 @@ class SowingService {
         const response = await axiosJwtProtected.get(`sowings?${queryParams.variety.id}=${varietyId}&${queryParams.project.id}=${userStore.activeProjectUser.project.id}`);
         return response.data;
     }
+    async getSowing(sowingId: number): Promise<Sowing> {
+        const response = await axiosJwtProtected.get(`sowings/${sowingId}`);
+        return response.data;
+    }
 }
 const sowingService = new SowingService()
 export default sowingService

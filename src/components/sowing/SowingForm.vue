@@ -20,12 +20,12 @@
         v-if="sowing.variety.id === 0"
       />
       <div class="field grid">
-        <label for="monitoring" class="col-12 sm:col-3"
+        <label for="location" class="col-12 sm:col-3"
           >{{ $t("sowing.location") }} :
         </label>
         <div class="col-12 sm:col-4">
           <select
-            id="monitoring"
+            id="location"
             v-model="sowing.location"
             :class="getCssClass.input.default"
           >
@@ -108,11 +108,12 @@
         :editable="false"
         @selectVariety="selectVariety"
       />
-      <template v-else>
+      <template v-else-if="!loadingVarieties">
         <InlineMessage class="col-12 mb-1" :severity="'info'">{{
           $t("message.variety.none")
         }}</InlineMessage>
       </template>
+      <LoadingSpinner v-else />
     </div>
     <InlineMessage
       class="col-12 mb-1"
@@ -126,8 +127,15 @@
         rounded
         :label="submitButtonLabel"
         @click="submit()"
-        class="col-4 md:col-3 col-offset-4"
+        class="col-5 md:col-4 md:col-offset-2 mr-2"
         :loading="loading"
+      />
+      <Button
+        rounded
+        :label="$t('button.cancel')"
+        @click="quit()"
+        class="col-5 md:col-4"
+        severity="secondary"
       />
     </div>
   </div>
@@ -139,18 +147,21 @@ import FormCommon from "@/components/common/FormCommon.vue";
 import Button from "primevue/button";
 import InlineMessage from "primevue/inlinemessage";
 import { cssClass, getInputClass } from "@/utils/style";
-import monitoringScript from "@/scripts/MonitoringScript";
 import FormMessage from "@/components/common/FormMessage.vue";
 import Checkbox from "primevue/checkbox";
 import sowingScript from "@/scripts/SowingScript";
 import VarietyDataTable from "@/components/variety/VarietyDataTable.vue";
 import type { Variety } from "@/models/Variety";
-import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { useI18n } from "vue-i18n";
 import { toInputDate } from "@/utils/date";
 import type SelectOption from "@/models/form/SelectOption";
 import { locationOptions } from "@/utils/location";
-import { useVarietyStore } from "@/stores/variety";
+import { useUserStore } from "@/stores/user";
+import type { ToastMessageOptions } from "primevue/toast";
+import toastService from "@/services/ToastService";
+import projectService from "@/services/ProjectService";
+import responseService from "@/services/ResponseService";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 
 export default defineComponent({
   extends: FormCommon,
@@ -166,9 +177,6 @@ export default defineComponent({
     sowingToUpdate: {
       default: sowingScript.init(),
     },
-    monitoringToAddLine: {
-      default: monitoringScript.init(),
-    },
   },
   setup() {
     const { t } = useI18n();
@@ -182,7 +190,28 @@ export default defineComponent({
       sowing: sowingScript.init(),
       formError: this.initFormError(),
       customType: "",
+      userVarieties: [] as Variety[],
+      loadingVarieties: true,
     };
+  },
+  async mounted() {
+    if (!this.isUpdateMode) {
+      try {
+        const userStore = useUserStore();
+        this.userVarieties = await projectService.getVarietiesByProject(
+          userStore.activeProjectUser.project
+        );
+      } catch (error: any) {
+        const toastOptions = toastService.getToastOptions(
+          "Impossible de récupérer vos variétés",
+          responseService.getApiErrors(error)
+        );
+        toastOptions.forEach((toastOption: ToastMessageOptions) => {
+          this.$toast.add(toastOption);
+        });
+      }
+    }
+    this.loadingVarieties = false;
   },
   watch: {
     sowingToUpdate(newSowingToUpdate) {
@@ -207,8 +236,7 @@ export default defineComponent({
       return locationOptions;
     },
     getUserVarieties(): Variety[] {
-      const varietyStore = useVarietyStore();
-      return varietyStore.userVarieties;
+      return this.userVarieties;
     },
   },
   methods: {

@@ -43,7 +43,9 @@
           </template>
           <MonitoringLinePanel
             class="col-12"
+            @refreshLines="refreshMonitoringLines"
             :monitoringToAddLine="monitoringToAddLine"
+            :loading="loadingMonitoringLines"
           />
         </div>
       </div>
@@ -90,6 +92,7 @@ const plotPanelVisible = ref(true);
 const apiErrors = ref([] as ApiError[]);
 const apiGetErrors = ref([] as ApiError[]);
 const loading = ref(false);
+const loadingMonitoringLines = ref(false);
 const confirm = useConfirm();
 const monitoringToAddLine = ref(monitoringScript.init());
 
@@ -146,6 +149,15 @@ async function deleteMonitoring(id: number) {
   };
   confirm.require(confirmDialog);
 }
+async function refreshMonitoringLines(monitoring: Monitoring) {
+  loadingMonitoringLines.value = true;
+  monitoring.monitoringLines = [];
+  monitoring.monitoringLines = await monitoringLineService.getMonitoringLinesByMonitoring(
+    monitoring.id
+  );
+  monitoringStore.updateMonitoring(monitoring);
+  loadingMonitoringLines.value = false;
+}
 async function selectMonitoring(monitoring: Monitoring) {
   if (
     monitoringStore.selectedMonitorings.find(
@@ -158,11 +170,8 @@ async function selectMonitoring(monitoring: Monitoring) {
       )
     );
   } else {
-    monitoring.monitoringLines = [];
     monitoringStore.selectedMonitorings.push(monitoring);
-    monitoring.monitoringLines = await monitoringLineService.getMonitoringLinesByMonitoring(
-      monitoring.id
-    );
+    refreshMonitoringLines(monitoring);
   }
 }
 function goToUpdateMonitoring(monitoring: Monitoring) {

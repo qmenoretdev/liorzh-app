@@ -33,8 +33,15 @@
           rounded
           :label="submitButtonLabel"
           @click="submit()"
-          class="col-4 md:col-3 col-offset-4"
+          class="col-5 md:col-4 mr-2"
           :loading="loading"
+        />
+        <Button
+          rounded
+          :label="$t('button.cancel')"
+          @click="emits('quit')"
+          class="col-5 md:col-4"
+          severity="secondary"
         />
       </div>
     </div>
@@ -70,7 +77,7 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["quit", "submit"]);
+const emits = defineEmits(["quit", "submit"]);
 
 watch(
   () => props.projectToUpdate,
@@ -80,7 +87,7 @@ watch(
 );
 function submit() {
   if (checkForm()) {
-    emit("submit", project.value);
+    emits("submit", project.value);
   }
 }
 function checkForm() {

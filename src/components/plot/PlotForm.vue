@@ -1,15 +1,15 @@
 <template>
   <div class="grid">
-    <span
-      >Utilisation des données de localisation
+    <div class="col-12">
+      Utilisation des données de localisation
       <div
         class="pi pi-info-circle"
         v-tooltip="
           'Fournir aux utilisateurs une analyse globale par variété pour leur localisation. Aucune utilisation publicitaire.'
         "
-      ></div
-    ></span>
-    <div :class="cssClass.container.default">
+      ></div>
+    </div>
+    <div :class="cssClass.container.default + ' col-12 sm:col-6'">
       <div class="field grid">
         <label for="name" class="col-12 sm:col-3"
           >Nom*&nbsp;
@@ -118,8 +118,15 @@
           rounded
           :label="submitButtonLabel"
           @click="submit()"
-          class="col-4 md:col-3 col-offset-4"
+          class="col-5 md:col-4 md:col-offset-2 mr-2"
           :loading="loading"
+        />
+        <Button
+          rounded
+          :label="$t('button.cancel')"
+          @click="emits('quit')"
+          class="col-5 md:col-4"
+          severity="secondary"
         />
       </div>
     </div>
@@ -156,7 +163,7 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["quit", "submit"]);
+const emits = defineEmits(["quit", "submit"]);
 watch(
   () => props.plotToUpdate,
   (newValue) => {
@@ -174,7 +181,7 @@ function submit() {
       plot.value.subRegion = null;
       plot.value.city = null;
     }
-    emit("submit", plot.value);
+    emits("submit", plot.value);
   }
 }
 function checkForm() {

@@ -209,10 +209,7 @@
         </div>
       </div>
     </div>
-    <div
-      :class="getCssClass.container.default + ' col-6'"
-      v-if="!isUpdateMode && !loadingVarieties"
-    >
+    <div :class="getCssClass.container.default + ' col-6'" v-if="!isUpdateMode">
       <VarietyDataTable
         class="col-12"
         v-if="getUserVarieties.length > 0"
@@ -221,11 +218,12 @@
         :editable="false"
         @selectVariety="selectVariety"
       />
-      <template v-else>
+      <template v-else-if="!loadingVarieties">
         <InlineMessage class="col-12 mb-1" :severity="'info'">{{
           $t("message.variety.none")
         }}</InlineMessage>
       </template>
+      <LoadingSpinner v-else />
     </div>
     <InlineMessage
       class="col-12 mb-1"
@@ -276,6 +274,7 @@ import sowingService from "@/services/SowingService";
 import type { Sowing } from "@/models/Sowing";
 import projectService from "@/services/ProjectService";
 import { useUserStore } from "@/stores/user";
+import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 
 export default defineComponent({
   extends: FormCommon,
@@ -285,6 +284,7 @@ export default defineComponent({
     FormMessage,
     Checkbox,
     VarietyDataTable,
+    LoadingSpinner,
   },
   props: {
     monitoringLineToUpdate: {

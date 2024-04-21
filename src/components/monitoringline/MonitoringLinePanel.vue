@@ -16,16 +16,16 @@
         @harvest="openHarvestMonitoringLine"
       />
     </template>
-    <!--<HarvestForm
-      ref="harvestFormRef"
+    <HarvestForm
+      :visible="monitoringLineHarvestVisible"
       :header="$t('monitoringLine.harvest.updateTitle')"
       :monitoringLineToUpdate="selectedMonitoringLine"
       :apiErrors="apiErrors"
       :loading="loadingForm"
       :submitButtonLabel="$t('button.register')"
       @submit="updateMonitoringLine"
-      @close="closeModal()"
-    />-->
+      @close="closeModal"
+    />
   </div>
 </template>
 
@@ -45,6 +45,7 @@ import responseService from "@/services/ResponseService";
 import monitoringLineScript from "@/scripts/MonitoringLineScript";
 import HarvestForm from "@/components/monitoringline/HarvestForm.vue";
 import router from "@/router";
+import type { Monitoring } from "@/models/Monitoring";
 
 const monitoringStore = useMonitoringStore();
 const confirm = useConfirm();
@@ -52,7 +53,6 @@ const confirm = useConfirm();
 const monitoringLineHarvestVisible = ref(false);
 const apiErrors = ref([] as ApiError[]);
 const loadingForm = ref(false);
-const loading = ref(false);
 const selectedMonitoringLine = ref(monitoringLineScript.init());
 
 const aggregateMonitoringLines = computed(() => {
@@ -70,12 +70,34 @@ const props = defineProps({
   mode: {
     default: MONITORING_LINE_DISPLAY_MODE.AGGREGATE,
   },
+  loading: {
+    default: false,
+  },
 });
 
-function closeModal() {
-  monitoringLineHarvestVisible.value = false;
-}
+const emits = defineEmits(["refreshLines"]);
 
+function closeModal(monitoring: Monitoring) {
+  monitoringLineHarvestVisible.value = false;
+  emits("refreshLines", monitoring);
+}
+async function updateMonitoringLine(monitoringLine: MonitoringLine) {
+  try {
+    loadingForm.value = true;
+    const isUpdated = await monitoringLineService.updateMonitoringLine(monitoringLine);
+    if (!isUpdated) {
+      apiErrors.value = [
+        { message: "Impossible de modifier la ligne de suivi", code: "", level: "error" },
+      ];
+    } else {
+      monitoringStore.updateMonitoringLine(monitoringLine);
+    }
+  } catch (error: any) {
+    apiErrors.value = responseService.getApiErrors(error);
+  }
+  loadingForm.value = false;
+  closeModal(monitoringLine.monitoring);
+}
 async function deleteMonitoringLine(monitoringLine: MonitoringLine) {
   let confirmDialog = defaultConfirmDialogOptions;
   confirmDialog.message = "Etes-vous certain de vouloir supprimer cette ligne ?";

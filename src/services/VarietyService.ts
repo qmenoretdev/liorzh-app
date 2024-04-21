@@ -3,6 +3,10 @@ import type { Specy } from '@/models/Specy';
 import type { Variety } from '@/models/Variety';
 import type { SearchVariety } from '@/models/request/search/SearchVariety';
 class VarietyService {
+    async getVariety(varietyId: number): Promise<Variety> {
+        const response = await axiosJwtProtected.get(`varieties/${varietyId}`);
+        return response.data;
+    }
     async createVariety(variety: Variety): Promise<Variety> {
         const response = await axiosJwtProtected.post('varieties', {
             name: variety.name,

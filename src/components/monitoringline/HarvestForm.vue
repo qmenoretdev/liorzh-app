@@ -1,131 +1,140 @@
 <template>
-  <div class="grid">
-    <div :class="getCssClass.container.default + getFormClass">
-      <div class="field grid">
-        <label for="harvestNumber" class="col-12 sm:col-3 mb-0">{{
-          $t("monitoringLine.harvest.addNumber")
-        }}</label>
-        <div class="col-12 sm:col-3">
-          <input
-            id="harvestNumber"
-            placeholder="0"
-            type="number"
-            :class="getCssClass.input.default"
-            v-model.number="harvestNumber"
-            @keyup.enter="add()"
-          />
-        </div>
-        <label for="harvestWeight" class="col-12 sm:col-3 mb-0">{{
-          $t("monitoringLine.harvest.addWeight")
-        }}</label>
-        <div class="col-12 sm:col-3">
-          <input
-            id="harvestWeight"
-            placeholder="0"
-            type="number"
-            :class="getCssClass.input.default"
-            v-model.number="harvestWeight"
-            @keyup.enter="add()"
-          />
-        </div>
-      </div>
-      <div class="col-12">
-        <Button
-          rounded
-          severity="info"
-          :label="$t('button.add')"
-          @click="add()"
-          class="col-4 md:col-3 col-offset-4"
-        />
-      </div>
-      <div class="field grid">
-        <label for="harvestNumber" class="col-12 sm:col-3 mb-0">{{
-          $t("monitoringLine.harvest.number")
-        }}</label>
-        <div class="col-12 sm:col-6">
-          <input
-            id="harvestNumber"
-            placeholder="0"
-            type="number"
-            :class="getCssClass.input.default"
-            v-model.number="monitoringLine.harvest.number"
-            @keyup.enter="submit()"
-          />
-        </div>
-      </div>
-      <div class="field grid">
-        <label for="harvestWeight" class="col-12 sm:col-3 mb-0">{{
-          $t("monitoringLine.harvest.weight")
-        }}</label>
-        <div class="col-12 sm:col-6">
-          <input
-            id="harvestWeight"
-            placeholder="0"
-            type="number"
-            :class="getCssClass.input.default"
-            v-model.number="monitoringLine.harvest.weight"
-            @keyup.enter="submit()"
-          />
-        </div>
-        <label
-          v-if="totalWeightAdd !== 0"
-          class="col-12 sm:col-3 mb-0"
-          :style="getOperationStyle(totalWeightAdd)"
-        >
-          {{ getOperation(totalWeightAdd) }}
-        </label>
-      </div>
-      <div class="field grid">
-        <label for="harvestStart" class="col-12 sm:col-3 mb-0">{{
-          $t("monitoringLine.harvest.start")
-        }}</label>
-        <div class="col-12 sm:col-6">
-          <input
-            id="harvestStart"
-            type="date"
-            :class="getCssClass.input.default"
-            v-model="monitoringLine.harvest.start"
-            @keyup.enter="submit()"
-          />
-        </div>
-      </div>
-      <div class="field grid">
-        <label for="harvestStop" class="col-12 sm:col-3 mb-0">{{
-          $t("monitoringLine.harvest.stop")
-        }}</label>
-        <div class="col-12 sm:col-6">
-          <input
-            id="harvestStop"
-            type="date"
-            :class="getCssClass.input.default"
-            v-model="monitoringLine.harvest.stop"
-            @keyup.enter="submit()"
-          />
-        </div>
-      </div>
-    </div>
-    <InlineMessage
-      class="col-12 mb-1"
-      v-for="apiError in apiErrors"
-      :key="apiError"
-      :severity="apiError.level"
-      >{{ apiError.message }}</InlineMessage
+  <div>
+    <Dialog
+      :header="header"
+      v-model:visible="visibleData"
+      modal
+      :style="{ width: isUpdateMode ? '45vw' : '90vw' }"
+      @update:visible="closeModal"
     >
-    <div class="col-12">
-      <Button
-        rounded
-        :label="submitButtonLabel"
-        @click="submit()"
-        class="col-4 md:col-3 col-offset-4"
-        :loading="loading"
-      />
-    </div>
+      <div class="grid">
+        <div :class="getCssClass.container.default + getFormClass">
+          <div class="field grid">
+            <label for="harvestNumber" class="col-12 sm:col-3 mb-0">{{
+              $t("monitoringLine.harvest.addNumber")
+            }}</label>
+            <div class="col-12 sm:col-3">
+              <input
+                id="harvestNumber"
+                placeholder="0"
+                type="number"
+                :class="getCssClass.input.default"
+                v-model.number="harvestNumber"
+                @keyup.enter="add()"
+              />
+            </div>
+            <label for="harvestWeight" class="col-12 sm:col-3 mb-0">{{
+              $t("monitoringLine.harvest.addWeight")
+            }}</label>
+            <div class="col-12 sm:col-3">
+              <input
+                id="harvestWeight"
+                placeholder="0"
+                type="number"
+                :class="getCssClass.input.default"
+                v-model.number="harvestWeight"
+                @keyup.enter="add()"
+              />
+            </div>
+          </div>
+          <div class="col-12">
+            <Button
+              rounded
+              severity="info"
+              :label="$t('button.add')"
+              @click="add()"
+              class="col-4 md:col-3 col-offset-4"
+            />
+          </div>
+          <div class="field grid">
+            <label for="harvestNumber" class="col-12 sm:col-3 mb-0">{{
+              $t("monitoringLine.harvest.number")
+            }}</label>
+            <div class="col-12 sm:col-6">
+              <input
+                id="harvestNumber"
+                placeholder="0"
+                type="number"
+                :class="getCssClass.input.default"
+                v-model.number="monitoringLine.harvest.number"
+                @keyup.enter="submit()"
+              />
+            </div>
+          </div>
+          <div class="field grid">
+            <label for="harvestWeight" class="col-12 sm:col-3 mb-0">{{
+              $t("monitoringLine.harvest.weight")
+            }}</label>
+            <div class="col-12 sm:col-6">
+              <input
+                id="harvestWeight"
+                placeholder="0"
+                type="number"
+                :class="getCssClass.input.default"
+                v-model.number="monitoringLine.harvest.weight"
+                @keyup.enter="submit()"
+              />
+            </div>
+            <label
+              v-if="totalWeightAdd !== 0"
+              class="col-12 sm:col-3 mb-0"
+              :style="getOperationStyle(totalWeightAdd)"
+            >
+              {{ getOperation(totalWeightAdd) }}
+            </label>
+          </div>
+          <div class="field grid">
+            <label for="harvestStart" class="col-12 sm:col-3 mb-0">{{
+              $t("monitoringLine.harvest.start")
+            }}</label>
+            <div class="col-12 sm:col-6">
+              <input
+                id="harvestStart"
+                type="date"
+                :class="getCssClass.input.default"
+                v-model="monitoringLine.harvest.start"
+                @keyup.enter="submit()"
+              />
+            </div>
+          </div>
+          <div class="field grid">
+            <label for="harvestStop" class="col-12 sm:col-3 mb-0">{{
+              $t("monitoringLine.harvest.stop")
+            }}</label>
+            <div class="col-12 sm:col-6">
+              <input
+                id="harvestStop"
+                type="date"
+                :class="getCssClass.input.default"
+                v-model="monitoringLine.harvest.stop"
+                @keyup.enter="submit()"
+              />
+            </div>
+          </div>
+        </div>
+        <InlineMessage
+          class="col-12 mb-1"
+          v-for="apiError in apiErrors"
+          :key="apiError"
+          :severity="apiError.level"
+          >{{ apiError.message }}</InlineMessage
+        >
+        <div class="col-12">
+          <Button
+            rounded
+            :label="submitButtonLabel"
+            @click="submit()"
+            class="col-4 md:col-3 col-offset-4"
+            :loading="loading"
+          />
+        </div>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import FormCommon from "@/components/common/FormCommon.vue";
 import Button from "primevue/button";
 import InlineMessage from "primevue/inlinemessage";
 import { cssClass, getInputClass } from "@/utils/style";
@@ -140,9 +149,11 @@ import type { Variety } from "@/models/Variety";
 import LoadingSpinner from "@/components/common/LoadingSpinner.vue";
 import { useI18n } from "vue-i18n";
 import { toInputDate } from "@/utils/date";
+import ModalFormCommon from "../common/ModalFormCommon.vue";
+import Dialog from "primevue/dialog";
 
 export default defineComponent({
-  extends: FormCommon,
+  extends: ModalFormCommon,
   components: {
     Button,
     InlineMessage,
@@ -150,13 +161,11 @@ export default defineComponent({
     Checkbox,
     VarietyDataTable,
     LoadingSpinner,
+    Dialog,
   },
   props: {
     monitoringLineToUpdate: {
       default: monitoringLineScript.init(),
-    },
-    monitoringToAddLine: {
-      default: monitoringScript.init(),
     },
   },
   setup() {
@@ -197,8 +206,8 @@ export default defineComponent({
             : toInputDate(this.monitoringLine.harvest.stop);
       }
     },
-    monitoringToAddLine(newMonitoringToAddLine) {
-      this.monitoringLine.monitoring = newMonitoringToAddLine;
+    visible() {
+      this.reset();
     },
   },
   computed: {
@@ -217,6 +226,9 @@ export default defineComponent({
     },
   },
   methods: {
+    closeModal() {
+      this.$emit("close", this.monitoringLine.monitoring);
+    },
     submit() {
       if (this.checkForm()) {
         this.$emit("submit", this.monitoringLine);

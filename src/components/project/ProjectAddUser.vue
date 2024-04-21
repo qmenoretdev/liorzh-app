@@ -39,8 +39,15 @@
           rounded
           :label="submitButtonLabel"
           @click="submit()"
-          class="col-4 md:col-3 col-offset-4"
-          :loading="loading"
+          class="col-5 md:col-4 mr-2"
+          :loading="loadingForm"
+        />
+        <Button
+          rounded
+          :label="$t('button.cancel')"
+          @click="router.go(-1)"
+          class="col-5 md:col-4"
+          severity="secondary"
         />
       </div>
     </div>
@@ -49,7 +56,7 @@
 
 <script setup lang="ts">
 import InlineMessage from "primevue/inlinemessage";
-import { ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { cssClass, getInputClass } from "@/utils/style";
 import projectScript from "@/scripts/ProjectScript";
 import FormMessage from "@/components/common/FormMessage.vue";
@@ -57,34 +64,61 @@ import Button from "primevue/button";
 import type { ApiError } from "@/models/ApiError";
 import userScript from "@/scripts/UserScript";
 import { PROJECT_ROLES } from "@/utils/constant";
+import projectService from "@/services/ProjectService";
+import router from "@/router";
+import type { User } from "@/models/User";
+import type { Project } from "@/models/Project";
+import responseService from "@/services/ResponseService";
+import { useToast } from "primevue/usetoast";
+import toastService from "@/services/ToastService";
 
+const toast = useToast();
 const user = ref(userScript.init());
+const project = ref(projectScript.init());
 const role = ref(PROJECT_ROLES.READER);
+const loading = ref(true);
+const loadingForm = ref(false);
+const apiErrors = ref([] as ApiError[]);
 
 const formError = ref(initFormError());
+
 const props = defineProps({
   header: {
     default: "Ajouter un utilisateur",
   },
-  project: {
-    default: projectScript.init(),
-  },
-  apiErrors: {
-    default: [] as ApiError[],
-  },
   submitButtonLabel: {
     default: "Ajouter",
   },
-  loading: {
-    default: false,
+  id: {
+    default: 0,
   },
 });
-const emit = defineEmits(["quit", "submit"]);
+
+onMounted(async () => {
+  project.value = await projectService.getProject(props.id);
+  loading.value = false;
+});
 
 function submit() {
   if (checkForm()) {
-    emit("submit", props.project, user.value, getRoles(role.value));
+    addUserToProject(project.value, user.value, getRoles(role.value));
   }
+}
+async function addUserToProject(project: Project, user: User, roles: string[]) {
+  try {
+    loadingForm.value = true;
+    const isAdded = await projectService.addUserToProject(project, user, roles);
+    if (!isAdded) {
+      apiErrors.value = [
+        { message: "Impossible d'ajouter l'utilisateur'", code: "", level: "error" },
+      ];
+    } else {
+      toast.add(toastService.showSuccess("Utilisateur ajouté !", ""));
+    }
+  } catch (error: any) {
+    apiErrors.value = responseService.getApiErrors(error);
+  }
+  loadingForm.value = false;
 }
 function getRoles(role: string): string[] {
   switch (role) {

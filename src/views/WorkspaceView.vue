@@ -28,6 +28,12 @@ const keepAliveExcludes = ref([
   "MonitoringCreate",
   "MonitoringLineUpdate",
   "MonitoringLineCreate",
+  "PlotUpdate",
+  "PlotCreate",
+  "VarietyUpdate",
+  "VarietyCreate",
+  "SowingUpdate",
+  "SowingCreate",
 ]);
 
 const menuItems = computed(() => [

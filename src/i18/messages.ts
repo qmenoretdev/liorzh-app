@@ -117,6 +117,7 @@ export default {
             add: 'Ajouter',
             addSowing: 'Ajouter un semis',
             create: 'Créer',
+            cancel: 'Annuler',
         }
     },
     en: {
@@ -238,6 +239,7 @@ export default {
             add: 'Add',
             addSowing: 'Add a sowing',
             create: 'Create',
+            cancel: 'Cancel',
         }
     }
 }
