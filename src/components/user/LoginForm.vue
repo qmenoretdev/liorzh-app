@@ -1,15 +1,12 @@
 <template>
   <div class="card p-4 col-12 lg:col-4 mx-auto">
     <div :class="cssClass.container.default">
-      <InlineMessage class="col-12 mb-2" v-if="justSignup" severity="success"
-        >{{ $t('message.signup.success', { name: user.name }) }}</InlineMessage
-      >
-      <InlineMessage class="col-12 mb-2" v-else-if="jwtExpiration" severity="info"
-        >{{ $t('message.login.jwtExpiration', { name: user.name }) }}</InlineMessage
-      >
-      <h2>{{ $t('login.title') }}</h2>
+      <InlineMessage class="col-12 mb-2" v-if="justSignup" severity="success">{{
+        $t("message.signup.success", { name: user.name })
+      }}</InlineMessage>
+      <h2>{{ $t("login.title") }}</h2>
       <div class="field grid">
-        <label for="email" class="col-12 sm:col-3">{{ $t('login.email') }}</label>
+        <label for="email" class="col-12 sm:col-3">{{ $t("login.email") }}</label>
         <div class="col-12 sm:col-8">
           <input
             id="email"
@@ -23,7 +20,7 @@
         <FormMessage :message="formError.usernameError" />
       </div>
       <div class="field grid">
-        <label for="password" class="col-12 sm:col-3">{{ $t('login.password') }}</label>
+        <label for="password" class="col-12 sm:col-3">{{ $t("login.password") }}</label>
         <div class="col-12 sm:col-8">
           <input
             id="password"
@@ -66,7 +63,7 @@ import { useUserStore } from "@/stores/user";
 import type { ApiError } from "@/models/ApiError";
 import type { FormLogin } from "@/models/FormLogin";
 import { useI18n } from "vue-i18n";
-import {useRoute} from "vue-router";
+import { useRoute } from "vue-router";
 import { queryParams } from "@/utils/queryParams";
 
 const { t } = useI18n();
@@ -85,7 +82,6 @@ const emit = defineEmits(["login"]);
 // If redirection after registration display the welcome message
 const user = computed(() => userStore.user);
 const justSignup = context === queryParams.loginForm.context.signup;
-const jwtExpiration = context === queryParams.loginForm.context.jwtExpiration;
 
 const formLogin = ref({
   username: "",
@@ -104,11 +100,11 @@ function checkForm(): boolean {
   formError.value = initFormError();
   let checkOk = true;
   if (formLogin.value.username === "" || formLogin.value.username == undefined) {
-    formError.value.usernameError = t('message.login.emailError');
+    formError.value.usernameError = t("message.login.emailError");
     checkOk = false;
   }
   if (formLogin.value.password === "" || formLogin.value.password == undefined) {
-    formError.value.passwordError = t('message.login.passwordError');
+    formError.value.passwordError = t("message.login.passwordError");
     checkOk = false;
   }
   return checkOk;
