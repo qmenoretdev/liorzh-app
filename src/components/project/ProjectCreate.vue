@@ -47,7 +47,6 @@ async function createProject(project: Project) {
 async function selectProjectUser(project: Project) {
   const user = await userService.getUser();
   const projectUser = user.projectUsers.find((projectUserIn) => {
-    console.log(projectUserIn);
     return project.id === projectUserIn.project.id;
   });
   if (projectUser) {
