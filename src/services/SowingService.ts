@@ -2,6 +2,7 @@ import { axiosJwtProtected } from '@/axios.config';
 import type { Sowing } from '@/models/Sowing';
 import { useUserStore } from '@/stores/user';
 import { toDateTime } from '@/utils/date';
+import { queryParams } from '@/utils/queryParams';
 
 class SowingService {
     async createSowing(sowing: Sowing): Promise<Sowing> {
@@ -33,8 +34,13 @@ class SowingService {
         const response = await axiosJwtProtected.delete(`sowings/${sowingId}`);
         return response.status === 204;
     }
-    async getSowingsByVariety(varietyId: number): Promise<Sowing[]> {
-        const response = await axiosJwtProtected.get(`sowings?varietyId=${varietyId}`);
+    async getSowingsByVarietyAndProject(varietyId: number): Promise<Sowing[]> {
+        const userStore = useUserStore();
+        const response = await axiosJwtProtected.get(`sowings?${queryParams.variety.id}=${varietyId}&${queryParams.project.id}=${userStore.activeProjectUser.project.id}`);
+        return response.data;
+    }
+    async getSowing(sowingId: number): Promise<Sowing> {
+        const response = await axiosJwtProtected.get(`sowings/${sowingId}`);
         return response.data;
     }
 }

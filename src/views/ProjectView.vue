@@ -3,10 +3,13 @@
     <div style="text-align: center">
       <h1>Projets</h1>
     </div>
-    <ProjectPanel />
+    <RouterView v-slot="{ Component }">
+      <keep-alive :exclude="keepAliveExcludes"><component :is="Component" /></keep-alive>
+    </RouterView>
   </div>
 </template>
 
 <script setup lang="ts">
-import ProjectPanel from "@/components/project/ProjectPanel.vue"
+import { ref } from "vue";
+const keepAliveExcludes = ref(["ProjectUpdate", "ProjectCreate", "ProjectAddUser"]);
 </script>

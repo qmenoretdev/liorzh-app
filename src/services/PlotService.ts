@@ -3,6 +3,10 @@ import { axiosJwtProtected } from '@/axios.config';
 import { useUserStore } from "@/stores/user";
 
 class PlotService {
+    async getPlot(plotId: number): Promise<Plot> {
+        const response = await axiosJwtProtected.get(`plots/${plotId}`)
+        return response.data
+    }
     async createPlot(plot: Plot): Promise<Plot> {
         const userStore = useUserStore();
         const response = await axiosJwtProtected.post('plots', {

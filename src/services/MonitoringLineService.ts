@@ -3,6 +3,10 @@ import { axiosJwtProtected } from '@/axios.config';
 import { toDateTime } from "@/utils/date";
 
 class MonitoringLineService {
+    async getMonitoringLine(monitoringId: number): Promise<MonitoringLine> {
+        const response = await axiosJwtProtected.get(`monitoring-lines/${monitoringId}`);
+        return response.data;
+    }
     async getMonitoringLinesByMonitoring(monitoringId: number): Promise<MonitoringLine[]> {
         const response = await axiosJwtProtected.get(`monitoring-lines?monitoringId=${monitoringId}`);
         return response.data;

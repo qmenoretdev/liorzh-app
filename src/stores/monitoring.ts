@@ -27,11 +27,12 @@ export const useMonitoringStore = defineStore('monitoringStore', () => {
     })
   }
   function updateMonitoringLine(monitoringLine: MonitoringLine) {
-    selectedMonitorings.value.forEach(monitoring => {
+    selectedMonitorings.value.forEach((monitoring: Monitoring, i: number) => {
       if (monitoring.id === monitoringLine.monitoring.id) {
-        monitoring.monitoringLines?.forEach(monitoringLineIn => {
+        monitoring.monitoringLines?.forEach((monitoringLineIn: MonitoringLine, y: number) => {
           if (monitoringLineIn.id === monitoringLine.id) {
-            monitoringLineIn = monitoringLine
+            selectedMonitorings.value[i].monitoringLines[y] = monitoringLine
+            return;
           }
         });
       }
@@ -46,5 +47,19 @@ export const useMonitoringStore = defineStore('monitoringStore', () => {
       }
     });
   }
-  return { monitorings, setMonitorings, selectedMonitorings, setSelectedMonitorings, removeMonitoringLine, updateMonitoringLine }
+  function updateMonitoring(monitoring: Monitoring) {
+    selectedMonitorings.value.forEach((monitoringIn: Monitoring, i: number) => {
+      if (monitoring.id === monitoringIn.id) {
+        selectedMonitorings.value[i] = monitoring;
+        return;
+      }
+    });
+    monitorings.value.forEach((monitoringIn: Monitoring, i: number) => {
+      if (monitoring.id === monitoringIn.id) {
+        monitorings.value[i] = monitoring;
+        return;
+      }
+    });
+  }
+  return { monitorings, setMonitorings, selectedMonitorings, setSelectedMonitorings, removeMonitoringLine, updateMonitoringLine, updateMonitoring }
 })
