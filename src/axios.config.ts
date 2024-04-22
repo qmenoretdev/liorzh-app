@@ -4,7 +4,7 @@ import userService from './services/UserService';
 
 axios.defaults.baseURL = import.meta.env.VITE_LIORZH_API_URL
 
-export function getAxiosJwtProtected(): AxiosInstance {
+function getAxiosJwtProtected(): AxiosInstance {
     const axiosJwtProtected = axios.create({
         //withCredentials: true, //=> utilisable que si allow-origin différent de *
     });
