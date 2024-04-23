@@ -26,9 +26,20 @@
       <Column field="specy.botanicalName">
         <template #body="slotProps">
           <span class="flex align-items-center">
-            <img class="mr-2" src="@/assets/img/visible_24px.png" v-if="slotProps.data.specy.owner === PUBLIC" title="Espèce publique"/>
-            <img class="mr-2" src="@/assets/img/invisible_24px.png" v-else :title="'Espèce privée : ' + slotProps.data.specy.owner"/>
-          <i>{{ slotProps.data.specy.botanicalName }}</i></span>
+            <img
+              class="mr-2"
+              src="@/assets/img/visible_24px.png"
+              v-if="slotProps.data.specy.owner === PUBLIC"
+              title="Espèce publique"
+            />
+            <img
+              class="mr-2"
+              src="@/assets/img/invisible_24px.png"
+              v-else
+              :title="'Espèce privée : ' + slotProps.data.specy.owner"
+            />
+            <i>{{ slotProps.data.specy.botanicalName }}</i></span
+          >
         </template>
       </Column>
       <Column field="specy.frenchCommonNames">
@@ -41,9 +52,20 @@
       <Column field="name">
         <template #body="slotProps">
           <span class="flex align-items-center">
-            <img class="mr-2" src="@/assets/img/visible_24px.png" v-if="slotProps.data.owner === PUBLIC" title="Variété publique"/>
-            <img class="mr-2" src="@/assets/img/invisible_24px.png" v-else :title="'Variété privée : ' + slotProps.data.owner"/>
-          <i>{{ slotProps.data.name }}</i></span>
+            <img
+              class="mr-2"
+              src="@/assets/img/visible_24px.png"
+              v-if="slotProps.data.owner === PUBLIC"
+              title="Variété publique"
+            />
+            <img
+              class="mr-2"
+              src="@/assets/img/invisible_24px.png"
+              v-else
+              :title="'Variété privée : ' + slotProps.data.owner"
+            />
+            <i>{{ slotProps.data.name }}</i></span
+          >
         </template>
       </Column>
       <Column field="description"></Column>
@@ -61,7 +83,10 @@
             raised
             rounded
             @click="updateVariety(slotProps.data)"
-            v-if="editable && (authorizationService.isAdmin() || slotProps.data.owner !== PUBLIC)"
+            v-if="
+              editable &&
+              (authorizationService.isAdmin() || slotProps.data.owner !== PUBLIC)
+            "
           />
           <Button
             icon="pi pi-trash"
@@ -89,7 +114,7 @@
             text
             raised
             rounded
-            @click="addVarietyToUser(slotProps.data)"
+            @click="addVarietyToProject(slotProps.data)"
             v-if="addable"
             title="Ajouter à vos variétés"
           />
@@ -113,7 +138,13 @@ import { showValidity } from "@/utils/validity";
 import varietyScript from "@/scripts/VarietyScript";
 import { ref } from "vue";
 
-const emit = defineEmits(["update", "delete", "addToUser", "publish", "selectVariety"]);
+const emit = defineEmits([
+  "update",
+  "delete",
+  "addToProject",
+  "publish",
+  "selectVariety",
+]);
 defineProps({
   data: {
     default: [] as Variety[],
@@ -126,10 +157,10 @@ defineProps({
   },
 });
 
-const selectedVariety = ref(varietyScript.init())
+const selectedVariety = ref(varietyScript.init());
 
 function onSelect() {
-  emit("selectVariety", selectedVariety.value)
+  emit("selectVariety", selectedVariety.value);
 }
 
 function updateVariety(variety: Variety) {
@@ -144,8 +175,7 @@ function publishVariety(variety: Variety) {
   emit("publish", variety);
 }
 
-function addVarietyToUser(variety: Variety) {
-  emit("addToUser", variety);
+function addVarietyToProject(variety: Variety) {
+  emit("addToProject", variety);
 }
-
 </script>

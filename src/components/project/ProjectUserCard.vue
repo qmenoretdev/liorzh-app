@@ -1,10 +1,6 @@
 <template>
   <div>
-    <div
-      :class="getCardClass()"
-      style="height: 100%"
-      @click="selectProjectUser"
-    >
+    <div :class="getCardClass()" style="height: 100%" @click="selectProjectUser">
       <div class="grid p-2">
         <div class="col-6" style="text-align: center">
           <h2>
@@ -27,7 +23,7 @@
             class="m-1"
             raised
             rounded
-            title="Modifier le projet"
+            title="Ajouter un utilisateur au projet"
             @click.stop="openAddUserToProject()"
           />
           <Button
@@ -60,7 +56,13 @@ import projectUserScript from "@/scripts/ProjectUserScript";
 import { PROJECT_ROLES } from "@/utils/constant";
 import Button from "primevue/button";
 
-const emit = defineEmits(["openUpdateProject", "openAddUserToProject", "deleteProject", "selectProjectUser", "quitProject"]);
+const emit = defineEmits([
+  "openUpdateProject",
+  "openAddUserToProject",
+  "deleteProject",
+  "selectProjectUser",
+  "quitProject",
+]);
 const props = defineProps({
   projectUser: {
     default: projectUserScript.init(),

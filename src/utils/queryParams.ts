@@ -2,7 +2,6 @@ export const queryParams = {
     loginForm: {
         context: {
             signup: 'signup',
-            jwtExpiration: 'jwtExpiration',
         }
     },
     variety: {
@@ -10,5 +9,11 @@ export const queryParams = {
     },
     user: {
         id: 'userId',
-    }
+    },
+    monitoring: {
+        id: 'monitoringId',
+    },
+    project: {
+        id: 'projectId',
+    },
 }

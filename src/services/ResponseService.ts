@@ -1,7 +1,6 @@
 import { AxiosError } from "axios";
 import type { ApiError } from "@/models/ApiError";
-import router from "@/router";
-import { queryParams } from "@/utils/queryParams";
+
 class ResponseService {
   getApiErrors(error: any): ApiError[] {
     const apiErrors = [] as ApiError[];
@@ -11,11 +10,7 @@ class ResponseService {
         return error.response.data;
       } else {
         // ApiError Custom error
-        if (error.response.data.code === 401) {
-          router.push({ name: 'login', query: { context: queryParams.loginForm.context.jwtExpiration } })
-        } else {
           return [error.response.data]
-        }
       }
     } else {
       // No response from server

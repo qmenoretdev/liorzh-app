@@ -8,6 +8,10 @@ import type { User } from "@/models/User";
 import type { ProjectUser } from "@/models/ProjectUser";
 
 class ProjectService {
+    async getProject(projectId: number): Promise<Project> {
+        const response = await axiosJwtProtected.get(`projects/${projectId}`);
+        return response.data;
+    }
     async createProject(project: Project): Promise<Project> {
         const response = await axiosJwtProtected.post('projects', {
             name: project.name,
