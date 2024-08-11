@@ -1,8 +1,7 @@
 <template>
-  <div :class="getCssClass.container.default + ' col-12'">
-    <div class="grid">
+  <div :class="getCssClass.container.default + ' grid col-12'">
+    <div class="col-12 md:col-6">
       <SpecyForm
-        :class="getFormClass"
         :formError="formErrorSpecy"
         v-model:botanicalName="variety.specy.botanicalName"
         v-model:frenchCommonNames="frenchCommonNames"
@@ -10,67 +9,7 @@
         v-model:isPublicSpecy="isPublicSpecy"
         :readonly="isUpdateMode"
       />
-      <div v-if="!isUpdateMode" class="col-6">
-        <div>
-          <h3>Recherche d'espèce</h3>
-          <SearchSpecy
-            class="col-12 mb-2"
-            v-model:botanicalName="searchSpecy.botanicalName"
-            v-model:frenchCommonName="searchSpecy.frenchCommonName"
-            v-model:validityValues="searchSpecyFilter.validityValues"
-            v-model:onAllSpecies="searchSpecyFilter.onAllSpecies"
-            @submit="searchSpecies"
-          />
-          <Button class="col-12" icon="pi pi-search" @click="searchSpecies"
-            >Rechercher</Button
-          >
-        </div>
-        <LoadingSpinner v-if="loadingSearchStep == 1" />
-        <DataTable
-          v-if="loadingSearchStep == 2 && searchedSpecies.length > 0"
-          :value="searchedSpecies"
-          scrollable
-          scrollHeight="300px"
-          dataKey="id"
-        >
-          <Column field="botanicalName" header="Nom botanique">
-            <template #body="slotProps">
-              <i>{{ slotProps.data.botanicalName }}</i>
-            </template>
-          </Column>
-          <Column field="frenchCommonNames" header="Nom(s) commun(s)">
-            <template #body="slotProps">
-              {{ commonNamesArrayToString(slotProps.data.frenchCommonNames) }}
-            </template>
-          </Column>
-          <Column field="upovCode" header="Code UPOV" />
-          <Column field="valid" header="Validée ?"
-            ><template #body="slotProps">
-              {{ showValidity(slotProps.data.valid) }}
-            </template></Column
-          >
-          <Column>
-            <template #body="slotProps">
-              <Button
-                icon="pi pi-plus-circle"
-                text
-                raised
-                rounded
-                @click="selectSpecy(slotProps.data)"
-                title="Sélectionner cette espèce"
-              />
-            </template>
-          </Column>
-        </DataTable>
-        <div v-else-if="loadingSearchStep == 2 && searchedSpecies.length == 0">
-          <InlineMessage class="col-12 mb-1" severity="info"
-            >Aucun résultat</InlineMessage
-          >
-        </div>
-      </div>
-    </div>
-    <div class="grid mb-2">
-      <div :class="getCssClass.container.default + ' ' + getFormClass">
+      <div :class="getCssClass.container.default">
         <h3 style="margin-top: -5px">Variété</h3>
         <div class="field grid">
           <label for="name" class="col-12 sm:col-3 mb-0">Nom de la variété</label>
@@ -134,6 +73,53 @@
           @click="addVarietyToProject()"
           class="col-12 md:col-6"
         />
+      </div>
+    </div>
+    <div v-if="!isUpdateMode" class="col-12 md:col-6">
+      <div>
+        <h3>Recherche d'espèce</h3>
+        <SearchSpecy
+          class="col-12 mb-2"
+          v-model:botanicalName="searchSpecy.botanicalName"
+          v-model:frenchCommonName="searchSpecy.frenchCommonName"
+          v-model:validityValues="searchSpecyFilter.validityValues"
+          v-model:onAllSpecies="searchSpecyFilter.onAllSpecies"
+          @submit="searchSpecies"
+        />
+        <Button class="col-12" icon="pi pi-search" @click="searchSpecies"
+          >Rechercher</Button
+        >
+      </div>
+      <LoadingSpinner v-if="loadingSearchStep == 1" />
+      <DataTable
+        v-if="loadingSearchStep == 2 && searchedSpecies.length > 0"
+        :value="searchedSpecies"
+        scrollable
+        scrollHeight="300px"
+        dataKey="id"
+        selectionMode="single"
+        :metaKeySelection="false"
+        v-model:selection="selectedSpecy"
+        @row-unselect="unSelectSpecy()"
+      >
+        <Column field="botanicalName" header="Nom botanique">
+          <template #body="slotProps">
+            <i>{{ slotProps.data.botanicalName }}</i>
+          </template>
+        </Column>
+        <Column field="frenchCommonNames" header="Nom(s) commun(s)">
+          <template #body="slotProps">
+            {{ commonNamesArrayToString(slotProps.data.frenchCommonNames) }}
+          </template>
+        </Column>
+        <Column field="valid" header="Validée ?"
+          ><template #body="slotProps">
+            {{ showValidity(slotProps.data.valid) }}
+          </template></Column
+        >
+      </DataTable>
+      <div v-else-if="loadingSearchStep == 2 && searchedSpecies.length == 0">
+        <InlineMessage class="col-12 mb-1" severity="info">Aucun résultat</InlineMessage>
       </div>
     </div>
     <InlineMessage
@@ -217,6 +203,7 @@ export default defineComponent({
     return {
       variety: varietyScript.init(),
       searchedSpecies: [] as Specy[],
+      selectedSpecy: specyScript.init(),
       searchSpecy: specyScript.initSearch(),
       frenchCommonNames: "",
       formError: this.initFormError(),
@@ -241,13 +228,13 @@ export default defineComponent({
         this.isPublicSpecy = newVarietyToUpdate.specy.owner === PUBLIC;
       }
     },
+    selectedSpecy(specy: Specy) {
+      this.selectSpecy(specy);
+    },
   },
   computed: {
     getCssClass() {
       return cssClass;
-    },
-    getFormClass() {
-      return "col-12" + (this.isUpdateMode ? "" : " md:col-6");
     },
     isUpdateMode(): boolean {
       return this.varietyToUpdate && this.varietyToUpdate.id !== 0;
@@ -318,6 +305,11 @@ export default defineComponent({
       this.frenchCommonNames = specyService.commonNamesArrayToString(
         specy.frenchCommonNames
       );
+    },
+    unSelectSpecy() {
+      this.variety.specy = specyScript.init();
+      this.isPublicSpecy = true;
+      this.frenchCommonNames = "";
     },
     showValidity(valid: string) {
       return showValidity(valid);

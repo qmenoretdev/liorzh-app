@@ -111,10 +111,7 @@
         <template #body="slotProps">
           <Button
             icon="pi pi-file-edit"
-            class="mr-2"
             text
-            raised
-            rounded
             @click="updateVariety(slotProps.data)"
             v-if="
               editable &&
@@ -123,20 +120,14 @@
           />
           <Button
             icon="pi pi-trash"
-            class="mr-2"
             text
-            raised
-            rounded
             severity="danger"
             @click="deleteVariety(slotProps.data)"
             v-if="editable"
           />
           <Button
             icon="pi pi-eye"
-            class="mr-2"
             text
-            raised
-            rounded
             severity="info"
             @click="publishVariety(slotProps.data)"
             v-if="editable && slotProps.data.owner !== PUBLIC"
@@ -145,8 +136,6 @@
           <Button
             icon="pi pi-plus-circle"
             text
-            raised
-            rounded
             @click="addVarietyToProject(slotProps.data)"
             v-if="addable"
             title="Ajouter à vos variétés"

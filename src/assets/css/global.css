@@ -1,6 +1,7 @@
 :root {
   /* colors */
   --surface-card: #f9fafb !important;
+  --select-color: rgb(67, 218, 167);
 }
 
 /* policy uniformization */
@@ -40,7 +41,7 @@ body {
 }
 
 .selected-card {
-  background-color: var(--primary-color) !important;
+  background-color: var(--select-color) !important;
   color: var(--primary-color-text);
 }
 

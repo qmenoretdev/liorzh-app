@@ -45,7 +45,7 @@
           />
         </div>
       </div>
-      <div class="field grid">
+      <div class="field grid" v-if="isAdmin()">
         <label for="upovCode" class="col-12 sm:col-3"
           >Code UPOV&nbsp;
           <div
@@ -109,6 +109,7 @@ import FormMessage from "@/components/common/FormMessage.vue";
 import type { Specy } from "@/models/Specy";
 import type { FormErrorSpecy } from "@/models/form/FormErrorSpecy";
 import Checkbox from "primevue/checkbox";
+import authorizationService from "@/services/AuthorizationService";
 
 export default defineComponent({
   extends: FormCommon,
@@ -186,6 +187,9 @@ export default defineComponent({
         botanicalNameError: "",
         valid: true,
       };
+    },
+    isAdmin(): boolean {
+      return authorizationService.isAdmin();
     },
   },
 });

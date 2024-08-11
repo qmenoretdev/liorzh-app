@@ -22,9 +22,12 @@
         :filterMatchModeOptions="varietyMatchModeOptions"
       >
         <template #body="slotProps">
-          <i>{{ slotProps.data.variety.specy.botanicalName }}</i> ({{
-            slotProps.data.variety.name
-          }}) {{ slotProps.data.variety.specy.frenchCommonNames }}
+          <span :title="slotProps.data.variety.specy.botanicalName"
+            >{{
+              commonNamesArrayToString(slotProps.data.variety.specy.frenchCommonNames)
+            }}
+            ({{ slotProps.data.variety.name }})</span
+          >
         </template>
         <template #filter="{ filterModel, filterCallback }">
           <InputText
@@ -103,7 +106,6 @@ import { toStrDate } from "@/utils/date";
 import monitoringLineScript from "@/scripts/MonitoringLineScript";
 import ContextMenu from "primevue/contextmenu";
 import { useI18n } from "vue-i18n";
-import { FilterMatchMode } from "primevue/api";
 import InputText from "primevue/inputtext";
 import { FilterService } from "primevue/api";
 import type { Variety } from "@/models/Variety";
@@ -172,5 +174,9 @@ const menuModel = ref([
 
 function onRowContextMenu(event: any) {
   cm.value.show(event.originalEvent);
+}
+
+function commonNamesArrayToString(commonNames: string[]) {
+  return specyService.commonNamesArrayToString(commonNames);
 }
 </script>
